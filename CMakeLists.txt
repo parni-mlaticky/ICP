@@ -16,10 +16,10 @@ find_package(
 
 add_executable(
   parni-pacman
-  main.cpp
-  mainwindow.cpp
-  mainwindow.h
-  mainwindow.ui
+  src/main.cpp
+  src/mainwindow.cpp
+  src/mainwindow.h
+  src/mainwindow.ui
   src/player.cpp
   src/player.h
   src/ghost.h

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "src/player.h"
+#include "player.h"
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QMainWindow>

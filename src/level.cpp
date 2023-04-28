@@ -3,62 +3,79 @@
 #include "ghost.h"
 #include "key.h"
 #include "wall.h"
+#include "player.h"
 #include <QTextStream>
 #include <fstream>
 #include <iostream>
 
-Level::Level(QGraphicsScene *scene) { this->m_scene = scene; }
+void Level::addEntity(char c, qreal x, qreal y) {
+  Entity* entity = createEntity(c, x, y);
+  if (entity != nullptr) {
+    entities.push_back(entity);
+    this->m_scene->addItem(entity);
+  }
+}
+
+Level::Level(QGraphicsScene *scene, int scale) {
+  this->m_scene = scene;
+  this->m_scale = scale;
+}
+
+Entity* Level::createEntity(char c, qreal x, qreal y) {
+  switch (c) {
+    case 'T': {
+      return (Entity*) new Finish(x, y, this);
+    }
+    case 'X': {
+      return (Entity*) new Wall(x, y, this);
+    }
+    case 'G': {
+      return (Entity*) new Ghost(x, y, this);
+    }
+    case 'K': {
+      return (Entity*) new Key(x, y, this);
+    }
+    case 'S': {
+      return (Entity*) new Player(x, y, true, this);
+    }
+    case '.': {
+      return nullptr;
+    }
+    default: {
+      throw "Invalid entity code!\n";
+    }
+  }
+}
+
 void Level::loadLevel(const QString &filename) {
-  int x = 0;
-  int y = 0;
   std::string level;
   std::string firstLine;
   std::ifstream levelFile(filename.toUtf8().constData());
   std::getline(levelFile, firstLine);
   std::cerr << firstLine << std::endl;
+
+  entities = std::vector<Entity*>();
+
+  int x = 0;
+  int y = 0;
+
   while (std::getline(levelFile, level)) {
     for (char c : level) {
-      switch (c) {
-      case '.': {
-        break;
-      }
-      case 'T': {
-        Finish finish(x, y, 1, 1);
-        break;
-      }
-      case 'X': {
-        Wall wall(x, y, 1, 1);
-        break;
-      }
-      case 'G': {
-        Ghost ghost(x, y, 1, 1);
-        break;
-      }
-      case 'K': {
-        Key key(x, y, 1, 1);
-        break;
-      }
-      case 'S': {
-        QPointF start(x, y);
-        this->m_startingPoint = start;
-        break;
-      }
-      }
-      x++;
+      this->addEntity(c, x, y);
+      x+=1;
     }
-    y++;
+    x = 0;
+    y+=1;
   }
   levelFile.close();
 }
-void Level::addEntity(char entityType, int gridX, int gridY) {
-  qreal x = gridX * GRID_SIZE;
-  qreal y = gridY * GRID_SIZE;
+
+void Level::updateScene() {
+  for (auto entity : this->entities) {
+    entity->update();
+  }
 }
 
-QPointF Level::getStartingPoint() {
-  return this->m_startingPoint;
-  // QPointF debugPos(0, 0);
-  // return debugPos;
+int Level::scale() {
+  return m_scale;
 }
-
-QPointF Level::getFinishPoint() { return this->m_finishPoint; }

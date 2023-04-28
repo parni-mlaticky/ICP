@@ -1,21 +1,26 @@
-#ifndef LEVEL_H
-#define LEVEL_H
+#ifndef LEVEL_H_
+#define LEVEL_H_
+
 #include <QGraphicsScene>
+#include "entity.h"
+#include <vector>
 
-const int GRID_SIZE = 40;
-
-class Level {
+class Level : public QObject {
+  Q_OBJECT
 public:
-  Level(QGraphicsScene *scene);
+  Level(QGraphicsScene *scene, int scale);
   void loadLevel(const QString &filename);
-  QPointF getStartingPoint();
-  QPointF getFinishPoint();
+  void addEntity(char c, qreal x, qreal y);
+  void updateScene();
+  int scale();
+
 
 private:
-  void addEntity(char entityType, int x, int y);
-
+  Entity* createEntity(char c, qreal x, qreal y);
   QGraphicsScene *m_scene;
-  QPointF m_startingPoint;
-  QPointF m_finishPoint;
+  int m_scale;
+
+  std::vector<Entity*> entities;
 };
+
 #endif

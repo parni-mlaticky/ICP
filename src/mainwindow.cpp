@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "src/level.h"
+#include "level.h"
 #include <QTimer>
 #include <QVBoxLayout>
 

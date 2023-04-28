@@ -11,3 +11,6 @@ build:
 clean:
 	rm -rf $(BUILDDIR)
 
+# TODO kolo dal source soubory jinam nez do src hahaahaha
+pack:
+	zip xhucov00-xkolou05-xzobal01.zip Makefile README.md src/* CMakeLists.txt

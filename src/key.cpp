@@ -1,8 +1,8 @@
 #include "key.h"
+Key::Key(qreal x, qreal y, qreal width, qreal height)
+    : Entity(x, y, width, height) {}
 
-Key::Key(qreal x, qreal y, qreal width, qreal height) {
-  this->x = x;
-  this->y = y;
-  this->width = width;
-  this->height = height;
+void Key::setImage() {
+  QPixmap pixmap("/assets/key.png");
+  setPixmap(pixmap);
 }

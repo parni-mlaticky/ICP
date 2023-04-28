@@ -1,3 +1,5 @@
+#ifndef GHOST_H
+#define GHOST_H
 #include <QGraphicsItem>
 #include <QObject>
 
@@ -22,3 +24,4 @@ private:
   qreal x;
   qreal y;
 };
+#endif

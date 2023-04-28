@@ -6,8 +6,6 @@ class Finish : public Entity {
 public:
   Finish(qreal x, qreal y, qreal width, qreal height);
 
-  void setImage();
-
 protected:
   bool collidesWith(const QGraphicsRectItem *otherItem,
                     Qt::ItemSelectionMode mode) const;

@@ -3,15 +3,12 @@
 #include <QGraphicsItem>
 #include <QObject>
 
-class Ghost : public QObject, public QGraphicsItem {
+class Ghost : public QObject, public QGraphicsPixmapItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 public:
   Ghost(qreal x, qreal y, qreal width, qreal height);
 
-  QRectF boundingRect() const override;
-  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget) override;
   void setDirection(int dx, int dy);
 
   void updatePosition();

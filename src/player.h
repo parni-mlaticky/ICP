@@ -5,15 +5,12 @@
 #include <QKeyEvent>
 #include <QObject>
 
-class Player : public QObject, public QGraphicsItem {
+class Player : public QObject, public QGraphicsPixmapItem {
   Q_OBJECT
   Q_INTERFACES(QGraphicsItem)
 public:
   Player();
 
-  QRectF boundingRect() const override;
-  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-             QWidget *widget) override;
   void setDirection(int dx, int dy);
 
 protected:

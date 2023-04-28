@@ -11,7 +11,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(
   Qt5
-  COMPONENTS Core Widgets
+  COMPONENTS Core Widgets Network
   REQUIRED)
 
 add_executable(
@@ -33,6 +33,9 @@ add_executable(
   src/level.h
   src/level.cpp
   src/entity.h
-  src/entity.cpp)
+  src/entity.cpp
+  src/server.cpp
+  src/client.cpp
+  )
 
-target_link_libraries(parni-pacman PRIVATE Qt5::Core Qt5::Widgets)
+target_link_libraries(parni-pacman PRIVATE Qt5::Core Qt5::Widgets Qt5::Network)

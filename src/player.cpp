@@ -5,14 +5,8 @@
 Player::Player() : m_dx(0), m_dy(0), m_speed(5) {
   setFlag(QGraphicsItem::ItemIsFocusable, true);
   setFocus();
-}
-
-QRectF Player::boundingRect() const { return QRectF(-10, -10, 20, 20); }
-
-void Player::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                   QWidget *widget) {
-  painter->setBrush(Qt::blue);
-  painter->drawEllipse(boundingRect());
+  QPixmap playerPixmap("../assets/player.png");
+  setPixmap(playerPixmap.scaled(20, 20, Qt::KeepAspectRatio));
 }
 
 void Player::setDirection(int dx, int dy) {

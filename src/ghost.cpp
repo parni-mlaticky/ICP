@@ -3,18 +3,14 @@
 #include <QPainter>
 
 Ghost::Ghost(qreal x, qreal y, qreal width, qreal height) {
-    this->x = x;
-    this->y = y;
-    this->width = width;
-    this->height = height;
-}
+  this->x = x;
+  this->y = y;
+  this->width = width;
+  this->height = height;
 
-QRectF Ghost::boundingRect() const { return QRectF(-10, -10, 20, 20); }
-
-void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                   QWidget *widget) {
-  painter->setBrush(Qt::red);
-  painter->drawEllipse(boundingRect());
+  QPixmap ghostPixmap("../assets/ghost.png");
+  setPixmap(ghostPixmap.scaled(width, height, Qt::KeepAspectRatio));
+  setPos(x, y);
 }
 
 void Ghost::setDirection(int dx, int dy) {

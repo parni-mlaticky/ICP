@@ -31,6 +31,8 @@ add_executable(
   src/finish.h
   src/finish.cpp
   src/level.h
-  src/level.cpp)
+  src/level.cpp
+  src/entity.h
+  src/entity.cpp)
 
 target_link_libraries(parni-pacman PRIVATE Qt5::Core Qt5::Widgets)

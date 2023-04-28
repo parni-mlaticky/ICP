@@ -1,3 +1,5 @@
+#ifndef LEVEL_H
+#define LEVEL_H
 #include <QGraphicsScene>
 
 const int GRID_SIZE = 40;
@@ -16,3 +18,4 @@ private:
   QPointF m_startingPoint;
   QPointF m_finishPoint;
 };
+#endif

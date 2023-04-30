@@ -14,27 +14,42 @@ find_package(
   COMPONENTS Core Widgets
   REQUIRED)
 
-add_executable(
-  parni-pacman
-  src/main.cpp
-  src/mainwindow.cpp
-  src/mainwindow.h
-  src/mainwindow.ui
-  src/player.cpp
-  src/player.h
-  src/ghost.h
-  src/ghost.cpp
-  src/key.h
-  src/key.cpp
-  src/wall.h
-  src/wall.cpp
-  src/floor.h
-  src/floor.cpp
-  src/finish.h
-  src/finish.cpp
-  src/level.h
-  src/level.cpp
-  src/entity.h
-  src/entity.cpp)
+set(SOURCES
+    src/entity.cpp
+    src/finish.cpp
+    src/ghost.cpp
+    src/key.cpp
+    src/level.cpp
+    src/main.cpp
+    src/mainmenu.cpp
+    src/mainwindow.cpp
+    src/player.cpp
+    src/floor.cpp
+    src/wall.cpp)
+
+set(HEADERS
+    src/entity.h
+    src/finish.h
+    src/ghost.h
+    src/key.h
+    src/level.h
+    src/mainmenu.h
+    src/mainwindow.h
+    src/player.h
+    src/floor.h
+    src/wall.h)
+
+set(UI src/mainwindow.ui src/mainmenu.ui)
+
+# Save the original CMAKE_CURRENT_BINARY_DIR and change it to the src directory
+set(ORIGINAL_CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+set(CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+qt5_wrap_ui(UI_HEADERS ${UI})
+
+# Restore the original CMAKE_CURRENT_BINARY_DIR
+set(CMAKE_CURRENT_BINARY_DIR ${ORIGINAL_CMAKE_CURRENT_BINARY_DIR})
+
+add_executable(parni-pacman ${SOURCES} ${HEADERS} ${UI_HEADERS})
 
 target_link_libraries(parni-pacman PRIVATE Qt5::Core Qt5::Widgets)

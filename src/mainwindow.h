@@ -1,6 +1,6 @@
 #pragma once
 
-#include "player.h"
+#include "level.h"
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QMainWindow>
@@ -15,5 +15,5 @@ public:
 private:
   QGraphicsScene *m_scene;
   QGraphicsView *m_view;
-  Player *m_player;
+  Level *m_level;
 };

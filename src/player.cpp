@@ -1,24 +1,18 @@
 #include "player.h"
 #include <QKeyEvent>
 #include <QPainter>
+#include <iostream>
 
-Player::Player() : m_dx(0), m_dy(0), m_speed(5) {
+Player::Player(qreal x, qreal y, bool isLocal, Level* level) : Entity(x, y, "player.png", level), m_local_player(isLocal) {
+  m_speed = 5;
   setFlag(QGraphicsItem::ItemIsFocusable, true);
   setFocus();
-  QPixmap playerPixmap("../assets/player.png");
-  setPixmap(playerPixmap.scaled(20, 20, Qt::KeepAspectRatio));
-}
-
-void Player::setDirection(int dx, int dy) {
-  m_dx = dx;
-  m_dy = dy;
-}
-
-void Player::updatePosition() {
-  setPos(x() + m_dx * m_speed, y() + m_dy * m_speed);
 }
 
 void Player::keyPressEvent(QKeyEvent *event) {
+  // Skip movement if this is a remote player.
+  if (!this->m_local_player) return;
+
   switch (event->key()) {
   case Qt::Key_W:
     setDirection(0, -1);
@@ -33,4 +27,8 @@ void Player::keyPressEvent(QKeyEvent *event) {
     setDirection(1, 0);
     break;
   }
+}
+
+void Player::update() {
+  ((Entity*) this)->updatePosition();
 }

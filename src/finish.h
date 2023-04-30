@@ -4,16 +4,12 @@
 
 class Finish : public Entity {
 public:
-  Finish(qreal x, qreal y, qreal width, qreal height);
+  Finish(qreal x, qreal y, Level* level);
 
 protected:
   bool collidesWith(const QGraphicsRectItem *otherItem,
                     Qt::ItemSelectionMode mode) const;
 
 private:
-  qreal x;
-  qreal y;
-  qreal width;
-  qreal height;
 };
 #endif

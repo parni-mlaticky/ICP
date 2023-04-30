@@ -7,6 +7,7 @@ Entity::Entity(qreal x, qreal y, std::string sprite_path, Level* level) : m_dx(1
   QPixmap ghostPixmap(("assets/" + sprite_path).c_str());
   setPixmap(ghostPixmap.scaled(level->scale(), level->scale(), Qt::KeepAspectRatio));
   setPos(x * level->scale(), y * level->scale());
+  this->sprite_path = sprite_path;
 }
 
 void Entity::update() {}
@@ -19,3 +20,5 @@ void Entity::setDirection(int dx, int dy) {
   this->m_dx = dx;
   this->m_dy = dy;
 }
+
+

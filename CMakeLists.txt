@@ -8,10 +8,14 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_COMPILER g++)
+
+add_compile_options(-g)
 
 find_package(
   Qt5
-  COMPONENTS Core Widgets
+  COMPONENTS Core Widgets Network
   REQUIRED)
 
 set(SOURCES
@@ -25,7 +29,9 @@ set(SOURCES
     src/mainwindow.cpp
     src/player.cpp
     src/floor.cpp
-    src/wall.cpp)
+    src/wall.cpp
+	src/cell.cpp
+	)
 
 set(HEADERS
     src/entity.h
@@ -37,7 +43,8 @@ set(HEADERS
     src/mainwindow.h
     src/player.h
     src/floor.h
-    src/wall.h)
+    src/wall.h
+	src/cell.h)
 
 set(UI src/mainwindow.ui src/mainmenu.ui)
 
@@ -51,5 +58,4 @@ qt5_wrap_ui(UI_HEADERS ${UI})
 set(CMAKE_CURRENT_BINARY_DIR ${ORIGINAL_CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(parni-pacman ${SOURCES} ${HEADERS} ${UI_HEADERS})
-
-target_link_libraries(parni-pacman PRIVATE Qt5::Core Qt5::Widgets)
+target_link_libraries(parni-pacman PRIVATE Qt5::Core Qt5::Widgets Qt5::Network)

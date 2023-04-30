@@ -1,7 +1,10 @@
 #include "mainwindow.h"
 #include <QTimer>
 #include <QVBoxLayout>
-
+#include "server.h"
+#include "client.h"
+#include <chrono>
+#include <thread>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), m_scene(new QGraphicsScene(this)),
       m_view(new QGraphicsView(m_scene, this)) {

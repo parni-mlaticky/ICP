@@ -9,10 +9,14 @@
 #include <fstream>
 #include <iostream>
 
-void Level::addEntity(char c, qreal x, qreal y) {
+using namespace std;
+
+
+void Level::addEntity(char c, int x, int y) {
   Entity* entity = createEntity(c, x, y);
+  std::cerr << "Adding entity: " << c << " at " << x << ", " << y << std::endl;
   if (entity != nullptr) {
-    this->m_scene->addItem(entity);
+	  this->m_grid[x][y] = new Cell(entity);
   }
 }
 
@@ -23,7 +27,7 @@ Level::Level(QGraphicsScene *scene, int window_w, int window_h) {
   this->m_window_h = window_h;
 }
 
-Entity* Level::createEntity(char c, qreal x, qreal y) {
+Entity* Level::createEntity(char c, int x, int y) {
   switch (c) {
     case 'T': {
       return (Entity*) new Finish(x, y, this);
@@ -63,44 +67,30 @@ void Level::loadLevel(const QString &filename) {
   std::cerr << bound_x << ", " << bound_y << std::endl;
   std::getline(levelFile, firstLine);
 
-  // Calculating maze offset to center maze.
-  int base_x = 0 - bound_x/2;
-  int base_y = 0 - bound_y/2;
-
-  // Calculating scale
-  int scale_x = m_window_w / (bound_x+2);
-  int scale_y = m_window_h / (bound_y+2);
-  this->m_scale = std::min(scale_x, scale_y);
-
-  std::cerr << "scale: " << this->m_scale << std::endl;
-
-  int x = base_x;
-  int y = base_y;
-  while (std::getline(levelFile, level)) {
-    for (char c : level) {
-      this->addEntity(c, x, y);
-      // Make sure there is a floor under this entity.
-      if (c != '.' || c != 'X') {
-        this->addEntity('.', x, y);
-      }
-      x+=1;
+	this->m_grid.resize(bound_y + 2);
+	for(int i = 0; i < bound_y + 2; i++) {
+		this->m_grid[i].resize(bound_x + 2);
+	}
+	
+	
+  char c;
+  for (int y = 0; y < bound_y; y++) {
+    for (int x = 0; x < bound_x; x++) {
+		levelFile >> c;
+		this->m_grid[y+1][x+1] = new Cell(createEntity(c, x+1, y+1));
     }
-    x = base_x;
-    y+=1;
   }
   levelFile.close();
-
-  // Draw horizontal walls arround maze (including corenrs).
-  for (int x = base_x-1; x < base_x + bound_x+1; x++) {
-    this->addEntity('X', x, base_y-1);
-    this->addEntity('X', x, base_y + bound_y);
+	
+  for(int i = 0; i < bound_x + 2; i++) {
+	  this->m_grid[0][i] = new Cell (createEntity('X', i, 0));
+	  this->m_grid[bound_y + 1][i] = new Cell (createEntity('X', i, bound_y));
   }
-
-  // Draw vertical walls
-  for (int y = base_y; y < base_y + bound_y; y++) {
-    this->addEntity('X', base_x-1, y);
-    this->addEntity('X', base_x + bound_x, y);
+  for(int i = 0; i < bound_y + 2; i++) {
+	  this->m_grid[i][0] = new Cell(createEntity('X', 0, i));
+	  this->m_grid[i][bound_x + 1] = new Cell(createEntity('X', bound_x, i));
   }
+  this->dumpGrid();
 }
 
 void Level::updateScene() {
@@ -112,3 +102,17 @@ void Level::updateScene() {
 int Level::scale() {
   return m_scale;
 }
+
+void Level::dumpGrid(){
+	std::cerr << "Dumping grid" << this->m_grid.size() << " " <<this->m_grid[0].size() << std::endl;
+	for(int i = 0; i < this->m_grid.size(); i++) {
+		for(int j = 0; j < this->m_grid[i].size(); j++) {
+			std::cerr << this->m_grid[i][j]->getEntity()->sprite_path << "\t";
+		}
+		std::cerr << std::endl;
+	}
+}
+
+
+
+

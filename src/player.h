@@ -15,7 +15,6 @@ protected:
   void keyPressEvent(QKeyEvent *event) override;
 
 public slots:
-  void updatePosition();
 
 private:
   bool m_local_player;

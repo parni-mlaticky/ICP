@@ -2,12 +2,15 @@
 #include "level.h"
 #include <iostream>
 
-Entity::Entity(qreal x, qreal y, std::string sprite_path, Level* level) : m_dx(1), m_dy(0), m_level(level) {
+Entity::Entity(qreal x, qreal y, std::string sprite_path) : m_dx(1), m_dy(0) {
   setFlag(QGraphicsItem::ItemIsFocusable, true);
-  QPixmap ghostPixmap(("assets/" + sprite_path).c_str());
-  setPixmap(ghostPixmap.scaled(level->scale(), level->scale(), Qt::KeepAspectRatio));
-  setPos(x * level->scale(), y * level->scale());
+  this->m_pixmap = QPixmap (("/home/ondrej/Projekty/ICP/assets/" + sprite_path).c_str());
+  setPos(x, y);
   this->sprite_path = sprite_path;
+}
+
+void Entity::setSpriteScale(int scale) {
+  setPixmap(m_pixmap.scaled(scale, scale, Qt::KeepAspectRatio));
 }
 
 void Entity::update() {}

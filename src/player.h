@@ -8,7 +8,7 @@
 
 class Player : Entity {
 public:
-  Player(qreal x, qreal y, bool isLocal, Level* level);
+  Player(qreal x, qreal y, bool isLocal);
   void update() override;
 
 protected:

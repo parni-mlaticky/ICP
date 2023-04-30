@@ -8,7 +8,7 @@
 class Level : public QObject {
   Q_OBJECT
 public:
-  Level(QGraphicsScene *scene, int scale);
+  Level(QGraphicsScene *scene, int window_w, int window_h);
   void loadLevel(const QString &filename);
   void addEntity(char c, qreal x, qreal y);
   void updateScene();
@@ -19,8 +19,8 @@ private:
   Entity* createEntity(char c, qreal x, qreal y);
   QGraphicsScene *m_scene;
   int m_scale;
-
-  std::vector<Entity*> entities;
+  int m_window_w;
+  int m_window_h;
 };
 
 #endif

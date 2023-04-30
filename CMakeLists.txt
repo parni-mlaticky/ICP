@@ -28,6 +28,8 @@ add_executable(
   src/key.cpp
   src/wall.h
   src/wall.cpp
+  src/floor.h
+  src/floor.cpp
   src/finish.h
   src/finish.cpp
   src/level.h

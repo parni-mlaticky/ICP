@@ -18,7 +18,6 @@ find_package(
   COMPONENTS Core Widgets Network
   REQUIRED)
 
-<<<<<<< Updated upstream
 set(SOURCES
     src/entity.cpp
     src/finish.cpp
@@ -33,34 +32,6 @@ set(SOURCES
     src/wall.cpp
 	src/cell.cpp
 	)
-=======
-add_executable(
-  parni-pacman
-  src/main.cpp
-  src/mainwindow.cpp
-  src/mainwindow.h
-  src/mainwindow.ui
-  src/player.cpp
-  src/player.h
-  src/ghost.h
-  src/ghost.cpp
-  src/key.h
-  src/key.cpp
-  src/wall.h
-  src/wall.cpp
-  src/floor.h
-  src/floor.cpp
-  src/finish.h
-  src/finish.cpp
-  src/level.h
-  src/level.cpp
-  src/entity.h
-  src/entity.cpp
-  src/server.cpp
-  src/client.cpp
-  src/cell.cpp
-  )
->>>>>>> Stashed changes
 
 set(HEADERS
     src/entity.h

@@ -4,16 +4,11 @@
 
 class Wall : public Entity {
 public:
-  Wall(qreal x, qreal y, qreal width, qreal height);
+  Wall(qreal x, qreal y, Level* level);
 
 protected:
   bool collidesWith(const QGraphicsRectItem *otherItem,
                     Qt::ItemSelectionMode mode) const;
 
-private:
-  qreal x;
-  qreal y;
-  qreal width;
-  qreal height;
 };
 #endif

@@ -1,11 +1,10 @@
 #include "mainwindow.h"
-#include "level.h"
 #include <QTimer>
 #include <QVBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), m_scene(new QGraphicsScene(this)),
-      m_view(new QGraphicsView(m_scene, this)), m_player(new Player()) {
+      m_view(new QGraphicsView(m_scene, this)) {
 
   setWindowTitle("Parni pacman");
   setFixedSize(800, 600);
@@ -13,16 +12,12 @@ MainWindow::MainWindow(QWidget *parent)
   m_view->setRenderHint(QPainter::Antialiasing);
   m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-  Level level(m_scene);
+  m_level = new Level(m_scene, 32);
   m_scene->setSceneRect(-100, -100, 200, 200);
-  level.loadLevel("./levels/level.txt");
-  m_scene->addItem(m_player);
-  QPointF startingPos = level.getStartingPoint();
-  m_player->setPos(startingPos.x(), startingPos.y());
+  m_level->loadLevel("./levels/level.txt");
 
   QTimer *timer = new QTimer(this);
-  connect(timer, &QTimer::timeout, m_player, &Player::updatePosition);
-  timer->start(1000 / 60);
-}
+  connect(timer, &QTimer::timeout, m_level, &Level::updateScene);
+  timer->start(1000 / 60);}
 
 MainWindow::~MainWindow() = default;

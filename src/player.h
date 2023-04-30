@@ -4,14 +4,12 @@
 #include <QGraphicsItem>
 #include <QKeyEvent>
 #include <QObject>
+#include "level.h"
 
-class Player : public QObject, public QGraphicsPixmapItem {
-  Q_OBJECT
-  Q_INTERFACES(QGraphicsItem)
+class Player : Entity {
 public:
-  Player();
-
-  void setDirection(int dx, int dy);
+  Player(qreal x, qreal y, bool isLocal, Level* level);
+  void update() override;
 
 protected:
   void keyPressEvent(QKeyEvent *event) override;
@@ -20,7 +18,6 @@ public slots:
   void updatePosition();
 
 private:
-  int m_dx, m_dy;
-  int m_speed;
+  bool m_local_player;
 };
 #endif

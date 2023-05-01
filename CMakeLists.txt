@@ -30,7 +30,6 @@ set(SOURCES
     src/player.cpp
     src/floor.cpp
     src/wall.cpp
-	src/cell.cpp
 	)
 
 set(HEADERS
@@ -44,7 +43,7 @@ set(HEADERS
     src/player.h
     src/floor.h
     src/wall.h
-	src/cell.h)
+	)
 
 set(UI src/mainwindow.ui src/mainmenu.ui)
 

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <QDebug>
 #include "wall.h"
-Player::Player(qreal x, qreal y, bool isLocal) : Entity(x, y, "player.png"), m_local_player(isLocal) {
+Player::Player(bool isLocal) : Entity("player.png"), m_local_player(isLocal) {
   m_speed = 5;
   setFlag(QGraphicsItem::ItemIsFocusable, true);
   setFocus();
@@ -28,9 +28,11 @@ void Player::keyPressEvent(QKeyEvent *event) {
     setDirection(1, 0);
     break;
   }
+  std::cerr << "direction:" <<  this->m_dx << " " <<  this->m_dy << std::endl;
 }
 
 void Player::update() {
 	this->updatePosition();
-  std::cerr << "x " << x() << " y " << y() << std::endl;
+	this->setFocus();
+  //std::cerr << "x " << x() << " y " << y() << std::endl;
 }

@@ -14,24 +14,26 @@ MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
   const int height = 600;
   const int width = 800;
 
+  const int log_tick_ms = 200;
+  const int gfx_tick_ms = 1000/60;
+
   setWindowTitle("Parni pacman");
   setFixedSize(width, height);
   setCentralWidget(m_view);
   m_view->setRenderHint(QPainter::Antialiasing);
   m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-  m_level = new Level(m_scene, width, height);
+
+  int animation_frames = log_tick_ms/gfx_tick_ms;
+  m_level = new Level(m_scene, width, height, animation_frames);
   m_level->loadLevel(levelFilePath);
+
   m_scene->setSceneRect(-100, -100, 200, 200);
-  // m_level->loadLevel(levelFile);
 
   QTimer *timer = new QTimer(this);
-  connect(timer, &QTimer::timeout, m_level, &Level::updateScene);
-  timer->start(1000 / 60);
 
-  QTimer *timer2 = new QTimer(this);
-  connect(timer2, &QTimer::timeout, m_level, &Level::updateGrid);
-  timer2->start(400);
+  connect(timer, &QTimer::timeout, m_level, &Level::updateLevel);
+  timer->start(gfx_tick_ms);
 }
 
 MainWindow::~MainWindow() = default;

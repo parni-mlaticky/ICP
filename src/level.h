@@ -15,7 +15,7 @@ using Grid = std::vector<Row>;
 class Level : public QObject {
   Q_OBJECT
 public:
-  Level(QGraphicsScene *scene, int window_w, int window_h);
+  Level(QGraphicsScene *scene, int window_w, int window_h, int update_grid);
   void loadLevel(const QString &filename);
   void addEntity(Entity* entity);
   void updateScene();
@@ -33,6 +33,7 @@ public:
   T* findEntityAt(int x, int y);
 
   bool removeEntity(Entity* ent);
+  void updateLevel();
 
 private:
   Grid m_grid;
@@ -46,6 +47,8 @@ private:
   int m_window_h;
   int m_bound_x;
   int m_bound_y;
+  int m_update_grid;
+  int m_update_grid_counter;
 };
 
 #endif

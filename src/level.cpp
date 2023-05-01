@@ -15,7 +15,7 @@ using namespace std;
 
 void Level::addEntity(Entity *entity) { this->m_scene->addItem(entity); }
 
-Level::Level(QGraphicsScene *scene, int window_w, int window_h) {
+Level::Level(QGraphicsScene *scene, int window_w, int window_h, int update_grid) {
   this->m_scene = scene;
   this->m_scale = -1;
   this->m_scale = -1;
@@ -23,8 +23,10 @@ Level::Level(QGraphicsScene *scene, int window_w, int window_h) {
   this->m_window_h = window_h;
   this->m_bound_x = -1;
   this->m_bound_y = -1;
-
   this->m_background_gfx = vector<Entity *>();
+  this->m_background_gfx = vector<Entity*>();
+  this->m_update_grid = update_grid;
+  this->m_update_grid_counter = update_grid-1;
 }
 
 Entity* Level::createEntity(char c, int x, int y) {
@@ -123,10 +125,10 @@ void Level::updateScene() {
   for (int row = 0; row < this->m_grid.size(); ++row) {
     for (int col = 0; col < this->m_grid[row].size(); ++col) {
       if (this->m_grid[row][col].size() == 0) continue;
-	  for(int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++){
-		this->m_grid[row][col][entIndex]->setSpriteScale(this->m_scale);
-		this->m_grid[row][col][entIndex]->updateSprite(col, row, this);
-	  }
+      for(int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++){
+        this->m_grid[row][col][entIndex]->setSpriteScale(this->m_scale);
+        this->m_grid[row][col][entIndex]->interpolate(this->m_update_grid);
+      }
     }
   }
 
@@ -189,6 +191,7 @@ void Level::updateGrid() {
 			for(int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++){
 				Entity* ent = this->m_grid[row][col][entIndex];
 				if (ent == nullptr) continue;
+        ent->updateSprite(col, row, this);
 				pair<int, int> dxdy = ent->getDxDy();
 				int dx = dxdy.first;
 				int dy = dxdy.second;
@@ -200,6 +203,7 @@ void Level::updateGrid() {
 				if(!checkWall(row+dy, col+dx)){
 					newGrid[row+dy][col+dx].push_back(ent);
 					ent->set_xy(row+dy, col+dx);
+          ent->move_to(col+dx, row+dy, this);
 				}
 				else{
 					ent->stop();
@@ -217,6 +221,19 @@ void Level::updateGrid() {
 		removeEntity(playerKeyPair.second);
 		this->m_scene->removeItem(playerKeyPair.second);
 	}
+}
+
+void Level::updateLevel() {
+  ++this->m_update_grid_counter;
+  // Execute grid update once in m_update_grid frames.
+  if (this->m_update_grid_counter == this->m_update_grid) {
+    this->m_update_grid_counter = 0;
+    // Updates logical grid.
+    this->updateGrid();
+  }
+
+  // Updates sprites
+  this->updateScene();
 }
 
 bool Level::checkWall(int x, int y){

@@ -1,19 +1,19 @@
-#include <QTcpSocket>
 #include <QCoreApplication>
+#include <QTcpSocket>
 class Client : public QObject {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    Client(QObject *parent = nullptr);
-    ~Client();
-	void connectToSession(QString ip, int port); 
+  Client(QObject *parent = nullptr);
+  ~Client();
+  void connectToSession(QString ip, int port);
 
 private slots:
-    void onConnected();
-    void onReadyRead();
-    void onDisconnected();
-    void onError(QAbstractSocket::SocketError socketError);
+  void onConnected();
+  void onReadyRead();
+  void onDisconnected();
+  void onError(QAbstractSocket::SocketError socketError);
 
 private:
-    QTcpSocket *socket;
+  QTcpSocket *socket;
 };

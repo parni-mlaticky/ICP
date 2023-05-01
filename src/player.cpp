@@ -1,10 +1,11 @@
 #include "player.h"
+#include "wall.h"
+#include <QDebug>
 #include <QKeyEvent>
 #include <QPainter>
 #include <iostream>
-#include <QDebug>
-#include "wall.h"
 Player::Player(bool isLocal) : Entity("player.png"), m_local_player(isLocal) {
+
   m_speed = 5;
   setFlag(QGraphicsItem::ItemIsFocusable, true);
   setFocus();
@@ -12,7 +13,8 @@ Player::Player(bool isLocal) : Entity("player.png"), m_local_player(isLocal) {
 
 void Player::keyPressEvent(QKeyEvent *event) {
   // Skip movement if this is a remote player.
-  if (!this->m_local_player) return;
+  if (!this->m_local_player)
+    return;
 
   switch (event->key()) {
   case Qt::Key_W:
@@ -28,11 +30,11 @@ void Player::keyPressEvent(QKeyEvent *event) {
     setDirection(1, 0);
     break;
   }
-  std::cerr << "direction:" <<  this->m_dx << " " <<  this->m_dy << std::endl;
+  std::cerr << "direction:" << this->m_dx << " " << this->m_dy << std::endl;
 }
 
 void Player::update() {
-	this->updatePosition();
-	this->setFocus();
-  //std::cerr << "x " << x() << " y " << y() << std::endl;
+  this->updatePosition();
+  this->setFocus();
+  // std::cerr << "x " << x() << " y " << y() << std::endl;
 }

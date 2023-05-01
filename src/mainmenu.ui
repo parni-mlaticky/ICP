@@ -47,6 +47,16 @@
           </widget>
         </item>
         <item alignment="Qt::AlignHCenter">
+          <widget class="QPushButton" name="selectLevelButton">
+            <property name="text">
+              <string>Select level</string>
+            </property>
+            <property name="flat">
+              <bool>false</bool>
+            </property>
+          </widget>
+        </item>
+        <item alignment="Qt::AlignHCenter">
           <widget class="QPushButton" name="replayButton">
             <property name="text">
               <string>Replay</string>

@@ -174,6 +174,7 @@ std::pair<int, int> Level::translate(int x, int y) {
 
 
 void Level::updateGrid() {
+	cerr << "Updating grid" << endl;
 	std::vector<std::vector<Entity*>> newGrid;
 	newGrid.resize(m_bound_y + 2);
 	for(int i = 0; i < m_bound_y + 2; i++) {
@@ -184,25 +185,25 @@ void Level::updateGrid() {
 			Entity* ent = this->m_grid[row][col];
       if (ent == nullptr) continue;
 			pair<int, int> dxdy = ent->getDxDy();
-			if(dxdy.first == 1){
-				cerr << "Entity " << ent->sprite_path << " is moving right" << endl;
-				if(!checkWall(row, col+1)){
-					newGrid[row][col+1] = ent;
-					newGrid[row][col] = new Floor();
-				}
+			int dx = dxdy.first;
+			int dy = dxdy.second;
+			if(dx == 0 && dy == 0){
+				newGrid[row][col] = ent;
+				continue;
 			}
-			else if(dxdy.first == -1){
-				if(!checkWall(row, col-1)){
-					newGrid[row][col-1] = ent;
-					newGrid[row][col] = new Floor();
-				}
+		
+			if(!checkWall(row+dy, col+dx)){
+				newGrid[row+dy][col+dx] = ent;
+				newGrid[row][col] = 0;
 			}
 			else{
+				ent->stop();
 				newGrid[row][col] = ent;
 			}
 		}
 	}
 	this->m_grid = newGrid;
+	this->dumpGrid();
 }
 
 

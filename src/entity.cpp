@@ -32,3 +32,8 @@ void Entity::setDirection(int dx, int dy) {
 std::pair<int, int> Entity::getDxDy() {
 	return std::make_pair(this->m_dx, this->m_dy);
 }
+
+void Entity::stop() {
+  this->m_dx = 0;
+  this->m_dy = 0;
+}

@@ -2,12 +2,13 @@
 
 BUILDDIR := build
 
+build:
+	mkdir -p $(BUILDDIR)
+	cd $(BUILDDIR) && cmake .. && mv compile_commands.json ../ && make -j 8
+
 run: build
 	./$(BUILDDIR)/parni-pacman
 
-build:
-	mkdir -p $(BUILDDIR)
-	cd $(BUILDDIR) && cmake .. && mv compile_commands.json ../ && make -j 8 
 clean:
 	rm -rf $(BUILDDIR)
 

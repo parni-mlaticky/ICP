@@ -6,10 +6,6 @@ class Key : public Entity {
 public:
   Key(int x, int y);
 
-protected:
-  bool collidesWith(const QGraphicsRectItem *otherItem,
-                    Qt::ItemSelectionMode mode) const;
-
 private:
   qreal width;
   qreal height;

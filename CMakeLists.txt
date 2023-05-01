@@ -30,6 +30,10 @@ set(SOURCES
     src/player.cpp
     src/floor.cpp
     src/wall.cpp
+    src/scene.cpp
+    src/sprite.cpp
+    src/drawable.cpp
+    src/drawable_item.cpp
 	)
 
 set(HEADERS
@@ -43,6 +47,8 @@ set(HEADERS
     src/player.h
     src/floor.h
     src/wall.h
+    src/scene.h
+    src/sprite.h
 	)
 
 set(UI src/mainwindow.ui src/mainmenu.ui)

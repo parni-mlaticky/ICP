@@ -1,5 +1,5 @@
 #include "finish.h"
 
-Finish::Finish(int x, int y) : Entity("finish.png", x, y) {
+Finish::Finish(int x, int y) : Entity(x, y) {
 
 }

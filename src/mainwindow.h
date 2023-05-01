@@ -10,6 +10,7 @@ class MainWindow : public QMainWindow {
 
 public:
   explicit MainWindow(QString &levelFilePath, QWidget *parent = nullptr);
+  void keyPressEvent(QKeyEvent* event);
   ~MainWindow() override;
 
 private:

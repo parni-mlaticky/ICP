@@ -18,7 +18,7 @@ public:
   std::string sprite_path;
   std::pair<int, int> getDxDy();	
   void updateSprite(int col, int row, Level* level);
-
+  void stop();
 public slots:
 
 protected:

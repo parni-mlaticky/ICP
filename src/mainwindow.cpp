@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   QTimer *timer2 = new QTimer(this);
   connect(timer2, &QTimer::timeout, m_level, &Level::updateGrid);
-  timer2->start(1000);
+  timer2->start(400);
 }
 
 MainWindow::~MainWindow() = default;

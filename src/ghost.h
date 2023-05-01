@@ -6,6 +6,6 @@
 
 class Ghost : public Entity {
 public:
-  Ghost();
+  Ghost(int x, int y);
 };
 #endif

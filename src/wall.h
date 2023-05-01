@@ -4,7 +4,7 @@
 
 class Wall : public Entity {
 public:
-  Wall();
+  Wall(int x, int y);
 
 protected:
   bool collidesWith(const QGraphicsRectItem *otherItem,

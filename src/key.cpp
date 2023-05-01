@@ -1,5 +1,5 @@
 #include "key.h"
 
-Key::Key() : Entity("key.png") {
+Key::Key(int x, int y) : Entity("key.png", x, y) {
 
 }

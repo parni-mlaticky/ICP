@@ -1,13 +1,15 @@
 #include "mainwindow.h"
+#include "client.h"
+#include "server.h"
+#include <QDebug>
 #include <QTimer>
 #include <QVBoxLayout>
-#include "server.h"
-#include "client.h"
 #include <chrono>
 #include <thread>
-MainWindow::MainWindow(QWidget *parent)
+
+MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
     : QMainWindow(parent), m_scene(new QGraphicsScene(this)),
-      m_view(new QGraphicsView(m_scene, this)) {
+      m_view(new QGraphicsView(m_scene, this)), m_levelLoaded(false) {
 
   const int height = 600;
   const int width = 800;
@@ -19,13 +21,13 @@ MainWindow::MainWindow(QWidget *parent)
   m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
   m_level = new Level(m_scene, width, height);
+  m_level->loadLevel(levelFilePath);
   m_scene->setSceneRect(-100, -100, 200, 200);
-  m_level->loadLevel("./levels/level.txt");
+  // m_level->loadLevel(levelFile);
 
   QTimer *timer = new QTimer(this);
   connect(timer, &QTimer::timeout, m_level, &Level::updateScene);
   timer->start(1000 / 60);
-
 
   QTimer *timer2 = new QTimer(this);
   connect(timer2, &QTimer::timeout, m_level, &Level::updateGrid);

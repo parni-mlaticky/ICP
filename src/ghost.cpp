@@ -2,4 +2,4 @@
 #include <QKeyEvent>
 #include <QPainter>
 
-Ghost::Ghost() : Entity("ghost.png") {}
+Ghost::Ghost(int x, int y) : Entity("ghost.png", x, y) {}

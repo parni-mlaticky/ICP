@@ -4,11 +4,11 @@
 #include <QGraphicsItem>
 #include <QKeyEvent>
 #include <QObject>
-#include "level.h"
+#include "entity.h"
 
-class Player : Entity {
+class Player : public Entity {
 public:
-  Player(bool isLocal);
+  Player(int x, int y, bool isLocal);
   void update() override;
 
 protected:

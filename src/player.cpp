@@ -4,8 +4,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <iostream>
-Player::Player(bool isLocal) : Entity("player.png"), m_local_player(isLocal) {
-
+Player::Player(int x, int y, bool isLocal) : Entity("player.png", x ,y), m_local_player(isLocal) {
   m_speed = 5;
   setFlag(QGraphicsItem::ItemIsFocusable, true);
   setFocus();

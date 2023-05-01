@@ -4,11 +4,7 @@
 
 class Finish : public Entity {
 public:
-  Finish(int x, int y);
-
-protected:
-  bool collidesWith(const QGraphicsRectItem *otherItem,
-                    Qt::ItemSelectionMode mode) const;
+  Finish(int x, int y, DrawableItem* item);
 
 private:
 };

@@ -1,5 +1,5 @@
 #include "wall.h"
 
-Wall::Wall(int x, int y) : Entity("wall.png", x, y) {
+Wall::Wall(int x, int y, DrawableItem* item) : Entity(x, y, item, 'X') {
 
 }

@@ -25,6 +25,11 @@ MainWindow::MainWindow(QWidget *parent)
   QTimer *timer = new QTimer(this);
   connect(timer, &QTimer::timeout, m_level, &Level::updateScene);
   timer->start(1000 / 60);
+
+
+  QTimer *timer2 = new QTimer(this);
+  connect(timer2, &QTimer::timeout, m_level, &Level::updateGrid);
+  timer2->start(1000);
 }
 
 MainWindow::~MainWindow() = default;

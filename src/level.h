@@ -18,7 +18,8 @@ public:
   int scale();
   void dumpGrid();
   std::pair<int, int> translate(int x, int y);
-
+  void updateGrid();
+  bool checkWall(int x, int y);
 
 private:
   std::vector<std::vector<Cell*> > m_grid;

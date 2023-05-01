@@ -16,6 +16,7 @@ public:
   void updatePosition();
   void setSpriteScale(int scale);
   std::string sprite_path;
+  std::pair<int, int> getDxDy();	
 
 public slots:
 

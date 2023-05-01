@@ -28,9 +28,11 @@ void Player::keyPressEvent(QKeyEvent *event) {
     setDirection(1, 0);
     break;
   }
+  std::cerr << "direction:" <<  this->m_dx << " " <<  this->m_dy << std::endl;
 }
 
 void Player::update() {
 	this->updatePosition();
+	this->setFocus();
   std::cerr << "x " << x() << " y " << y() << std::endl;
 }

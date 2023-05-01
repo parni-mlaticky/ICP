@@ -107,7 +107,6 @@ void Level::displayGrid() {
 
 void Level::updateScene() {
   static int a=0;
-
   for(int row = 0; row < this->m_grid.size(); ++row) {
      for (int col = 0; col < this->m_grid[row].size(); ++col) {
        this->m_grid[row][col]->updateSprite(col, row);
@@ -152,4 +151,50 @@ std::pair<int, int> Level::translate(int x, int y) {
   this->m_scale = std::min(scale_x, scale_y);  auto result = std::pair<int, int>(x , y);
 
   return result;
+}
+
+
+void Level::updateGrid() {
+	std::vector<std::vector<Cell*>> newGrid;
+	newGrid.resize(m_bound_y + 2);
+	for(int i = 0; i < m_bound_y + 2; i++) {
+		newGrid[i].resize(m_bound_x + 2);
+	}
+	for(int row = 0; row < this->m_grid.size(); row++) {
+		for(int col = 0; col < this->m_grid[row].size(); col++) {
+			Cell* cell = this->m_grid[row][col];
+			Entity* ent = cell->getEntity();
+			pair<int, int> dxdy = ent->getDxDy();
+			if(dxdy.first == 1){
+				cerr << "Entity " << ent->sprite_path << " is moving right" << endl;
+				if(!checkWall(row, col+1)){
+					newGrid[row][col+1] = cell;
+					newGrid[row][col] = new Cell(new Floor(col, row), this);
+				}
+			}
+			else if(dxdy.first == -1){
+				if(!checkWall(row, col-1)){
+					newGrid[row][col-1] = cell;
+					newGrid[row][col] = new Cell(new Floor(col, row), this);
+				}
+			}
+			else{
+				newGrid[row][col] = cell;
+			}
+		}
+	}
+	this->m_grid = newGrid;
+}
+
+
+bool Level::checkWall(int x, int y){
+	cerr << "Checking wall at " << x << " " << y << endl;
+	if(x >= this->m_grid.size() || x < 0) return true;
+	if(y >= this->m_grid[x].size() || y < 0) return true;
+	Cell* cell = this->m_grid[x][y];
+	Entity* ent = cell->getEntity();
+	if(dynamic_cast<Wall*>(ent) != nullptr){
+		return true;
+	}
+	return false;
 }

@@ -10,13 +10,14 @@ class Entity : public QObject, public QGraphicsPixmapItem {
 Q_OBJECT
 Q_INTERFACES(QGraphicsItem)
 public:
-  Entity(qreal x, qreal y, std::string sprite_path);
+  Entity(std::string sprite_path);
   virtual void update();
   void setDirection(int dx, int dy);
   void updatePosition();
   void setSpriteScale(int scale);
   std::string sprite_path;
   std::pair<int, int> getDxDy();	
+  void updateSprite(int col, int row, Level* level);
 
 public slots:
 

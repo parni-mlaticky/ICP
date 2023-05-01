@@ -4,7 +4,7 @@
 
 class Key : public Entity {
 public:
-  Key(qreal x, qreal y);
+  Key();
 
 protected:
   bool collidesWith(const QGraphicsRectItem *otherItem,

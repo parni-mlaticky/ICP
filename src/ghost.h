@@ -6,6 +6,6 @@
 
 class Ghost : public Entity {
 public:
-  Ghost(qreal x, qreal y);
+  Ghost();
 };
 #endif

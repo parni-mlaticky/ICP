@@ -4,7 +4,7 @@
 
 class Finish : public Entity {
 public:
-  Finish(qreal x, qreal y);
+  Finish();
 
 protected:
   bool collidesWith(const QGraphicsRectItem *otherItem,

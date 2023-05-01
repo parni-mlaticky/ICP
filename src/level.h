@@ -5,7 +5,6 @@
 #include <QGraphicsScene>
 #include "entity.h"
 #include <vector>
-#include "cell.h"
 
 
 class Level : public QObject {
@@ -22,10 +21,13 @@ public:
   bool checkWall(int x, int y);
 
 private:
-  std::vector<std::vector<Cell*> > m_grid;
-  Entity* createEntity(char c, int x, int y);
+
+  std::vector<std::vector<Entity*> > m_grid;
+  std::vector<Entity*> m_background_gfx;
+  Entity* createEntity(char c);
   QGraphicsScene *m_scene;
   void displayGrid();
+  void addBackgroundFloor(int x, int y);
   int m_scale;
   int m_window_w;
   int m_window_h;

@@ -4,7 +4,7 @@
 
 class Floor : public Entity {
 public:
-  Floor(qreal x, qreal y);
+  Floor();
 
 };
 #endif

@@ -4,7 +4,7 @@
 
 Entity::Entity(qreal x, qreal y, std::string sprite_path) : m_dx(1), m_dy(0) {
   setFlag(QGraphicsItem::ItemIsFocusable, true);
-  this->m_pixmap = QPixmap (("/home/ondrej/Projekty/ICP/assets/" + sprite_path).c_str());
+  this->m_pixmap = QPixmap (("assets/" + sprite_path).c_str());
   setPos(x, y);
   this->sprite_path = sprite_path;
 }

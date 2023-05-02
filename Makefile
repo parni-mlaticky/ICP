@@ -9,9 +9,14 @@ build:
 run: build
 	./$(BUILDDIR)/parni-pacman
 
+merlin:
+	rsync -P -v -r --delete ./ merlin:icp/ &&\
+	make clean &&\
+	ssh -Y -C merlin 'cd icp && make run ; exit 0'
+	exit 0
+
 clean:
 	rm -rf $(BUILDDIR)
 
-# TODO kolo dal source soubory jinam nez do src hahaahaha
 pack:
 	zip xhucov00-xkolou05-xzobal01.zip Makefile README.md src/* CMakeLists.txt

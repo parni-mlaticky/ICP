@@ -18,7 +18,7 @@ MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
   this->m_log_tick_ms = 200;
   this->m_gfx_tick_ms = 1000/60;
 
-  this->m_animation_frames = m_log_tick_ms/m_gfx_tick_ms;
+  this->m_animation_frames = m_log_tick_ms / m_gfx_tick_ms;
   this->m_frame_counter = m_animation_frames-1;
   this->m_scene = new Scene(width, height, this->m_animation_frames, (MainWindow*) this);
 
@@ -49,7 +49,7 @@ void MainWindow::update() {
     m_level->updateGrid();
     this->m_frame_counter = 0;
   }
-  this->m_scene->render();
+  this->m_scene->render(m_frame_counter);
 }
 
 MainWindow::~MainWindow() = default;

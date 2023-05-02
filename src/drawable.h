@@ -6,7 +6,7 @@
 
 class Drawable {
 public:
-  virtual void render() = 0;
+  virtual void render(int frame_n) = 0;
   virtual DrawableItem* drawItem(std::string sprite_path) = 0;
   virtual void deleteItem(DrawableItem* item) = 0;
   virtual void setGridDimensions(int x, int y) = 0;

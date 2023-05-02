@@ -6,6 +6,6 @@
 
 class Ghost : public Entity {
 public:
-  Ghost(int x, int y);
+  Ghost(int x, int y, DrawableItem* item);
 };
 #endif

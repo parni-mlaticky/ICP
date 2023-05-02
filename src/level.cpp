@@ -1,6 +1,5 @@
 #include "level.h"
 #include "finish.h"
-#include "floor.h"
 #include "ghost.h"
 #include "key.h"
 #include "player.h"
@@ -13,36 +12,35 @@
 
 using namespace std;
 
-void Level::addEntity(Entity *entity) { this->m_scene->addItem(entity); }
-
-Level::Level(QGraphicsScene *scene, int window_w, int window_h) {
-  this->m_scene = scene;
-  this->m_scale = -1;
-  this->m_scale = -1;
-  this->m_window_w = window_w;
-  this->m_window_h = window_h;
+Level::Level(Drawable* drawable) {
+  this->m_drawable = drawable;
   this->m_bound_x = -1;
   this->m_bound_y = -1;
-
-  this->m_background_gfx = vector<Entity *>();
+  this->m_background_gfx = vector<Entity*>();
 }
 
 Entity* Level::createEntity(char c, int x, int y) {
+  DrawableItem* item;
   switch (c) {
     case 'T': {
-      return (Entity*) new Finish(x, y);
+      item = m_drawable->drawItem("finish.png");
+      return (Entity*) new Finish(x, y, item);
     }
     case 'X': {
-      return (Entity*) new Wall(x, y);
+      item = m_drawable->drawItem("wall.png");
+      return (Entity*) new Wall(x, y, item);
     }
     case 'G': {
-      return (Entity*) new Ghost(x, y);
+      item = m_drawable->drawItem("ghost.png");
+      return (Entity*) new Ghost(x, y, item);
     }
     case 'K': {
-      return (Entity*) new Key(x, y);
+      item = m_drawable->drawItem("key.png");
+      return (Entity*) new Key(x, y, item);
     }
     case 'S': {
-      return (Entity*) new Player(x, y, true);
+      item = m_drawable->drawItem("player.png");
+      return (Entity*) new Player(x, y, true, item);
     }
     case '.': {
       return nullptr;
@@ -62,6 +60,9 @@ void Level::loadLevel(const QString &filename) {
   levelFile >> this->m_bound_x;
   levelFile >> this->m_bound_y;
 
+  this->m_drawable->setGridDimensions(m_bound_x+1, m_bound_y+1);
+  this->m_drawable->drawBackgroundTiles("floor.png");
+
   std::cerr << m_bound_x << ", " << m_bound_y << std::endl;
   std::getline(levelFile, firstLine);
 
@@ -74,13 +75,9 @@ void Level::loadLevel(const QString &filename) {
   for (int y = 0; y < m_bound_y; y++) {
     for (int x = 0; x < m_bound_x; x++) {
       levelFile >> c;
-		if(c != '.') {
-			this->m_grid[y+1][x+1].push_back(createEntity(c, y+1, x+1));
-		}
-
-      // Adding floor gfx under every cell. Floors are standalone
-      // entities and are not part of the grid.
-      this->addBackgroundFloor(x + 1, y + 1);
+      if(c != '.') {
+        this->m_grid[y+1][x+1].push_back(createEntity(c, y+1, x+1));
+      }
     }
   }
   levelFile.close();
@@ -95,47 +92,8 @@ void Level::loadLevel(const QString &filename) {
   }
 
   this->dumpGrid();
-
-  this->displayGrid();
 }
 
-void Level::addBackgroundFloor(int x, int y) {
-  std::cerr << "x " << x << " y " << y << std::endl;
-  Entity *floor = new Floor();
-  this->m_background_gfx.push_back(floor);
-  auto coords = this->translate(x, y);
-  floor->setPos(coords.first, coords.second);
-  floor->setSpriteScale(this->m_scale);
-  this->m_scene->addItem(floor);
-}
-
-void Level::displayGrid() {
-  for (int row = 0; row < this->m_grid.size(); ++row) {
-    for (int col = 0; col < this->m_grid[row].size(); ++col) {
-		for(int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++){
-			this->m_scene->addItem(this->m_grid[row][col][entIndex]);
-		}
-    }
-  }
-}
-
-void Level::updateScene() {
-  for (int row = 0; row < this->m_grid.size(); ++row) {
-    for (int col = 0; col < this->m_grid[row].size(); ++col) {
-      if (this->m_grid[row][col].size() == 0) continue;
-	  for(int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++){
-		this->m_grid[row][col][entIndex]->setSpriteScale(this->m_scale);
-		this->m_grid[row][col][entIndex]->updateSprite(col, row, this);
-	  }
-    }
-  }
-
-  for (auto entity : this->m_scene->items()) {
-    ((Entity *)entity)->update();
-  }
-}
-
-int Level::scale() { return m_scale; }
 
 void Level::dumpGrid(){
 	std::cerr << "Dumping grid" << this->m_grid.size() << " " <<this->m_grid[0].size() << std::endl;
@@ -146,7 +104,7 @@ void Level::dumpGrid(){
 			}
 			else {
 				for(int entIndex = 0; entIndex < this->m_grid[i][j].size(); entIndex++){
-					std::cerr << this->m_grid[i][j][entIndex]->sprite_path[0] << ",";
+					std::cerr << this->m_grid[i][j][entIndex]->m_debug_char << ",";
 				}
 				std::cerr << "\t";
 			}
@@ -155,30 +113,7 @@ void Level::dumpGrid(){
 	}
 }
 
-std::pair<int, int> Level::translate(int x, int y) {
-  // Calculating maze offset to center maze.
-  int base_x = 0 - m_bound_x / 2;
-  int base_y = 0 - m_bound_y / 2;
-
-  // Calculating scale
-  int scale_x = m_window_w / (m_bound_x + 2);
-  int scale_y = m_window_h / (m_bound_y + 2);
-  this->m_scale = std::min(scale_x, scale_y);
-
-  x += base_x;
-  x *= m_scale;
-
-  y += base_y - 1;
-  y *= m_scale;
-
-  this->m_scale = std::min(scale_x, scale_y);
-  auto result = std::pair<int, int>(x, y);
-
-  return result;
-}
-
 void Level::updateGrid() {
-	cerr << "Updating grid" << endl;
 	Grid newGrid;
 	newGrid.resize(m_bound_y + 2);
 	for(int i = 0; i < m_bound_y + 2; i++) {
@@ -189,6 +124,7 @@ void Level::updateGrid() {
 			for(int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++){
 				Entity* ent = this->m_grid[row][col][entIndex];
 				if (ent == nullptr) continue;
+        this->m_drawable->setPosition(ent->m_drawable_item, col, row);
 				pair<int, int> dxdy = ent->getDxDy();
 				int dx = dxdy.first;
 				int dy = dxdy.second;
@@ -200,6 +136,7 @@ void Level::updateGrid() {
 				if(!checkWall(row+dy, col+dx)){
 					newGrid[row+dy][col+dx].push_back(ent);
 					ent->set_xy(row+dy, col+dx);
+          this->m_drawable->moveTowards(ent->m_drawable_item, col+dx, row+dy);
 				}
 				else{
 					ent->stop();
@@ -215,7 +152,7 @@ void Level::updateGrid() {
 	std::pair<Player*, Key*> playerKeyPair = this->checkPlayerKeyPickup();
 	if(playerKeyPair.first != nullptr){
 		removeEntity(playerKeyPair.second);
-		this->m_scene->removeItem(playerKeyPair.second);
+    this->m_drawable->deleteItem(playerKeyPair.second->m_drawable_item);
 	}
 }
 
@@ -288,4 +225,14 @@ std::vector<T*> Level::findEntities(){
 		}
 	}
 	return entities;
+}
+
+void Level::keyPressEvent(QKeyEvent* event) {
+	for(int row = 0; row < this->m_grid.size(); row++) {
+		for(int col = 0; col < this->m_grid[row].size(); col++) {
+			for(int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++){
+        this->m_grid[row][col][entIndex]->keyPressEvent(event);
+      }
+    }
+  }
 }

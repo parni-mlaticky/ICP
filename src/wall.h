@@ -4,11 +4,7 @@
 
 class Wall : public Entity {
 public:
-  Wall(int x, int y);
-
-protected:
-  bool collidesWith(const QGraphicsRectItem *otherItem,
-                    Qt::ItemSelectionMode mode) const;
+  Wall(int x, int y, DrawableItem* item);
 
 };
 #endif

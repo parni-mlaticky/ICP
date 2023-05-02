@@ -8,7 +8,7 @@
 
 class Player : public Entity {
 public:
-  Player(int x, int y, bool isLocal);
+  Player(int x, int y, bool isLocal, DrawableItem* item);
   void update() override;
 
 protected:

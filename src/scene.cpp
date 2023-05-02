@@ -20,9 +20,9 @@ void Scene::keyPressEvent(QKeyEvent* event) {
   m_window->keyPressEvent(event);
 }
 
-void Scene::render() {
+void Scene::render(int frame_n) {
   for (auto item : this->items()) {
-    ((Sprite*) item)->interpolate(m_update_grid);
+    ((Sprite*) item)->interpolate(frame_n, m_update_grid);
   }
 }
 

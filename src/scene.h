@@ -13,7 +13,7 @@ class MainWindow;
 class Scene : public Drawable, public QGraphicsScene {
 public:
   // Drawable
-  void render();
+  void render(int frame_n);
   DrawableItem* drawItem(std::string sprite_path) override;
   void deleteItem(DrawableItem* item) override;
   void setGridDimensions(int x, int y) override;

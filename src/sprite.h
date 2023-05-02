@@ -14,7 +14,7 @@ Q_INTERFACES(QGraphicsItem)
 public:
   Sprite(std::string sprite_path);
   void setSpriteScale(int scale);
-  void interpolate(int frame_count);
+  void interpolate(int frame_n, int frame_count);
   void setZ(int z);
 
   // Drawable Item

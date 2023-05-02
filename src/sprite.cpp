@@ -21,14 +21,14 @@ void Sprite::setPosition(std::pair<int, int> coords) {
   new_coords = coords;
 }
 
-void Sprite::interpolate(int in_frames) {
+void Sprite::interpolate(int frame_n, int in_frames) {
   int delta_x = new_coords.first - old_coords.first;
   int delta_y = new_coords.second - old_coords.second;
 
-  int frame_delta_x = delta_x * (1./(double)in_frames);
-  int frame_delta_y = delta_y * (1./(double)in_frames);
+  int frame_delta_x = delta_x * ((double)frame_n/(double)in_frames);
+  int frame_delta_y = delta_y * ((double)frame_n/(double)in_frames);
 
-  setPos(x() + frame_delta_x, y() + frame_delta_y);
+  setPos(old_coords.first + frame_delta_x, old_coords.second + frame_delta_y);
 }
 
 void Sprite::moveTowards(std::pair<int, int> coords) {

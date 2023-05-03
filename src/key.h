@@ -5,7 +5,7 @@
 class Key : public Entity {
 public:
   Key(int x, int y, DrawableItem* item);
-
+  void onCollision(Entity* other);
 private:
   qreal width;
   qreal height;

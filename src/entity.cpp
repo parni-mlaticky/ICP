@@ -38,3 +38,18 @@ void Entity::set_xy(int x, int y){
 	this->m_y = y;
 }
 
+bool Entity::canMove(){
+	return this->m_can_move;
+}
+
+void Entity::kill(){
+	this->m_is_alive = false;
+}
+
+void Entity::onCollision(Entity* other){
+	return;
+}
+
+bool Entity::isAlive(){
+	return this->m_is_alive;
+}

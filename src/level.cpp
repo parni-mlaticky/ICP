@@ -113,6 +113,7 @@ void Level::dumpGrid(){
 	}
 }
 
+
 void Level::updateGrid() {
 	Grid newGrid;
 	newGrid.resize(m_bound_y + 2);
@@ -124,7 +125,12 @@ void Level::updateGrid() {
 			for(int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++){
 				Entity* ent = this->m_grid[row][col][entIndex];
 				if (ent == nullptr) continue;
-        this->m_drawable->setPosition(ent->m_drawable_item, col, row);
+				this->m_drawable->setPosition(ent->m_drawable_item, col, row);
+				// entity cant move (wall, key, etc.) so skip it
+				if(!ent->canMove()) {
+					newGrid[row][col].push_back(ent);
+					continue;
+				}
 				pair<int, int> dxdy = ent->getDxDy();
 				int dx = dxdy.first;
 				int dy = dxdy.second;
@@ -132,11 +138,10 @@ void Level::updateGrid() {
 					newGrid[row][col].push_back(ent);
 					continue;
 				}
-
 				if(!checkWall(row+dy, col+dx)){
 					newGrid[row+dy][col+dx].push_back(ent);
 					ent->set_xy(row+dy, col+dx);
-          this->m_drawable->moveTowards(ent->m_drawable_item, col+dx, row+dy);
+					this->m_drawable->moveTowards(ent->m_drawable_item, col+dx, row+dy);
 				}
 				else{
 					ent->stop();
@@ -148,16 +153,56 @@ void Level::updateGrid() {
 	this->m_grid = newGrid;
 	this->dumpGrid();
 
-	/* TODO add bool or something to indicate that player has picked up a key */
-	std::pair<Player*, Key*> playerKeyPair = this->checkPlayerKeyPickup();
-	if(playerKeyPair.first != nullptr){
-		removeEntity(playerKeyPair.second);
-    this->m_drawable->deleteItem(playerKeyPair.second->m_drawable_item);
+	
+	// find coordinates on which entities collided
+	// TODO dont delete the graphical entities immediately, just mark them as deleted
+	// and delete them after finishing the interpolation (or maybe halfway through?)
+	std::vector<std::pair<int, int>> collisionsCoordsVector = this->getCollisionCoordinates();
+	for(auto collisionCoords: collisionsCoordsVector){
+		// for each colliding entity, call onCollision() with other entities on the same square
+		vector<Entity*> entities = this->m_grid[collisionCoords.first][collisionCoords.second];
+		for(Entity* ent: entities){
+			for(Entity* ent2: entities){
+				if(ent == ent2) continue;
+				ent->onCollision(ent2);
+			}
+			// check if entity is still alive
+			if(!ent->isAlive()){
+				this->removeEntity(ent);
+				this->m_drawable->deleteItem(ent->m_drawable_item);
+				if(dynamic_cast<Player*>(ent) != nullptr){
+					// YOU LOSE screen TODO
+					// also this is probably not a good way to check if the player is dead
+					cerr << "YOU LOSE" << endl;	
+				}
+			}
+			// FIXME HACK
+			auto keys = findEntities<Key>();
+			cerr << "keys: " << keys.size() << endl;
+			Player* p = dynamic_cast<Player*>(ent);
+			if(p != nullptr){
+				if(keys.size() == 0){
+					this->openFinishes();
+				}
+				if(p->reachedFinish()){
+					this->m_drawable->deleteItem(p->m_drawable_item);
+					this->removeEntity(p);
+					// YOU WIN screen i guess TODO
+				}
+			}
+		}
+	}
+}
+
+
+void Level::openFinishes(){
+	auto finishes = findEntities<Finish>();
+	for(auto finish: finishes){
+		finish->open();
 	}
 }
 
 bool Level::checkWall(int x, int y){
-	cerr << "Checking wall at " << x << " " << y << endl;
 	if(x >= this->m_grid.size() || x < 0) return true;
 	if(y >= this->m_grid[x].size() || y < 0) return true;
 	for(Entity* entity : this->m_grid[x][y]){
@@ -169,46 +214,30 @@ bool Level::checkWall(int x, int y){
 }
 
 bool Level::removeEntity(Entity* ent){
-	for(int row = 0; row < this->m_grid.size(); ++row) {
-		for (int col = 0; col < this->m_grid[row].size(); ++col) {
-			if (this->m_grid[row][col].size() == 0) continue;
-			for(int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++){
-				if(this->m_grid[row][col][entIndex] == ent){
-					this->m_grid[row][col].erase(this->m_grid[row][col].begin() + entIndex);
-					return true;
-				}
-			}
+	std::pair<int, int> coords = ent->get_xy();
+	for(int i = 0; i < this->m_grid[coords.first][coords.second].size(); i++){
+		if(this->m_grid[coords.first][coords.second][i] == ent){
+			this->m_grid[coords.first][coords.second].erase(this->m_grid[coords.first][coords.second].begin() + i);
+			return true;
 		}
 	}
 	return false;
 }
 
-
-std::pair<Player*, Key*> Level::checkPlayerKeyPickup(){
-	auto players = this->findEntities<Player>();
-	auto keys = this->findEntities<Key>();
-	for(Player* p: players){
-		for(Key* k: keys){
-			if(p->get_xy() == k->get_xy()){
-				return std::pair<Player*, Key*>(p, k); 
+std::vector<std::pair<int,int>> Level::getCollisionCoordinates(){
+	std::vector<std::pair<int,int>> collisionCoordinates;
+	for(int row = 0; row < this->m_grid.size(); ++row) {
+		for (int col = 0; col < this->m_grid[row].size(); ++col) {
+			if (this->m_grid[row][col].size() == 0) continue;
+			if (this->m_grid[row][col].size() > 1) {
+				collisionCoordinates.push_back(std::pair<int,int>(row, col));
 			}
 		}
 	}
-	return std::pair<Player*, Key*>(nullptr, nullptr);
+	return collisionCoordinates;
 }
 
-template<typename T>
-T* Level::findEntityAt(int x, int y){
-	for(Entity* entity : this->m_grid[x][y]){
-		T* ent = dynamic_cast<T*>(entity);
-		if(ent){
-			return dynamic_cast<T*>(entity);
-		}
-		else{
-			return nullptr;
-		}
-	}
-}
+
 
 template<typename T>
 std::vector<T*> Level::findEntities(){

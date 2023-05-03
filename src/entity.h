@@ -17,15 +17,20 @@ public:
   void stop();
   std::pair<int, int> get_xy();
   void set_xy(int x, int y);
-  DrawableItem* m_drawable_item;
   virtual void keyPressEvent(QKeyEvent *event);
-
+  virtual void onCollision(Entity* other);
   char m_debug_char;
+  DrawableItem* m_drawable_item;
+  bool canMove();
+  bool isAlive();
+  void kill();
 
 protected:
-	int m_x, m_y;
+  int m_x, m_y;
   int m_dx, m_dy;
   int m_speed;
+  bool m_is_alive = true;
+  bool m_can_move = false;
 };
 
 #endif

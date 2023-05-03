@@ -38,6 +38,7 @@ public:
   void updateLevel();
 
 private:
+  std::vector<std::pair<int, int>> checkDirections(int x, int y);
   Grid m_grid;
   EntityVector m_background_gfx;
   Entity* createEntity(char c, int x, int y);

@@ -94,7 +94,6 @@ void Level::loadLevel(const QString &filename) {
   this->dumpGrid();
 }
 
-
 void Level::dumpGrid(){
 	std::cerr << "Dumping grid" << this->m_grid.size() << " " <<this->m_grid[0].size() << std::endl;
 	for(int i = 0; i < this->m_grid.size(); i++) {
@@ -134,6 +133,10 @@ void Level::updateGrid() {
 				pair<int, int> dxdy = ent->getDxDy();
 				int dx = dxdy.first;
 				int dy = dxdy.second;
+        if (ent->m_debug_char == 'G') {
+          ((Ghost*) ent)->setAllowedDirections(checkDirections(row, col));
+        }
+        ent->update();
 				if(dx == 0 && dy == 0){
 					newGrid[row][col].push_back(ent);
 					continue;
@@ -200,6 +203,23 @@ void Level::openFinishes(){
 	for(auto finish: finishes){
 		finish->open();
 	}
+}
+
+std::vector<std::pair<int, int>> Level::checkDirections(int x, int y) {
+  std::vector<std::pair<int, int>> out{};
+  if (!this->checkWall(x-1, y)) {
+    out.push_back(std::pair<int, int>(0, -1));
+  }
+  if (!this->checkWall(x+1, y)) {
+    out.push_back(std::pair<int, int>(0, 1));
+  }
+  if (!this->checkWall(x, y-1)) {
+    out.push_back(std::pair<int, int>(-1, 0));
+  }
+  if (!this->checkWall(x, y+1)) {
+    out.push_back(std::pair<int, int>(1, 0));
+  }
+  return out;
 }
 
 bool Level::checkWall(int x, int y){

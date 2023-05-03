@@ -43,17 +43,17 @@ void Scene::setGridDimensions(int x, int y) {
   this->m_y = y;
 
   // Calculating scale
-  int scale_x = m_window_w / (x + 2);
-  int scale_y = m_window_h / (y + 2);
+  double scale_x = (double) m_window_w / (double)(x + 2);
+  double scale_y = (double)m_window_h / (double)(y + 2);
   this->m_scale = std::min(scale_x, scale_y);
 }
 
 void Scene::moveTowards(DrawableItem* item, int col, int row) {
-  ((Sprite*) item)->moveTowards(this->translate(col, row));
+  item->moveTowards(this->translate(col, row));
 }
 
 void Scene::setPosition(DrawableItem* item, int col, int row) {
-  ((Sprite*) item)->setPosition(this->translate(col, row));
+  item->setPosition(this->translate(col, row));
 }
 
 void Scene::drawBackgroundTiles(std::string sprite_path) {
@@ -76,7 +76,7 @@ std::pair<int, int> Scene::translate(int x, int y) {
   int base_x = 0 - m_x / 2;
   int base_y = 0 - m_y / 2;
 
-  x += base_x;
+  x += base_x - 1;
   x *= m_scale;
 
   y += base_y - 1;

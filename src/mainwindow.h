@@ -1,7 +1,7 @@
 #pragma once
 
-#include "level.h"
 #include "drawable.h"
+#include "level.h"
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QMainWindow>
@@ -11,12 +11,13 @@ class MainWindow : public QMainWindow {
 
 public:
   explicit MainWindow(QString &levelFilePath, QWidget *parent = nullptr);
-  void keyPressEvent(QKeyEvent* event);
+  void keyPressEvent(QKeyEvent *event);
   ~MainWindow() override;
+  std::string loadLevelFile(QString levelFilePath);
 
 private:
   void update();
-  Drawable* m_scene;
+  Drawable *m_scene;
   QGraphicsView *m_view;
   Level *m_level;
   bool m_levelLoaded;

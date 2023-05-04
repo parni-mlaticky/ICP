@@ -7,6 +7,14 @@
 
 class Level;
 
+enum EntityType{
+  PLAYER = 'P',
+  GHOST = 'G',
+  KEY = 'K',
+  FINISH = 'F',
+  WALL = 'X',
+};
+
 class Entity {
 public:
   Entity(int x, int y, DrawableItem* item, char debug_char);
@@ -24,13 +32,15 @@ public:
   bool canMove();
   bool isAlive();
   void kill();
-
+  EntityType m_type;
+  void setAllowedDirections(std::vector<std::pair<int, int>> directions);
 protected:
   int m_x, m_y;
   int m_dx, m_dy;
   int m_speed;
   bool m_is_alive = true;
   bool m_can_move = false;
+  std::vector<std::pair<int, int>> m_allowed_directions;
 };
 
 #endif

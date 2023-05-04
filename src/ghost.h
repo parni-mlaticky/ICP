@@ -12,7 +12,6 @@ public:
 private:
   void newDirection();
   int m_steps_left;
-  std::vector<std::pair<int, int>> m_allowed_directions;
 
 };
 #endif

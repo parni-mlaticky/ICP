@@ -29,12 +29,23 @@ public:
   void updateGrid();
   bool checkWall(int x, int y);
   void keyPressEvent(QKeyEvent *event);
-  std::vector<std::pair<int, int>> getCollisionCoordinates();
+  std::vector<std::pair<int,int>> getCollisionCoordinates();
+  void updatePlayers();
+  void updateNonPlayers();
+  void triggerCollisions(Entity* ent);
+  // entities TODO maybe move this to private?
+  std::unordered_map<EntityType, EntityVector> m_entities;
 
   template <typename T> std::vector<T *> findEntities();
 
   bool removeEntity(Entity *ent);
   void updateLevel();
+
+  void updateEntitiesOfType(EntityType type);
+  EntityVector findEntitiesAt(int x, int y);
+
+  void removeDeadEntities();
+  void checkPlayerWin();
 
 private:
   std::vector<std::pair<int, int>> checkDirections(int x, int y);

@@ -17,8 +17,8 @@ public:
   DrawableItem* drawItem(std::string sprite_path) override;
   void deleteItem(DrawableItem* item) override;
   void setGridDimensions(int x, int y) override;
-  void moveTowards(DrawableItem* item, int col, int row) override;
-  void setPosition(DrawableItem* item, int col, int row) override;
+  void moveTowards(DrawableItem* item, int row, int col) override;
+  void setPosition(DrawableItem* item, int row, int col) override;
   void drawBackgroundTiles(std::string sprite_path) override;
 
   Scene(int m_window_w, int m_window_h, int frame_between_updates, MainWindow* window);

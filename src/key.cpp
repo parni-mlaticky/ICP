@@ -2,7 +2,7 @@
 #include "player.h"
 
 Key::Key(int x, int y, DrawableItem* item) : Entity(x, y, item, 'K') {
-
+	this->m_type = EntityType::KEY; 
 }
 
 void Key::onCollision(Entity* other){

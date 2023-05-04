@@ -12,8 +12,8 @@ public:
   virtual void setGridDimensions(int x, int y) = 0;
   virtual void drawBackgroundTiles(std::string sprite_path) = 0;
 
-  virtual void moveTowards(DrawableItem* item, int col, int row) = 0;
-  virtual void setPosition(DrawableItem* item, int col, int row) = 0;
+  virtual void moveTowards(DrawableItem* item, int row, int col) = 0;
+  virtual void setPosition(DrawableItem* item, int row, int col) = 0;
 
   Drawable();
 };

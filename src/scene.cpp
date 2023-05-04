@@ -48,20 +48,20 @@ void Scene::setGridDimensions(int x, int y) {
   this->m_scale = std::min(scale_x, scale_y);
 }
 
-void Scene::moveTowards(DrawableItem* item, int col, int row) {
-  item->moveTowards(this->translate(col, row));
+void Scene::moveTowards(DrawableItem* item, int row, int col) {
+  item->moveTowards(this->translate(row, col));
 }
 
-void Scene::setPosition(DrawableItem* item, int col, int row) {
-  item->setPosition(this->translate(col, row));
+void Scene::setPosition(DrawableItem* item, int row, int col) {
+  item->setPosition(this->translate(row, col));
 }
 
 void Scene::drawBackgroundTiles(std::string sprite_path) {
-  for (int row = 0; row < this->m_y; row++) {
-    for (int col = 0; col < this->m_x; col++) {
+  for (int row = 0; row < this->m_x; row++) {
+    for (int col = 0; col < this->m_y; col++) {
       std::cerr << "drawing floor!" << std::endl;
       Sprite* sprite = new Sprite(sprite_path);
-      sprite->setPosition(this->translate(col, row));
+      sprite->setPosition(this->translate(row, col));
       sprite->setSpriteScale(this->m_scale);
       sprite->setZ(-1);
       this->addItem(sprite);
@@ -82,7 +82,7 @@ std::pair<int, int> Scene::translate(int x, int y) {
   y += base_y - 1;
   y *= m_scale;
 
-  auto result = std::pair<int, int>(x, y);
+  auto result = std::pair<int, int>(y, x);
 
   return result;
 }

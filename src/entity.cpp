@@ -3,10 +3,12 @@
 #include <iostream>
 #include <utility>
 
+
+
 Entity::Entity(int x, int y, DrawableItem* item, char debug_char) : m_x(x),
-  m_y(y), m_dx(0), m_dy(0), m_drawable_item(item), m_debug_char(debug_char) {
-  ;
-}
+	m_y(y), m_dx(0), m_dy(0), m_drawable_item(item), m_debug_char(debug_char) {
+		this->m_allowed_directions = {{0,1}, {0,-1}, {1,0}, {-1,0}};
+	}
 
 void Entity::keyPressEvent(QKeyEvent *event) {
   return;
@@ -52,4 +54,9 @@ void Entity::onCollision(Entity* other){
 
 bool Entity::isAlive(){
 	return this->m_is_alive;
+}
+
+
+void Entity::setAllowedDirections(std::vector<std::pair<int, int>> directions) {
+    m_allowed_directions = directions;
 }

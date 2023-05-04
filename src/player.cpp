@@ -11,28 +11,39 @@ Player::Player(int x, int y, bool isLocal, DrawableItem* item) : Entity(x ,y, it
   m_speed = 5;
   m_key_count = 0;
   m_can_move = true;
+  m_type = EntityType::PLAYER;
 }
 
 void Player::keyPressEvent(QKeyEvent *event) {
   // Skip movement if this is a remote player.
+  int old_dx, old_dy;
+  old_dx = this->m_dx;
+  old_dy = this->m_dy;
   if (!this->m_local_player)
     return;
 
   switch (event->key()) {
   case Qt::Key_W:
-    setDirection(0, -1);
-    break;
-  case Qt::Key_A:
     setDirection(-1, 0);
     break;
+  case Qt::Key_A:
+    setDirection(0, -1);
+    break;
   case Qt::Key_S:
-    setDirection(0, 1);
+    setDirection(1, 0);
     break;
   case Qt::Key_D:
-    setDirection(1, 0);
+    setDirection(0, 1);
     break;
   }
   std::cerr << "direction:" << this->m_dx << " " << this->m_dy << std::endl;
+  std::pair<int, int> direction = std::make_pair(this->m_dx, this->m_dy);
+  for(auto pair : this->m_allowed_directions){
+	if(pair == direction){
+		return;
+	}
+  }
+  this->setDirection(old_dx, old_dy);
 }
 
 void Player::update() {

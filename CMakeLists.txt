@@ -10,7 +10,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_COMPILER g++)
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++17 -pthread -g")
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
+find_package(Threads REQUIRED)
 
 
 find_package(
@@ -65,4 +66,4 @@ qt5_wrap_ui(UI_HEADERS ${UI})
 set(CMAKE_CURRENT_BINARY_DIR ${ORIGINAL_CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(parni-pacman ${SOURCES} ${HEADERS} ${UI_HEADERS})
-target_link_libraries(parni-pacman PRIVATE Qt5::Core Qt5::Widgets Qt5::Network)
+target_link_libraries(parni-pacman PRIVATE Qt5::Core Qt5::Widgets Qt5::Network Threads::Threads)

@@ -30,23 +30,23 @@ Entity *Level::createEntity(char c, int x, int y) {
   switch (c) {
   case 'T': {
     item = m_drawable->drawItem("finish.png");
-    return (Entity *)new Finish(x, y, item, m_id);
+    return (Entity *)new Finish(x, y, item, m_id++);
   }
   case 'X': {
     item = m_drawable->drawItem("wall.png");
-    return (Entity *)new Wall(x, y, item, m_id);
+    return (Entity *)new Wall(x, y, item, m_id++);
   }
   case 'G': {
     item = m_drawable->drawItem("ghost.png");
-    return (Entity *)new Ghost(x, y, item, m_id);
+    return (Entity *)new Ghost(x, y, item, m_id++);
   }
   case 'K': {
     item = m_drawable->drawItem("key.png");
-    return (Entity *)new Key(x, y, item, m_id);
+    return (Entity *)new Key(x, y, item, m_id++);
   }
   case 'S': {
     item = m_drawable->drawItem("player.png");
-    return (Entity *)new Player(x, y, true, item, m_id);
+    return (Entity *)new Player(x, y, true, item, m_id++);
   }
   case '.': {
     return nullptr;

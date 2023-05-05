@@ -7,6 +7,7 @@
 #include "drawable.h"
 #include <utility>
 #include <QGraphicsScene>
+#include <vector>
 
 class MainWindow;
 
@@ -20,6 +21,8 @@ public:
   void moveTowards(DrawableItem* item, int row, int col) override;
   void setPosition(DrawableItem* item, int row, int col) override;
   void drawBackgroundTiles(std::string sprite_path) override;
+  void setKeyCount(int count) override;
+  void setHealthCount(int count) override;
 
   Scene(int m_window_w, int m_window_h, int frame_between_updates, MainWindow* window);
   std::pair<int, int> translate(int x, int y);
@@ -36,6 +39,10 @@ protected:
   int m_window_h;
   int m_x;
   int m_y;
+  int keyCount;
+  int healthCount;
+  std::vector<Sprite *> healthSprites;
+  std::vector<Sprite *> keySprites;
 };
 
 #endif

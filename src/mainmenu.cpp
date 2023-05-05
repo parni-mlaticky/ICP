@@ -24,7 +24,7 @@ MainMenu::~MainMenu() {
 
 void MainMenu::on_playButton_clicked() {
   if (mainWindow == nullptr) {
-    mainWindow = new MainWindow(levelFile, MainWindow::GameMode::Play, this);
+    mainWindow = new MainWindow(levelFile, MainWindow::GameMode::Play);
   }
   this->hide();
   mainWindow->show();
@@ -51,7 +51,7 @@ void MainMenu::on_replayButton_clicked() {
         replayFile = replayFilePath;
 
         if (mainWindow == nullptr) {
-            mainWindow = new MainWindow(replayFile, MainWindow::GameMode::Replay, this);
+            mainWindow = new MainWindow(replayFile, MainWindow::GameMode::Replay);
         }
         this->hide();
         mainWindow->show();

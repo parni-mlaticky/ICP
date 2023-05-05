@@ -12,7 +12,7 @@
 #include "logger.h"
 #include <fstream>
 
-MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
+MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QWidget *parent)
     : QMainWindow(parent), m_levelLoaded(false) {
 
   const int height = 600;
@@ -33,7 +33,10 @@ MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
   m_view->setRenderHint(QPainter::Antialiasing);
   m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-  m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/game.rpl"));
+  m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
+  if(gameMode == MainWindow::GameMode::Replay) {
+      m_replay = new Log::Replay(loadLevelFile(levelFilePath));
+  }
   m_logger = new Log::Logger();
 
   m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);

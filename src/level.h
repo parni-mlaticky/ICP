@@ -48,6 +48,8 @@ public:
 
   void removeDeadEntities();
   void checkPlayerWin();
+  void spawnBoost();	
+  bool isGameOver();
 
 private:
   std::vector<std::pair<int, int>> checkDirections(int x, int y);
@@ -63,6 +65,7 @@ private:
   int m_bound_y;
   Drawable *m_drawable;
   void openFinishes();
+  bool m_game_over = false;
 };
 
 #endif

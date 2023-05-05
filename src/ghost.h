@@ -8,7 +8,6 @@ class Ghost : public Entity {
 public:
   Ghost(int x, int y, DrawableItem* item, int id);
   void update() override;
-  void setAllowedDirections(std::vector<std::pair<int, int>> directions);
 private:
   void newDirection();
   int m_steps_left;

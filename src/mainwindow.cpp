@@ -33,7 +33,7 @@ MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
   m_view->setRenderHint(QPainter::Antialiasing);
   m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-  m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
+  m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/game.rpl"));
   m_logger = new Log::Logger();
 
   m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
@@ -87,7 +87,7 @@ void MainWindow::update() {
   this->m_scene->render(m_frame_counter);
 
   // TODO save level on game over and show main menu.
-  if (this->m_logger && false) {
+  if (this->m_logger && this->m_level->isGameOver()) {
     // TODO Change filename to UTC timestamp.
     std::ofstream file("replay/game.rpl");
     file << m_logger->getFullLog();

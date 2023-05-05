@@ -10,8 +10,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_COMPILER g++)
+find_package(Threads REQUIRED)
 
-add_compile_options(-g)
 
 find_package(
   Qt5
@@ -34,6 +34,7 @@ set(SOURCES
     src/drawable.cpp
     src/drawable_item.cpp
     src/logger.cpp
+	src/boost.cpp
 	)
 
 set(HEADERS
@@ -49,6 +50,7 @@ set(HEADERS
     src/scene.h
     src/sprite.h
     src/logger.h
+	src/boost.h
 	)
 
 set(UI src/mainwindow.ui src/mainmenu.ui)
@@ -63,4 +65,4 @@ qt5_wrap_ui(UI_HEADERS ${UI})
 set(CMAKE_CURRENT_BINARY_DIR ${ORIGINAL_CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(parni-pacman ${SOURCES} ${HEADERS} ${UI_HEADERS})
-target_link_libraries(parni-pacman PRIVATE Qt5::Core Qt5::Widgets Qt5::Network)
+target_link_libraries(parni-pacman PRIVATE Qt5::Core Qt5::Widgets Qt5::Network Threads::Threads)

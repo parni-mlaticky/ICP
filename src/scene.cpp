@@ -89,7 +89,6 @@ void Scene::setHealthCount(int count) {
 void Scene::drawBackgroundTiles(std::string sprite_path) {
   for (int row = 0; row < this->m_x; row++) {
     for (int col = 0; col < this->m_y; col++) {
-      std::cerr << "drawing floor!" << std::endl;
       Sprite* sprite = new Sprite(sprite_path);
       sprite->setPosition(this->translate(row, col));
       sprite->setSpriteScale(this->m_scale);

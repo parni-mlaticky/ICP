@@ -20,9 +20,6 @@ void Ghost::update() {
         }
     }
 
-	std::cerr << "colided: " << colided << std::endl;
-	std::cerr << "steps left: " << m_steps_left << std::endl;
-	std::cerr << "allowed directions: " << m_allowed_directions.size() << std::endl; 
     if (m_steps_left <= 0 || colided) {
         newDirection();
     }
@@ -37,5 +34,4 @@ void Ghost::newDirection() {
 	
     m_dx = direction.first;
     m_dy = direction.second;
-	std::cerr << "new direction: " << m_dx << " " << m_dy << std::endl;
 }

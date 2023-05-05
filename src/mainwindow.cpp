@@ -41,6 +41,8 @@ MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
   m_level->loadLevel(levelString);
   m_logger->logGrid(levelString);
 
+  this->m_scene->setHealthCount(3);
+
   QTimer *timer = new QTimer(this);
 
   connect(timer, &QTimer::timeout, this, &MainWindow::update);

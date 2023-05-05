@@ -13,6 +13,7 @@ enum EntityType{
   KEY = 'K',
   FINISH = 'F',
   WALL = 'X',
+  BOOST = 'B',
 };
 
 class Entity {

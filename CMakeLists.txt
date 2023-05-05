@@ -10,8 +10,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_COMPILER g++)
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++17 -pthread -g")
 
-add_compile_options(-g)
 
 find_package(
   Qt5
@@ -34,6 +34,7 @@ set(SOURCES
     src/drawable.cpp
     src/drawable_item.cpp
     src/logger.cpp
+	src/boost.cpp
 	)
 
 set(HEADERS
@@ -49,6 +50,7 @@ set(HEADERS
     src/scene.h
     src/sprite.h
     src/logger.h
+	src/boost.h
 	)
 
 set(UI src/mainwindow.ui src/mainmenu.ui)

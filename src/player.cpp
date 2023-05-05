@@ -1,4 +1,5 @@
 #include "player.h"
+#include "entity.h"
 #include "wall.h"
 #include "ghost.h"
 #include "key.h"
@@ -7,11 +8,22 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <iostream>
+#include <thread>
+#include <chrono>
 Player::Player(int x, int y, bool isLocal, DrawableItem* item, int id) : Entity(x ,y, item, 'P', id), m_local_player(isLocal) {
   m_speed = 5;
   m_key_count = 0;
   m_can_move = true;
   m_type = EntityType::PLAYER;
+}
+
+
+void Player::boostCountdown(){
+	while(this->m_boost_seconds_left > 0){
+		std::cerr << "boost seconds left: " << this->m_boost_seconds_left << std::endl;
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		this->m_boost_seconds_left--;
+	}
 }
 
 void Player::keyPressEvent(QKeyEvent *event) {
@@ -36,7 +48,6 @@ void Player::keyPressEvent(QKeyEvent *event) {
     setDirection(0, 1);
     break;
   }
-  std::cerr << "direction:" << this->m_dx << " " << this->m_dy << std::endl;
   std::pair<int, int> direction = std::make_pair(this->m_dx, this->m_dy);
   for(auto pair : this->m_allowed_directions){
 	if(pair == direction){
@@ -49,30 +60,45 @@ void Player::keyPressEvent(QKeyEvent *event) {
 void Player::update() {
 }
 
-void Player::addKey() {
-  m_key_count++;
-}
-
 void Player::onCollision(Entity* other) {
 	if(other == this){
 		return;
 	}
-	Ghost* g;
-	if((g = dynamic_cast<Ghost*>(other)) != nullptr){
-		this->kill();
-		return;
-	}
-	Key* k;
-	if((k = dynamic_cast<Key*>(other)) != nullptr){
-		this->addKey();
-		return;
-	}
-	Finish* f;
-	if((f = dynamic_cast<Finish*>(other)) != nullptr){
-		if(f->isOpen()){
-			this->m_reached_finish = true;
+	switch(other->m_type){
+		case EntityType::WALL: {
+			this->setDirection(0, 0);
+			break;	
 		}
-		return;
+		case EntityType::GHOST:{
+			if(this->m_boost_seconds_left){
+				dynamic_cast<Ghost*>(other)->kill();
+			}
+			else{
+				this->kill();
+			}
+			break;
+		}
+		case EntityType::KEY: {
+				this->m_key_count++;
+				break;
+		}
+		case EntityType::FINISH: {
+			if(dynamic_cast<Finish*>(other)->isOpen()){
+				this->m_reached_finish = true;
+			}
+			break;
+		}
+		case EntityType::BOOST: {
+			other->kill();
+			if(this->m_boost_seconds_left == 0){
+				std::thread t(&Player::boostCountdown, this);
+				t.detach();
+			}
+			this->m_boost_seconds_left += 5;
+			break;
+		}
+		default:
+			break;
 	}
 }
 

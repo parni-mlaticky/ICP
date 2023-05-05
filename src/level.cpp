@@ -1,4 +1,5 @@
 #include "level.h"
+#include "boost.h"
 #include "entity.h"
 #include "finish.h"
 #include "ghost.h"
@@ -51,6 +52,10 @@ Entity *Level::createEntity(char c, int x, int y) {
   case '.': {
     return nullptr;
   }
+  case 'B':{
+	item = m_drawable->drawItem("boost.png");
+	return (Entity*) new Boost(x, y, item, m_id++); 
+  }
   default: {
     throw "Invalid entity code!\n";
   }
@@ -68,14 +73,12 @@ void Level::loadLevel(const std::string &levelString) {
 	this->m_drawable->setGridDimensions(m_bound_x + 1, m_bound_y + 1);
 	this->m_drawable->drawBackgroundTiles("floor.png");
 
-	std::cerr << m_bound_x << ", " << m_bound_y << std::endl;
 	std::getline(levelStream, firstLine);
 
 
 	this->m_drawable->setGridDimensions(m_bound_x+1, m_bound_y+1);
 	this->m_drawable->drawBackgroundTiles("floor.png");
 
-	std::cerr << m_bound_x << ", " << m_bound_y << std::endl;
 
 	this->m_grid.resize(m_bound_x + 2);
 	for (int x = 0; x < m_bound_x + 2; x++) {
@@ -127,6 +130,21 @@ void Level::loadLevel(const std::string &levelString) {
 }
 
 
+void Level::spawnBoost(){
+	int x, y;
+	srand(time(NULL));
+	do{	
+		x = rand() % this->m_bound_x + 1;
+		y = rand() % this->m_bound_y + 1;
+	}
+	while(this->m_grid[x][y].size() != 0);
+	Entity* boost = createEntity('B', x, y);
+	this->m_grid[x][y].push_back(boost);
+	this->m_entities[boost->m_type].push_back(boost);
+	auto coords = boost->get_xy();
+	this->m_drawable->setPosition(boost->m_drawable_item, coords.first, coords.second);
+}
+
 void Level::dumpGrid(){
 	std::cerr << "Dumping grid" << this->m_grid.size() << " " <<this->m_grid[0].size() << std::endl;
 	for(int i = 0; i < this->m_grid.size(); i++) {
@@ -153,14 +171,13 @@ void Level::updateEntitiesOfType(EntityType type){
 	EntityVector entities = this->m_entities[type];
 	for(Entity* entity : entities){
 		this->triggerCollisions(entity);
-    if (m_replay) {
-      tryToApplyDirectionsFromReplay(entity);
-    }
-    else {
-      entity->update();
-    }
+		if (m_replay) {
+			tryToApplyDirectionsFromReplay(entity);
+		}
+		else {
+			entity->update();
+		}
 
-		cerr << entity->m_type << endl;
 		pair<int, int> dxdy = entity->getDxDy();
 		int dx = dxdy.first;
 		int dy = dxdy.second;
@@ -168,11 +185,13 @@ void Level::updateEntitiesOfType(EntityType type){
 		this->m_drawable->setPosition(entity->m_drawable_item, coords.first, coords.second);
 		if(!entity->canMove()) continue;
 		entity->setAllowedDirections(this->checkDirections(coords.first, coords.second));
+		if(m_logger){
+			this->m_logger->logDirection(entity->getId(), dx, dy);
+		}
 		if(dx == 0 && dy == 0) continue;
 		if(!checkWall(coords.first + dx, coords.second + dy)){
 			EntityVector* entitiesAtXY = &this->m_grid[coords.first][coords.second];
 			auto it = std::find(entitiesAtXY->begin(), entitiesAtXY->end(), entity);		
-			cerr << coords.first << " " << coords.second << endl;
 			if(it != entitiesAtXY->end()){
 				entitiesAtXY->erase(it);
 			}
@@ -198,7 +217,7 @@ void Level::removeDeadEntities(){
 
 void Level::triggerCollisions(Entity* ent){
 	std::pair<int, int> coords = ent->get_xy();
-	EntityVector collidingEntities = this->findEntitiesAt(coords.first, coords.second);
+	EntityVector collidingEntities = this->m_grid[coords.first][coords.second];
 	for(Entity* collidingEntity : collidingEntities){
 		ent->onCollision(collidingEntity);
 	}
@@ -231,14 +250,29 @@ void Level::updateGrid() {
 	this->updateEntitiesOfType(EntityType::KEY);
 	this->updateEntitiesOfType(EntityType::FINISH);
 	this->removeDeadEntities();
+	if(this->m_entities[EntityType::PLAYER].size() == 0){
+		this->m_game_over = true;
+	}
+	cerr << "BOOST SIZE: " << this->m_entities[EntityType::BOOST].size() << endl;
+	if(rand() % 100 < 98 && this->m_entities[EntityType::BOOST].size() == 0){
+		cerr << "SPAWNING BOOST" << endl;
+		this->spawnBoost();
+	}
 	this->dumpGrid();
+	if(this->m_logger){
+		this->m_logger->logTickEnd();
+	}
+}
+
+bool Level::isGameOver(){
+	return this->m_game_over;
 }
 
 
 void Level::openFinishes(){
-	auto finishes = findEntities<Finish>();
-	for(auto finish: finishes){
-		finish->open();
+	EntityVector finishes = this->m_entities[EntityType::FINISH];
+	for(Entity* f: finishes){
+		((Finish*) f)->open();
 	}
 }
 
@@ -283,23 +317,6 @@ bool Level::removeEntity(Entity* ent){
 		}
 	}
 	return false;
-}
-
-template<typename T>
-std::vector<T*> Level::findEntities(){
-	std::vector<T*> entities;
-	for(int row = 0; row < this->m_grid.size(); row++) {
-		for(int col = 0; col < this->m_grid[row].size(); col++) {
-			for(int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++){
-				Entity* entity = this->m_grid[row][col][entIndex];
-				T* ent = dynamic_cast<T*>(entity);
-				if(ent){
-					entities.push_back(ent);
-				}
-			}
-		}
-	}
-	return entities;
 }
 
 void Level::keyPressEvent(QKeyEvent *event) {

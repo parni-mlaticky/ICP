@@ -10,6 +10,8 @@ Scene::Scene(int window_w, int window_h, int frames_between_updates, MainWindow*
   this->m_update_grid = frames_between_updates;
   this->m_update_grid_counter = this->m_update_grid-1;
   this->m_window = window;
+  this->keyCount = 0;
+  this->healthCount = 0;
 
   this->setSceneRect(-100, -100, 200, 200);
   this->setFocus();
@@ -52,6 +54,36 @@ void Scene::moveTowards(DrawableItem* item, int row, int col) {
 
 void Scene::setPosition(DrawableItem* item, int row, int col) {
   item->setPosition(this->translate(row, col));
+}
+
+void Scene::setKeyCount(int count) {
+  static int offset = 0;
+  this->keyCount = count;
+  Sprite *key = new Sprite("key.png");
+  key->setSpriteScale(this->m_scale);
+  key->setPosition(std::pair<int, int>(-350 + offset, -280));
+  this->addItem(key);
+  this->keySprites.push_back(key);
+  offset += 20;
+}
+
+void Scene::setHealthCount(int count) {
+  static int offset = 0;
+  if (count < this->healthCount) {
+    offset -= 10;
+    Sprite *deletedHealth = this->healthSprites.back();
+    this->deleteItem(deletedHealth);
+    this->healthSprites.pop_back();
+  } else {
+    for (int i = 0; i < count; i++) {
+      Sprite *health = new Sprite("health.png");
+      health->setSpriteScale(this->m_scale);
+      health->setPosition(std::pair<int, int>(300 + offset, -280));
+      this->addItem(health);
+      this->healthSprites.push_back(health);
+      offset += 20;
+    }
+  }
 }
 
 void Scene::drawBackgroundTiles(std::string sprite_path) {

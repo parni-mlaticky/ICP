@@ -15,6 +15,9 @@ public:
   virtual void moveTowards(DrawableItem* item, int row, int col) = 0;
   virtual void setPosition(DrawableItem* item, int row, int col) = 0;
 
+  virtual void setKeyCount(int count) = 0;
+  virtual void setHealthCount(int count) = 0;
+
   Drawable();
 };
 

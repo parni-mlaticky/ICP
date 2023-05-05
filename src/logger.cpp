@@ -90,7 +90,6 @@ Replay::Replay(std::string str) : m_tick(0) {
     word = "";
 
     // Reading commands
-    std::cerr <<"badabum\n";
     auto iter = str.begin() + m_grid.size()-1;
     while (iter != str.end()) {
         iter++;
@@ -147,4 +146,8 @@ ReplayTick Replay::getLastTick() {
 
 void Replay::setNextTick() {
     this->m_tick++;
+}
+
+bool Replay::isReplayFinished() {
+    return this->m_tick == (int) m_log.size();
 }

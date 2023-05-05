@@ -10,7 +10,6 @@ Ghost::Ghost(int x, int y, DrawableItem* item, int id) : Entity(x, y, item, 'G',
 }
 
 void Ghost::update() {
-    std::cerr << "brih" << std::endl;
     --m_steps_left;
 
     bool colided = true;

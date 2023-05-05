@@ -37,6 +37,7 @@ class Logger {
         std::string getGrid();
         int getTick();
         ReplayTick getLastTick();
+        bool isReplayFinished();
     private:
         std::string m_grid;
         ReplayLog m_log;

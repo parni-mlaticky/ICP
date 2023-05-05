@@ -1,5 +1,5 @@
 #include "wall.h"
 
-Wall::Wall(int x, int y, DrawableItem* item) : Entity(x, y, item, 'X') {
+Wall::Wall(int x, int y, DrawableItem* item, int id) : Entity(x, y, item, 'X', id) {
 	this->m_type = EntityType::WALL;
 }

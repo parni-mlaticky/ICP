@@ -16,11 +16,13 @@
 
 using namespace std;
 
-Level::Level(Drawable *drawable) {
+Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay) : m_id(0) {
   this->m_drawable = drawable;
   this->m_bound_x = -1;
   this->m_bound_y = -1;
   this->m_background_gfx = vector<Entity *>();
+  this->m_logger = logger;
+  this->m_replay = replay;
 }
 
 Entity *Level::createEntity(char c, int x, int y) {
@@ -28,23 +30,23 @@ Entity *Level::createEntity(char c, int x, int y) {
   switch (c) {
   case 'T': {
     item = m_drawable->drawItem("finish.png");
-    return (Entity *)new Finish(x, y, item);
+    return (Entity *)new Finish(x, y, item, m_id);
   }
   case 'X': {
     item = m_drawable->drawItem("wall.png");
-    return (Entity *)new Wall(x, y, item);
+    return (Entity *)new Wall(x, y, item, m_id);
   }
   case 'G': {
     item = m_drawable->drawItem("ghost.png");
-    return (Entity *)new Ghost(x, y, item);
+    return (Entity *)new Ghost(x, y, item, m_id);
   }
   case 'K': {
     item = m_drawable->drawItem("key.png");
-    return (Entity *)new Key(x, y, item);
+    return (Entity *)new Key(x, y, item, m_id);
   }
   case 'S': {
     item = m_drawable->drawItem("player.png");
-    return (Entity *)new Player(x, y, true, item);
+    return (Entity *)new Player(x, y, true, item, m_id);
   }
   case '.': {
     return nullptr;
@@ -151,7 +153,13 @@ void Level::updateEntitiesOfType(EntityType type){
 	EntityVector entities = this->m_entities[type];
 	for(Entity* entity : entities){
 		this->triggerCollisions(entity);
-		entity->update();
+    if (m_replay) {
+      tryToApplyDirectionsFromReplay(entity);
+    }
+    else {
+      entity->update();
+    }
+
 		cerr << entity->m_type << endl;
 		pair<int, int> dxdy = entity->getDxDy();
 		int dx = dxdy.first;
@@ -205,6 +213,14 @@ void Level::checkPlayerWin(){
 	}
 }
 
+void Level::tryToApplyDirectionsFromReplay(Entity* ent) {
+  for (auto command : this->m_replay->getLastTick()) {
+    if (command[0] != "D") continue;
+    if (atoi(command[1].c_str()) != ent->getId()) continue;
+    ent->setDirection(atoi(command[2].c_str()), atoi(command[3].c_str()));
+  }
+}
+
 void Level::updateGrid() {
 	this->updateEntitiesOfType(EntityType::PLAYER);
 	if(this->m_entities[EntityType::KEY].size() == 0){
@@ -215,7 +231,7 @@ void Level::updateGrid() {
 	this->updateEntitiesOfType(EntityType::KEY);
 	this->updateEntitiesOfType(EntityType::FINISH);
 	this->removeDeadEntities();
-	this->dumpGrid();	
+	this->dumpGrid();
 }
 
 
@@ -287,6 +303,10 @@ std::vector<T*> Level::findEntities(){
 }
 
 void Level::keyPressEvent(QKeyEvent *event) {
+  if (m_replay) {
+    return;
+  }
+
   for (int row = 0; row < this->m_grid.size(); row++) {
     for (int col = 0; col < this->m_grid[row].size(); col++) {
       for (int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++) {

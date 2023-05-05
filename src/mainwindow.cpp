@@ -9,6 +9,8 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include "logger.h"
+#include <fstream>
 
 MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
     : QMainWindow(parent), m_levelLoaded(false) {
@@ -31,7 +33,7 @@ MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
   m_view->setRenderHint(QPainter::Antialiasing);
   m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-  m_level = new Level((Drawable *)m_scene);
+  m_level = new Level((Drawable *)m_scene, nullptr, nullptr);
   std::string levelString = this->loadLevelFile(levelFilePath);
   m_level->loadLevel(levelString);
 

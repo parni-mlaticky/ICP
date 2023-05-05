@@ -9,6 +9,8 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include "logger.h"
+#include <fstream>
 
 MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
     : QMainWindow(parent), m_levelLoaded(false) {
@@ -31,9 +33,13 @@ MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
   m_view->setRenderHint(QPainter::Antialiasing);
   m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-  m_level = new Level((Drawable *)m_scene);
+  m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
+  m_logger = new Log::Logger();
+
+  m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
   std::string levelString = this->loadLevelFile(levelFilePath);
   m_level->loadLevel(levelString);
+  m_logger->logGrid(levelString);
 
   QTimer *timer = new QTimer(this);
 
@@ -61,11 +67,31 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 void MainWindow::update() {
   ++this->m_frame_counter;
 
+  if (this->m_replay) {
+    if (this->m_replay->isReplayFinished()) {
+      // TODO show menu from here
+      std::cerr << "Finished replaying " << this->m_replay->getMaxTick() << " logical ticks."<< std::endl;
+      exit(0);
+    }
+  }
+
   if (this->m_frame_counter == this->m_animation_frames) {
-    m_level->updateGrid();
+    this->m_level->updateGrid();
     this->m_frame_counter = 0;
+    if (this->m_replay) {
+      this->m_replay->setNextTick();
+    }
   }
   this->m_scene->render(m_frame_counter);
+
+  // TODO save level on game over and show main menu.
+  if (this->m_logger && false) {
+    // TODO Change filename to UTC timestamp.
+    std::ofstream file("replay/game.rpl");
+    file << m_logger->getFullLog();
+    file.close();
+    exit(0);
+  }
 }
 
 MainWindow::~MainWindow() = default;

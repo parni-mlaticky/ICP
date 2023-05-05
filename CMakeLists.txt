@@ -33,6 +33,7 @@ set(SOURCES
     src/sprite.cpp
     src/drawable.cpp
     src/drawable_item.cpp
+    src/logger.cpp
 	)
 
 set(HEADERS
@@ -47,6 +48,7 @@ set(HEADERS
     src/wall.h
     src/scene.h
     src/sprite.h
+    src/logger.h
 	)
 
 set(UI src/mainwindow.ui src/mainmenu.ui)

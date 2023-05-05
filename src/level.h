@@ -7,6 +7,7 @@
 #include "ghost.h"
 #include "key.h"
 #include "player.h"
+#include "logger.h"
 #include <QGraphicsScene>
 #include <QKeyEvent>
 #include <utility>
@@ -19,7 +20,7 @@ using Grid = std::vector<Row>;
 
 class Level {
 public:
-  Level(Drawable *drawable);
+  Level(Drawable *drawable, Log::Logger *logger, Log::Replay *replay);
   void loadLevel(const std::string &levelString);
   void addEntity(Entity *entity);
   void updateScene();
@@ -29,12 +30,13 @@ public:
   void updateGrid();
   bool checkWall(int x, int y);
   void keyPressEvent(QKeyEvent *event);
-  std::vector<std::pair<int,int>> getCollisionCoordinates();
   void updatePlayers();
   void updateNonPlayers();
   void triggerCollisions(Entity* ent);
   // entities TODO maybe move this to private?
   std::unordered_map<EntityType, EntityVector> m_entities;
+  std::vector<std::pair<int, int>> getCollisionCoordinates();
+  void tryToApplyDirectionsFromReplay(Entity* ent);
 
   template <typename T> std::vector<T *> findEntities();
 
@@ -54,6 +56,9 @@ private:
   Entity *createEntity(char c, int x, int y);
   void displayGrid();
   void addBackgroundFloor(int x, int y);
+  Log::Logger* m_logger;
+  Log::Replay* m_replay;
+  int m_id;
   int m_bound_x;
   int m_bound_y;
   Drawable *m_drawable;

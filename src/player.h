@@ -8,7 +8,7 @@
 
 class Player : public Entity {
 public:
-  Player(int x, int y, bool isLocal, DrawableItem* item);
+  Player(int x, int y, bool isLocal, DrawableItem* item, int id);
   void update() override;
   void addKey();
   void onCollision(Entity* other) override;

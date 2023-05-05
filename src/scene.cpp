@@ -18,7 +18,6 @@ Scene::Scene(int window_w, int window_h, int frames_between_updates, MainWindow*
 }
 
 void Scene::keyPressEvent(QKeyEvent* event) {
-  std::cerr << "keyevent" << std::endl;
   m_window->keyPressEvent(event);
 }
 
@@ -29,7 +28,6 @@ void Scene::render(int frame_n) {
 }
 
 DrawableItem* Scene::drawItem(std::string sprite_path) {
-  std::cerr << "Drawing " << sprite_path << " " << this->m_scale << std::endl;
   Sprite* sprite = new Sprite(sprite_path);
   sprite->setSpriteScale(m_scale);
   this->addItem(sprite);

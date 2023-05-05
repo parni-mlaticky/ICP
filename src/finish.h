@@ -4,7 +4,7 @@
 
 class Finish : public Entity {
 public:
-  Finish(int x, int y, DrawableItem* item);
+  Finish(int x, int y, DrawableItem* item, int id);
   bool isOpen();
   void open();
 protected:

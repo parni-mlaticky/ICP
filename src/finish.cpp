@@ -1,7 +1,7 @@
 #include "finish.h"
 
-Finish::Finish(int x, int y, DrawableItem* item) : Entity(x, y, item, 'F') {
-	this->m_type = EntityType::FINISH; 
+Finish::Finish(int x, int y, DrawableItem* item, int id) : Entity(x, y, item, 'F', id) {
+	this->m_type = EntityType::FINISH;
 }
 
 bool Finish::isOpen(){

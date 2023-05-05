@@ -17,7 +17,7 @@ enum EntityType{
 
 class Entity {
 public:
-  Entity(int x, int y, DrawableItem* item, char debug_char);
+  Entity(int x, int y, DrawableItem* item, char debug_char, int id);
   virtual void update();
   void setDirection(int dx, int dy);
   void updatePosition();
@@ -34,7 +34,10 @@ public:
   void kill();
   EntityType m_type;
   void setAllowedDirections(std::vector<std::pair<int, int>> directions);
+  int getId();
+
 protected:
+  int m_id;
   int m_x, m_y;
   int m_dx, m_dy;
   int m_speed;

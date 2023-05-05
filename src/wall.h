@@ -4,7 +4,7 @@
 
 class Wall : public Entity {
 public:
-  Wall(int x, int y, DrawableItem* item);
+  Wall(int x, int y, DrawableItem* item, int id);
 
 };
 #endif

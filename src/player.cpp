@@ -7,7 +7,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <iostream>
-Player::Player(int x, int y, bool isLocal, DrawableItem* item) : Entity(x ,y, item, 'P'), m_local_player(isLocal) {
+Player::Player(int x, int y, bool isLocal, DrawableItem* item, int id) : Entity(x ,y, item, 'P', id), m_local_player(isLocal) {
   m_speed = 5;
   m_key_count = 0;
   m_can_move = true;

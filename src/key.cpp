@@ -1,8 +1,8 @@
 #include "key.h"
 #include "player.h"
 
-Key::Key(int x, int y, DrawableItem* item) : Entity(x, y, item, 'K') {
-	this->m_type = EntityType::KEY; 
+Key::Key(int x, int y, DrawableItem* item, int id) : Entity(x, y, item, 'K', id) {
+	this->m_type = EntityType::KEY;
 }
 
 void Key::onCollision(Entity* other){

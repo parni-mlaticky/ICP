@@ -14,8 +14,9 @@ public:
   void onCollision(Entity* other) override;
   bool reachedFinish();
   int keyCount();
+  int health();
   void boostCountdown();
-
+  void unhitableCountdown();
 protected:
   void keyPressEvent(QKeyEvent *event) override;
 
@@ -26,6 +27,8 @@ private:
   bool m_reached_finish = false;
   std::atomic_int m_boost_seconds_left = 0;
   int m_key_count;
+  int m_health;
+  std::atomic_int m_unhitable_seconds_left = 0;
 };
 #endif
 

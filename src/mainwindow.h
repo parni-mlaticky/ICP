@@ -20,6 +20,13 @@ public:
   ~MainWindow() override;
   std::string loadLevelFile(QString levelFilePath);
 
+protected:
+  void closeEvent(QCloseEvent *event) override;
+
+signals:
+  void windowClosed();
+  void openMainMenu();
+
 private:
   void update();
   Drawable *m_scene;
@@ -33,4 +40,5 @@ private:
   int m_animation_frames;
   int m_frame_counter;
   MainWindow::GameMode gamemode;
+  QTimer *timer;
 };

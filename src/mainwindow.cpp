@@ -46,7 +46,7 @@ MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QW
 
   this->m_scene->setHealthCount(3);
 
-  QTimer *timer = new QTimer(this);
+  timer = new QTimer(this);
 
   connect(timer, &QTimer::timeout, this, &MainWindow::update);
   timer->start(this->m_gfx_tick_ms);
@@ -69,14 +69,21 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   this->m_level->keyPressEvent(event);
 }
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+    emit windowClosed();
+    QMainWindow::closeEvent(event);
+}
+
 void MainWindow::update() {
   ++this->m_frame_counter;
 
   if (this->m_replay) {
     if (this->m_replay->isReplayFinished()) {
+      disconnect(timer, &QTimer::timeout, this, &MainWindow::update);
+      timer->stop();
       // TODO show menu from here
       std::cerr << "Finished replaying " << this->m_replay->getMaxTick() << " logical ticks."<< std::endl;
-      exit(0);
+      this->close();
     }
   }
 
@@ -95,7 +102,7 @@ void MainWindow::update() {
     std::ofstream file("replay/game.rpl");
     file << m_logger->getFullLog();
     file.close();
-    exit(0);
+    this->close();
   }
 }
 

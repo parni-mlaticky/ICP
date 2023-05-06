@@ -22,10 +22,14 @@ MainMenu::~MainMenu() {
   }
 }
 
+void MainMenu::onMainWindowClosed() {
+    this->show();
+}
+
 void MainMenu::on_playButton_clicked() {
-  if (mainWindow == nullptr) {
+    if(mainWindow != nullptr) delete mainWindow;
     mainWindow = new MainWindow(levelFile, MainWindow::GameMode::Play);
-  }
+    connect(mainWindow, SIGNAL(windowClosed()), this, SLOT(onMainWindowClosed()));
   this->hide();
   mainWindow->show();
 }
@@ -49,10 +53,9 @@ void MainMenu::on_replayButton_clicked() {
 
     if (!replayFilePath.isEmpty()) {
         replayFile = replayFilePath;
-
-        if (mainWindow == nullptr) {
-            mainWindow = new MainWindow(replayFile, MainWindow::GameMode::Replay);
-        }
+        if (mainWindow != nullptr) delete mainWindow;
+        mainWindow = new MainWindow(replayFile, MainWindow::GameMode::Replay);
+        connect(mainWindow, SIGNAL(windowClosed()), this, SLOT(onMainWindowClosed()));
         this->hide();
         mainWindow->show();
     }

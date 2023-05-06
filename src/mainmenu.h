@@ -13,6 +13,8 @@ public:
   explicit MainMenu(QWidget *parent = nullptr);
   ~MainMenu();
 
+public slots:
+    void onMainWindowClosed();
 
 private:
   Ui::Form ui;

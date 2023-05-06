@@ -11,10 +11,11 @@
 #include <thread>
 #include <chrono>
 Player::Player(int x, int y, bool isLocal, DrawableItem* item, int id) : Entity(x ,y, item, 'P', id), m_local_player(isLocal) {
-  m_speed = 5;
+  m_speed = 1;
   m_key_count = 0;
   m_can_move = true;
   m_type = EntityType::PLAYER;
+  m_health = 3;
 }
 
 
@@ -27,6 +28,14 @@ void Player::boostCountdown(){
 		this->m_boost_seconds_left--;
 	}
   this->m_drawable_item->setSpriteVariant();
+}
+
+void Player::unhitableCountdown(){
+	while(this->m_unhitable_seconds_left > 0){
+		std::cerr << "unhitable seconds left: " << this->m_unhitable_seconds_left << std::endl;
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		this->m_unhitable_seconds_left--;
+	}
 }
 
 void Player::keyPressEvent(QKeyEvent *event) {
@@ -77,7 +86,17 @@ void Player::onCollision(Entity* other) {
 				dynamic_cast<Ghost*>(other)->kill();
 			}
 			else{
-				this->kill();
+				if(this->m_unhitable_seconds_left == 0){
+					this->m_unhitable_seconds_left += 3;
+					this->m_health--;
+					if(this->m_health == 0){
+						this->kill();
+					}
+					else{
+						std::thread t(&Player::unhitableCountdown, this);
+						t.detach();
+					}
+				}
 			}
 			break;
 		}
@@ -100,6 +119,12 @@ void Player::onCollision(Entity* other) {
 			this->m_boost_seconds_left += 5;
 			break;
 		}
+		case EntityType::HEALTH: {
+			if(this->m_health < 3){
+				this->m_health++;
+				other->kill();
+			}
+		}
 		default:
 			break;
 	}
@@ -112,4 +137,8 @@ bool Player::reachedFinish(){
 
 int Player::keyCount(){
 	return this->m_key_count;
+}
+
+int Player::health(){
+	return this->m_health;
 }

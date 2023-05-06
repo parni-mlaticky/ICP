@@ -6,6 +6,7 @@
 #include "key.h"
 #include "player.h"
 #include "wall.h"
+#include "health.h"
 #include <QTextStream>
 #include <algorithm>
 #include <fstream>
@@ -14,7 +15,7 @@
 #include <string>
 #include <type_traits>
 #include <vector>
-
+#include <thread>
 using namespace std;
 
 Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay) : m_id(0) {
@@ -56,6 +57,10 @@ Entity *Level::createEntity(char c, int x, int y) {
 	item = m_drawable->drawItem("boost", 1);
 	return (Entity*) new Boost(x, y, item, m_id++); 
   }
+  case 'H':{
+	item = m_drawable->drawItem("health", 1);
+	return (Entity*) new Health(x, y, item, m_id++);
+  }
   default: {
     throw "Invalid entity code!\n";
   }
@@ -70,15 +75,14 @@ void Level::loadLevel(const std::string &levelString) {
 	levelStream >> this->m_bound_x;
 	levelStream >> this->m_bound_y;
 
-	this->m_drawable->setGridDimensions(m_bound_x + 1, m_bound_y + 1);
-	this->m_drawable->drawBackgroundTiles("floor");
 
 	std::getline(levelStream, firstLine);
 
 
-	this->m_drawable->setGridDimensions(m_bound_x+1, m_bound_y+1);
+	this->m_drawable->setGridDimensions(m_bound_x + 1, m_bound_y + 1);
 	this->m_drawable->drawBackgroundTiles("floor");
 
+	cerr << "Loading level with bounds: " << m_bound_x << " " << m_bound_y << endl;
 
 	this->m_grid.resize(m_bound_x + 2);
 	for (int x = 0; x < m_bound_x + 2; x++) {
@@ -86,13 +90,17 @@ void Level::loadLevel(const std::string &levelString) {
 	}
 
 	char c;
-	for (int x = 0; x < m_bound_y; x++) {
-		for (int y = 0; y < m_bound_x; y++) {
+	for (int x = 0; x < m_bound_x; x++) {
+		for (int y = 0; y < m_bound_y; y++) {
 			levelStream >> c;
 			if (c != '.') {
+				cerr << "creating entity at " << x << " " << y << " with code " << c << endl;
 				Entity* newEnt = createEntity(c, x+1, y+1);
 				this->m_grid[x+1][y+1].push_back(newEnt);
 				this->m_entities[newEnt->m_type].push_back(newEnt);
+			}
+			else{
+				cerr << "creating empty space at " << x << " " << y << endl;
 			}
 		}
 	}
@@ -129,10 +137,23 @@ void Level::loadLevel(const std::string &levelString) {
 	this->dumpGrid();
 }
 
+void Level::spawnHealth(){
+	int x, y;
+	do{
+		x = rand() % this->m_bound_x + 1;
+		y = rand() % this->m_bound_y + 1;
+		cerr << "trying to spawn health at " << x << " " << y << endl;
+	}
+	while(this->m_grid[x][y].size() != 0);
+	Entity* health = createEntity('H', x, y);
+	this->m_grid[x][y].push_back(health);
+	this->m_entities[health->m_type].push_back(health);
+	auto coords = health->get_xy();
+	this->m_drawable->setPosition(health->m_drawable_item, coords.first, coords.second);
+}
 
 void Level::spawnBoost(){
 	int x, y;
-	srand(time(NULL));
 	do{	
 		x = rand() % this->m_bound_x + 1;
 		y = rand() % this->m_bound_y + 1;
@@ -189,26 +210,29 @@ void Level::updateEntitiesOfType(EntityType type){
 			this->m_logger->logDirection(entity->getId(), dx, dy);
 		}
 		if(dx == 0 && dy == 0) continue;
-    entity->m_drawable_item->setRotation(dx, dy);
+		entity->m_drawable_item->setRotation(dx, dy);
 		if(!checkWall(coords.first + dx, coords.second + dy)){
-      entity->m_drawable_item->setAnimate(true);
-			EntityVector* entitiesAtXY = &this->m_grid[coords.first][coords.second];
-			auto it = std::find(entitiesAtXY->begin(), entitiesAtXY->end(), entity);		
-			if(it != entitiesAtXY->end()){
-				entitiesAtXY->erase(it);
+			entity->m_drawable_item->setAnimate(true);
+			int newX = coords.first + entity->getSpeed() * dx;
+			int newY = coords.second + entity->getSpeed() * dy;
+			if(!checkWall(newX, newY)){
+				EntityVector* entitiesAtXY = &this->m_grid[coords.first][coords.second];
+				auto it = std::find(entitiesAtXY->begin(), entitiesAtXY->end(), entity);		
+				if(it != entitiesAtXY->end()){
+					entitiesAtXY->erase(it);
+				}
+				entity->set_xy(newX, newY);
+				this->m_drawable->moveTowards(entity->m_drawable_item, newX, newY);
+				this->m_grid[newX][newY].push_back(entity);
+				entity->setAllowedDirections(this->checkDirections(newX, newY));
+				this->triggerCollisions(entity);
 			}
-			entity->set_xy(coords.first + dx, coords.second + dy);
-			this->m_drawable->moveTowards(entity->m_drawable_item, coords.first + dx, coords.second + dy);
-			this->m_grid[coords.first + dx][coords.second + dy].push_back(entity);
-			entity->setAllowedDirections(this->checkDirections(coords.first + dx, coords.second + dy));
-			this->triggerCollisions(entity);
+			else {
+				entity->m_drawable_item->setAnimate(false);
+			}
 		}
-    else {
-      entity->m_drawable_item->setAnimate(false);
-    }
 	}
 }
-
 void Level::removeDeadEntities(){
 	for(auto entityTypeVecPair: this->m_entities){
 		for(auto entity: entityTypeVecPair.second){
@@ -258,11 +282,18 @@ void Level::updateGrid() {
 	if(this->m_entities[EntityType::PLAYER].size() == 0){
 		this->m_game_over = true;
 	}
+	srand(time(NULL));
 	cerr << "BOOST SIZE: " << this->m_entities[EntityType::BOOST].size() << endl;
 	if(rand() % 100 < 98 && this->m_entities[EntityType::BOOST].size() == 0){
 		cerr << "SPAWNING BOOST" << endl;
 		this->spawnBoost();
 	}
+	if(rand() % 100 < 95 && this->m_entities[EntityType::HEALTH].size() == 0){
+		cerr << "SPAWNING HEALTH" << endl;
+		this->spawnHealth();
+	}
+	cerr << "HEALTH: " << ((Player*) this->m_entities[EntityType::PLAYER][0])->health() << endl;
+	this->m_drawable->setHealthCount(((Player*) this->m_entities[EntityType::PLAYER][0])->health());
 	this->dumpGrid();
 	if(this->m_logger){
 		this->m_logger->logTickEnd();
@@ -342,3 +373,5 @@ void Level::keyPressEvent(QKeyEvent *event) {
 EntityVector Level::findEntitiesAt(int x, int y){
 	return this->m_grid[x][y];
 }
+
+

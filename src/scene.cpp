@@ -92,14 +92,19 @@ void Scene::setKeyCount(int count) {
 }
 
 void Scene::setHealthCount(int count) {
+  if(count == this->healthCount) {
+	return;
+  }
   static int offset = 0;
   if (count < this->healthCount) {
-    offset -= 10;
-    Sprite *deletedHealth = this->healthSprites.back();
-    this->deleteItem(deletedHealth);
-    this->healthSprites.pop_back();
+	for(int i = 0; i < this->healthCount - count; i++){
+	  offset -= 20;
+	  Sprite *deletedHealth = this->healthSprites.back();
+	  this->deleteItem(deletedHealth);
+	  this->healthSprites.pop_back();
+	}
   } else {
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count - this->healthCount; i++) {
       Sprite *health = new Sprite("health", 1);
       health->setSpriteScale(this->m_scale);
       health->setPosition(std::pair<int, int>(300 + offset, -280));
@@ -108,6 +113,7 @@ void Scene::setHealthCount(int count) {
       offset += 20;
     }
   }
+  this->healthCount = count;
 }
 
 void Scene::drawBackgroundTiles(std::string sprite_path) {

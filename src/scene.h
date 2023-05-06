@@ -27,7 +27,7 @@ public:
   Scene(int m_window_w, int m_window_h, int frame_between_updates, MainWindow* window);
   std::pair<int, int> translate(int x, int y);
   int scale();
-
+  void redrawItem(DrawableItem* item, std::string sprite_path);
 protected:
   void cacheSprites(const std::string dirPath);
   void keyPressEvent(QKeyEvent* event) override;

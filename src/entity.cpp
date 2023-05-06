@@ -4,7 +4,7 @@
 #include <utility>
 
 Entity::Entity(int x, int y, DrawableItem* item, char debug_char, int id) : m_x(x),
-  m_y(y), m_dx(0), m_dy(0), m_drawable_item(item), m_debug_char(debug_char), m_id(id) {
+  m_y(y), m_dx(0), m_dy(0), m_drawable_item(item), m_debug_char(debug_char), m_id(id), m_speed(1) {
   this->m_allowed_directions = {{0,1}, {0,-1}, {1,0}, {-1,0}};
 }
 
@@ -60,4 +60,8 @@ void Entity::setAllowedDirections(std::vector<std::pair<int, int>> directions) {
 
 int Entity::getId() {
   return this->m_id;
+}
+
+int Entity::getSpeed(){
+	return this->m_speed;
 }

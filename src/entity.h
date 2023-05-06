@@ -14,6 +14,7 @@ enum EntityType{
   FINISH = 'F',
   WALL = 'X',
   BOOST = 'B',
+  HEALTH = 'H',
 };
 
 class Entity {
@@ -36,7 +37,7 @@ public:
   EntityType m_type;
   void setAllowedDirections(std::vector<std::pair<int, int>> directions);
   int getId();
-
+  int getSpeed();
 protected:
   int m_id;
   int m_x, m_y;

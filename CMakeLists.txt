@@ -35,6 +35,7 @@ set(SOURCES
     src/drawable_item.cpp
     src/logger.cpp
 	src/boost.cpp
+	src/health.cpp
 	)
 
 set(HEADERS
@@ -51,6 +52,7 @@ set(HEADERS
     src/sprite.h
     src/logger.h
 	src/boost.h
+	src/health.h
 	)
 
 set(UI src/mainwindow.ui src/mainmenu.ui)

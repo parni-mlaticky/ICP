@@ -48,7 +48,8 @@ public:
 
   void removeDeadEntities();
   void checkPlayerWin();
-  void spawnBoost();	
+  void spawnBoost();
+  void spawnHealth();
   bool isGameOver();
 
 private:

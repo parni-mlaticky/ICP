@@ -4,14 +4,13 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <iostream>
+#include "multiplayerDialog.h"
 
 MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
   ui.setupUi(this);
 
   connect(ui.playButton, &QPushButton::clicked, this,
           &MainMenu::on_playButton_clicked);
-  connect(ui.multiplayerButton, &QPushButton::clicked, this,
-          &MainMenu::on_multiplayerButton_clicked);
   connect(ui.exitButton, &QPushButton::clicked, this,
           &MainMenu::on_exitButton_clicked);
 }
@@ -35,7 +34,8 @@ void MainMenu::on_playButton_clicked() {
 }
 
 void MainMenu::on_multiplayerButton_clicked() {
-  // Code to execute when the multiplayer button is clicked
+    MultiplayerDialog multiplayerDialog(this);
+    multiplayerDialog.exec();
 }
 
 void MainMenu::on_selectLevelButton_clicked() {

@@ -25,46 +25,65 @@ Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay) : m_i
   this->m_background_gfx = vector<Entity *>();
   this->m_logger = logger;
   this->m_replay = replay;
+  srand(time(NULL));
 }
 
-Entity *Level::createEntity(char c, int x, int y) {
+void Level::addEntity(char c, int x, int y, int id, bool init) {
   DrawableItem *item;
+
+  if (m_logger && !init) {
+    m_logger->logCreation(m_id-1, c, x, y);
+  }
+
+  Entity* entity;
   switch (c) {
-  case 'T': {
-    item = m_drawable->drawItem("finish", 1);
-    return (Entity *)new Finish(x, y, item, m_id++);
+    case 'T': {
+        item = m_drawable->drawItem("finish", 1);
+        entity = (Entity *)new Finish(x, y, item, id);
+        break;
+    }
+    case 'X': {
+        item = m_drawable->drawItem("wall", 1);
+        entity = (Entity *)new Wall(x, y, item, id);
+        break;
+    }
+    case 'G': {
+        item = m_drawable->drawItem("ghost", 4);
+        entity = (Entity *)new Ghost(x, y, item, id);
+        break;
+    }
+    case 'K': {
+        item = m_drawable->drawItem("key", 1);
+        entity = (Entity *)new Key(x, y, item, id);
+        break;
+    }
+    case 'S': {
+        item = m_drawable->drawItem("player", 6);
+        entity = (Entity *)new Player(x, y, true, item, id);
+        break;
+    }
+    case '.': {
+        return;
+    }
+    case 'B':{
+        item = m_drawable->drawItem("boost", 1);
+        entity = (Entity*) new Boost(x, y, item, id);
+        break;
+    }
+    case 'H':{
+        item = m_drawable->drawItem("health", 1);
+        entity = (Entity*) new Health(x, y, item, id);
+        break;
+    }
+    default: {
+        std::cerr << "Invalid entity character used: " << c << std::endl;
+        exit(1);
+    }
   }
-  case 'X': {
-    item = m_drawable->drawItem("wall", 1);
-    return (Entity *)new Wall(x, y, item, m_id++);
-  }
-  case 'G': {
-    item = m_drawable->drawItem("ghost", 4);
-    return (Entity *)new Ghost(x, y, item, m_id++);
-  }
-  case 'K': {
-    item = m_drawable->drawItem("key", 1);
-    return (Entity *)new Key(x, y, item, m_id++);
-  }
-  case 'S': {
-    item = m_drawable->drawItem("player", 6);
-    return (Entity *)new Player(x, y, true, item, m_id++);
-  }
-  case '.': {
-    return nullptr;
-  }
-  case 'B':{
-	item = m_drawable->drawItem("boost", 1);
-	return (Entity*) new Boost(x, y, item, m_id++); 
-  }
-  case 'H':{
-	item = m_drawable->drawItem("health", 1);
-	return (Entity*) new Health(x, y, item, m_id++);
-  }
-  default: {
-    throw "Invalid entity code!\n";
-  }
-  }
+
+  m_grid[x][y].push_back(entity);
+  this->m_entities[entity->m_type].push_back(entity);
+  this->m_drawable->setPosition(entity->m_drawable_item, x, y);
 }
 
 void Level::loadLevel(const std::string &levelString) {
@@ -95,9 +114,7 @@ void Level::loadLevel(const std::string &levelString) {
 			levelStream >> c;
 			if (c != '.') {
 				cerr << "creating entity at " << x << " " << y << " with code " << c << endl;
-				Entity* newEnt = createEntity(c, x+1, y+1);
-				this->m_grid[x+1][y+1].push_back(newEnt);
-				this->m_entities[newEnt->m_type].push_back(newEnt);
+				addEntity(c, x+1, y+1, m_id++, true);
 			}
 			else{
 				cerr << "creating empty space at " << x << " " << y << endl;
@@ -105,34 +122,13 @@ void Level::loadLevel(const std::string &levelString) {
 		}
 	}
 
-
 	for(int i = 0; i < m_bound_x + 2; i++) {
-		Entity* wall = createEntity('X', i, 0);
-		auto wallXY = wall->get_xy();
-		this->m_grid[wallXY.first][wallXY.second].push_back(wall);
-		this->m_entities[wall->m_type].push_back(wall);
-		wall = createEntity('X', i, m_bound_y + 1);
-		wallXY = wall->get_xy();
-		this->m_grid[wallXY.first][wallXY.second].push_back(wall);
-		this->m_entities[wall->m_type].push_back(wall);
-	}	
-	for(int i = 0; i < m_bound_y + 2; i++) {
-		Entity* wall = createEntity('X', 0, i);
-		auto wallXY = wall->get_xy();
-		this->m_grid[wallXY.first][wallXY.second].push_back(wall);
-		this->m_entities[wall->m_type].push_back(wall);
-		wall = createEntity('X', m_bound_x + 1, i);
-		wallXY = wall->get_xy();
-		this->m_grid[wallXY.first][wallXY.second].push_back(wall);
-		this->m_entities[wall->m_type].push_back(wall);
+		addEntity('X', i, 0, m_id++, true);
+		addEntity('X', i, m_bound_y + 1, m_id++, true);
 	}
-	for(int i = 0; i < m_bound_x + 2; i++) {
-		for(int j = 0; j < m_bound_y + 2; j++) {
-			for(auto ent : this->m_grid[i][j]) {
-				auto coords = ent->get_xy();
-				this->m_drawable->setPosition(ent->m_drawable_item, coords.first, coords.second);
-			}
-		}
+	for(int i = 0; i < m_bound_y + 2; i++) {
+		addEntity('X', 0, i, m_id++, true);
+		addEntity('X', m_bound_x + 1, i, m_id++, true);
 	}
 	this->dumpGrid();
 }
@@ -145,11 +141,7 @@ void Level::spawnHealth(){
 		cerr << "trying to spawn health at " << x << " " << y << endl;
 	}
 	while(this->m_grid[x][y].size() != 0);
-	Entity* health = createEntity('H', x, y);
-	this->m_grid[x][y].push_back(health);
-	this->m_entities[health->m_type].push_back(health);
-	auto coords = health->get_xy();
-	this->m_drawable->setPosition(health->m_drawable_item, coords.first, coords.second);
+	addEntity('H', x, y, m_id++, false);
 }
 
 void Level::spawnBoost(){
@@ -159,11 +151,7 @@ void Level::spawnBoost(){
 		y = rand() % this->m_bound_y + 1;
 	}
 	while(this->m_grid[x][y].size() != 0);
-	Entity* boost = createEntity('B', x, y);
-	this->m_grid[x][y].push_back(boost);
-	this->m_entities[boost->m_type].push_back(boost);
-	auto coords = boost->get_xy();
-	this->m_drawable->setPosition(boost->m_drawable_item, coords.first, coords.second);
+	addEntity('B', x, y, m_id++, false);
 }
 
 void Level::dumpGrid(){
@@ -264,12 +252,41 @@ void Level::checkPlayerWin(){
 void Level::tryToApplyDirectionsFromReplay(Entity* ent) {
   for (auto command : this->m_replay->getLastTick()) {
     if (command[0] != "D") continue;
-    if (atoi(command[1].c_str()) != ent->getId()) continue;
-    ent->setDirection(atoi(command[2].c_str()), atoi(command[3].c_str()));
+    if (stoi(command[1]) != ent->getId()) continue;
+    ent->setDirection(stoi(command[2]), stoi(command[3]));
   }
 }
 
+void Level::tryToRemoveEntitiesFromReplay(bool backwards) {
+    if (!backwards) return;
+    for (auto command: this->m_replay->getLastTick()) {
+        if (command[0] != "R") continue;
+        int id = stoi(command[1]);
+        char type = command[2][0];
+        int x = stoi(command[3]);
+        int y = stoi(command[4]);
+        addEntity(type, x, y, id++, false);
+        std::cerr << "briihh " << x << " x " << y << std::endl;
+    }
+}
+
+void Level::tryToCreateEntitiesFromReplay(bool backwards) {
+    if (backwards) return;
+    for (auto command: this->m_replay->getLastTick()) {
+        if (command[0] != "C") continue;
+        int id = stoi(command[1]);
+        char type = command[2][0];
+        int x = stoi(command[3]);
+        int y = stoi(command[4]);
+        addEntity(type, x, y, id++, false);
+        std::cerr << "briihh " << x << " x " << y << std::endl;
+    }
+}
+
 void Level::updateGrid() {
+    if (m_replay) {
+        this->tryToCreateEntitiesFromReplay(false);
+    }
 	this->updateEntitiesOfType(EntityType::PLAYER);
 	if(this->m_entities[EntityType::KEY].size() == 0){
 		this->openFinishes();
@@ -278,23 +295,28 @@ void Level::updateGrid() {
 	this->updateEntitiesOfType(EntityType::GHOST);
 	this->updateEntitiesOfType(EntityType::KEY);
 	this->updateEntitiesOfType(EntityType::FINISH);
+	this->updateEntitiesOfType(EntityType::BOOST);
+	this->updateEntitiesOfType(EntityType::HEALTH);
 	this->removeDeadEntities();
 	if(this->m_entities[EntityType::PLAYER].size() == 0){
 		this->m_game_over = true;
 	}
-	srand(time(NULL));
-	cerr << "BOOST SIZE: " << this->m_entities[EntityType::BOOST].size() << endl;
-	if(rand() % 100 < 98 && this->m_entities[EntityType::BOOST].size() == 0){
-		cerr << "SPAWNING BOOST" << endl;
-		this->spawnBoost();
-	}
-	if(rand() % 100 < 95 && this->m_entities[EntityType::HEALTH].size() == 0){
-		cerr << "SPAWNING HEALTH" << endl;
-		this->spawnHealth();
-	}
-	cerr << "HEALTH: " << ((Player*) this->m_entities[EntityType::PLAYER][0])->health() << endl;
+    if (!m_replay) {
+        if(rand() % 100 < 98 && this->m_entities[EntityType::BOOST].size() == 0){
+            cerr << "SPAWNING BOOST" << endl;
+            this->spawnBoost();
+        }
+        if(rand() % 100 < 95 && this->m_entities[EntityType::HEALTH].size() == 0){
+            cerr << "SPAWNING HEALTH" << endl;
+            this->spawnHealth();
+        }
+    }
+    if (m_replay) {
+        this->tryToRemoveEntitiesFromReplay(false);
+    }
 	this->m_drawable->setHealthCount(((Player*) this->m_entities[EntityType::PLAYER][0])->health());
 	this->dumpGrid();
+
 	if(this->m_logger){
 		this->m_logger->logTickEnd();
 	}

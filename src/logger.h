@@ -14,6 +14,8 @@ class Logger {
         void logDirection(int id, std::pair<int, int> dx_dy);
         void logDirection(int id, int dx, int dy);
         void logTickEnd();
+        void logCreation(int id, char type, int x, int y);
+        void logRemoval(int id, char type, int x, int y);
         std::string getLastTick();
         std::string getCurrentTick();
         std::string getFullLog();

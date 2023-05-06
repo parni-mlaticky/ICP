@@ -7,6 +7,9 @@
 MultiplayerDialog::MultiplayerDialog(QWidget *parent) : QDialog(parent) {
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
+  QLabel *createServerLabel = new QLabel("Create a server", this);
+  mainLayout->addWidget(createServerLabel);
+
   QHBoxLayout *serverLayout = new QHBoxLayout();
   createServerButton = new QPushButton("Create Server", this);
   createServerButton->setEnabled(false);
@@ -16,6 +19,10 @@ MultiplayerDialog::MultiplayerDialog(QWidget *parent) : QDialog(parent) {
   serverLayout->addWidget(createServerButton);
   serverLayout->addWidget(serverPortInput);
   mainLayout->addLayout(serverLayout);
+
+
+  QLabel *connectToServerLabel = new QLabel("Connect to Server", this);
+  mainLayout->addWidget(connectToServerLabel);
 
   QHBoxLayout *clientLayout = new QHBoxLayout();
   connectToServerButton = new QPushButton("Connect to Server", this);
@@ -36,12 +43,10 @@ MultiplayerDialog::MultiplayerDialog(QWidget *parent) : QDialog(parent) {
 }
 
 void MultiplayerDialog::onCreateServerButtonClicked() {
-  // Your code to create a server
   qDebug() << "Create server with port:" << serverPortInput->text();
 }
 
 void MultiplayerDialog::onConnectToServerButtonClicked() {
-  // Your code to connect to a server
   qDebug() << "Connect to server with address:" << serverAddressInput->text() << "and port:" << connectPortInput->text();
 }
 

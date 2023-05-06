@@ -30,30 +30,30 @@ Entity *Level::createEntity(char c, int x, int y) {
   DrawableItem *item;
   switch (c) {
   case 'T': {
-    item = m_drawable->drawItem("finish.png");
+    item = m_drawable->drawItem("finish", 1);
     return (Entity *)new Finish(x, y, item, m_id++);
   }
   case 'X': {
-    item = m_drawable->drawItem("wall.png");
+    item = m_drawable->drawItem("wall", 1);
     return (Entity *)new Wall(x, y, item, m_id++);
   }
   case 'G': {
-    item = m_drawable->drawItem("ghost.png");
+    item = m_drawable->drawItem("ghost", 4);
     return (Entity *)new Ghost(x, y, item, m_id++);
   }
   case 'K': {
-    item = m_drawable->drawItem("key.png");
+    item = m_drawable->drawItem("key", 1);
     return (Entity *)new Key(x, y, item, m_id++);
   }
   case 'S': {
-    item = m_drawable->drawItem("player.png");
+    item = m_drawable->drawItem("player", 6);
     return (Entity *)new Player(x, y, true, item, m_id++);
   }
   case '.': {
     return nullptr;
   }
   case 'B':{
-	item = m_drawable->drawItem("boost.png");
+	item = m_drawable->drawItem("boost", 1);
 	return (Entity*) new Boost(x, y, item, m_id++); 
   }
   default: {
@@ -71,13 +71,13 @@ void Level::loadLevel(const std::string &levelString) {
 	levelStream >> this->m_bound_y;
 
 	this->m_drawable->setGridDimensions(m_bound_x + 1, m_bound_y + 1);
-	this->m_drawable->drawBackgroundTiles("floor.png");
+	this->m_drawable->drawBackgroundTiles("floor");
 
 	std::getline(levelStream, firstLine);
 
 
 	this->m_drawable->setGridDimensions(m_bound_x+1, m_bound_y+1);
-	this->m_drawable->drawBackgroundTiles("floor.png");
+	this->m_drawable->drawBackgroundTiles("floor");
 
 
 	this->m_grid.resize(m_bound_x + 2);
@@ -189,7 +189,9 @@ void Level::updateEntitiesOfType(EntityType type){
 			this->m_logger->logDirection(entity->getId(), dx, dy);
 		}
 		if(dx == 0 && dy == 0) continue;
+    entity->m_drawable_item->setRotation(dx, dy);
 		if(!checkWall(coords.first + dx, coords.second + dy)){
+      entity->m_drawable_item->setAnimate(true);
 			EntityVector* entitiesAtXY = &this->m_grid[coords.first][coords.second];
 			auto it = std::find(entitiesAtXY->begin(), entitiesAtXY->end(), entity);		
 			if(it != entitiesAtXY->end()){
@@ -201,6 +203,9 @@ void Level::updateEntitiesOfType(EntityType type){
 			entity->setAllowedDirections(this->checkDirections(coords.first + dx, coords.second + dy));
 			this->triggerCollisions(entity);
 		}
+    else {
+      entity->m_drawable_item->setAnimate(false);
+    }
 	}
 }
 

@@ -15,7 +15,7 @@ class Scene : public Drawable, public QGraphicsScene {
 public:
   // Drawable
   void render(int frame_n);
-  DrawableItem* drawItem(std::string sprite_path) override;
+  DrawableItem* drawItem(std::string sprite_path, int frame_count) override;
   void deleteItem(DrawableItem* item) override;
   void setGridDimensions(int x, int y) override;
   void moveTowards(DrawableItem* item, int row, int col) override;
@@ -29,6 +29,7 @@ public:
   int scale();
 
 protected:
+  void cacheSprites(const std::string dirPath);
   void keyPressEvent(QKeyEvent* event) override;
   void addBackgroundFloor(int x, int y);
   MainWindow* m_window;

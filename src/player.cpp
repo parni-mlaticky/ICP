@@ -19,11 +19,14 @@ Player::Player(int x, int y, bool isLocal, DrawableItem* item, int id) : Entity(
 
 
 void Player::boostCountdown(){
+  // TODO HACK maybe we should do this in the main thread or add mutex ??
+  this->m_drawable_item->setSpriteVariant("enraged");
 	while(this->m_boost_seconds_left > 0){
 		std::cerr << "boost seconds left: " << this->m_boost_seconds_left << std::endl;
 		std::this_thread::sleep_for(std::chrono::seconds(1));
 		this->m_boost_seconds_left--;
 	}
+  this->m_drawable_item->setSpriteVariant();
 }
 
 void Player::keyPressEvent(QKeyEvent *event) {

@@ -34,7 +34,8 @@ set(SOURCES
     src/drawable.cpp
     src/drawable_item.cpp
     src/logger.cpp
-	src/boost.cpp
+	  src/boost.cpp
+    src/multiplayerDialog.cpp
 	)
 
 set(HEADERS
@@ -50,7 +51,8 @@ set(HEADERS
     src/scene.h
     src/sprite.h
     src/logger.h
-	src/boost.h
+	  src/boost.h
+    src/multiplayerDialog.h
 	)
 
 set(UI src/mainwindow.ui src/mainmenu.ui)

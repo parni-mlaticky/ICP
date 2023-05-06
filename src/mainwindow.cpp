@@ -33,7 +33,6 @@ void MainWindow::initialize(){
 
 	m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
 	m_logger = new Log::Logger();
-  m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
   // this->m_scene->setHealthCount(3);
   timer = new QTimer(this);
   connect(timer, &QTimer::timeout, this, &MainWindow::update);
@@ -55,6 +54,7 @@ MainWindow::MainWindow(QString &levelFilePath, bool hosting, std::string host, i
     // TODO wait for connection.
   }
 
+  m_level = new Level((Drawable *)m_scene, this->m_logger, nullptr);
   //timer->start(this->m_gfx_tick_ms);
 }
 
@@ -63,8 +63,11 @@ MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QW
 
   this->initialize();
   if(gameMode == MainWindow::GameMode::Replay) {
+    std::cerr << "AAA " << levelFilePath.toStdString();
       m_replay = new Log::Replay(loadLevelFile(levelFilePath));
   }
+
+  m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
   std::string levelString = this->loadLevelFile(levelFilePath);
   m_level->loadLevel(levelString);
   m_logger->logGrid(levelString);
@@ -116,8 +119,6 @@ void MainWindow::onRecive(std::string message) {
 }
 
 void MainWindow::update() {
-  std::cerr << "update" << std::endl;
-  return;
   ++this->m_frame_counter;
 
   if (this->m_replay) {

@@ -82,11 +82,7 @@ std::string Logger::getGrid() {
 }
 
 Replay::Replay(std::string str) : m_tick(0) {
-    m_log = ReplayLog();
     std::string word = "";
-    ReplayCommand command = ReplayCommand();
-    ReplayTick tick = ReplayTick();
-
     // Reading grid
     int lines = -1;
     for (auto ch : str) {
@@ -102,10 +98,19 @@ Replay::Replay(std::string str) : m_tick(0) {
     }
 
     m_grid = word;
-    word = "";
+    std::cerr << str[word.size()] << "xdd\n";
+    std::string strr = std::string(&str.c_str()[word.size()-2]);
+    m_log = *readCommands(strr);
+}
+
+ReplayLog* Replay::readCommands(std::string str) {
+    ReplayLog* log = new ReplayLog();
+    std::string word = "";
+    ReplayCommand command = ReplayCommand();
+    ReplayTick tick = ReplayTick();
 
     // Reading commands
-    auto iter = str.begin() + m_grid.size()-1;
+    auto iter = str.begin();
     while (iter != str.end()) {
         iter++;
         if (*iter == '\n') {
@@ -133,7 +138,7 @@ Replay::Replay(std::string str) : m_tick(0) {
             if (command.size() > 0) {
                 tick.push_back(command);
             }
-            m_log.push_back(tick);
+            log->push_back(tick);
             command = ReplayCommand();
             tick = ReplayTick();
             continue;
@@ -141,6 +146,8 @@ Replay::Replay(std::string str) : m_tick(0) {
 
         word += *iter;
     }
+
+    return log;
 }
 
 std::string Replay::getGrid() {
@@ -165,4 +172,12 @@ void Replay::setNextTick() {
 
 bool Replay::isReplayFinished() {
     return this->m_tick == (int) m_log.size();
+}
+
+void Replay::appendTick(std::string commands) {
+    auto log = readCommands(commands);
+
+    for (auto entry : *log) {
+        m_log.push_back(entry);
+    }
 }

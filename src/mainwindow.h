@@ -11,10 +11,21 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  explicit MainWindow(QString &levelFilePath, QWidget *parent = nullptr);
+  enum class GameMode {
+      Play,
+      Replay
+  };
+  explicit MainWindow(QString &levelFilePath,MainWindow::GameMode gameMode, QWidget *parent = nullptr);
   void keyPressEvent(QKeyEvent *event);
   ~MainWindow() override;
   std::string loadLevelFile(QString levelFilePath);
+
+protected:
+  void closeEvent(QCloseEvent *event) override;
+
+signals:
+  void windowClosed();
+  void openMainMenu();
 
 private:
   void update();
@@ -28,4 +39,6 @@ private:
   int m_gfx_tick_ms;
   int m_animation_frames;
   int m_frame_counter;
+  MainWindow::GameMode gamemode;
+  QTimer *timer;
 };

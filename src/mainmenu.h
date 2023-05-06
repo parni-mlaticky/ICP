@@ -13,11 +13,16 @@ public:
   explicit MainMenu(QWidget *parent = nullptr);
   ~MainMenu();
 
+public slots:
+    void onMainWindowClosed();
+
 private:
   Ui::Form ui;
   MainWindow *mainWindow = nullptr;
   QString levelFile = "./levels/level.txt";
+  QString replayFile = "";
   const QString LEVEL_FOLDER_PATH = "./levels";
+  const QString REPLAY_FOLDER_PATH = "./replay";
 
 signals:
   void levelSelected(const QString &levelFilePath);

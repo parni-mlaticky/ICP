@@ -12,7 +12,7 @@
 #include "logger.h"
 #include <fstream>
 
-MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
+MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QWidget *parent)
     : QMainWindow(parent), m_levelLoaded(false) {
 
   const int height = 600;
@@ -33,7 +33,10 @@ MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
   m_view->setRenderHint(QPainter::Antialiasing);
   m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-  m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/game.rpl"));
+  m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
+  if(gameMode == MainWindow::GameMode::Replay) {
+      m_replay = new Log::Replay(loadLevelFile(levelFilePath));
+  }
   m_logger = new Log::Logger();
 
   m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
@@ -43,7 +46,7 @@ MainWindow::MainWindow(QString &levelFilePath, QWidget *parent)
 
   this->m_scene->setHealthCount(3);
 
-  QTimer *timer = new QTimer(this);
+  timer = new QTimer(this);
 
   connect(timer, &QTimer::timeout, this, &MainWindow::update);
   timer->start(this->m_gfx_tick_ms);
@@ -66,14 +69,21 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   this->m_level->keyPressEvent(event);
 }
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+    emit windowClosed();
+    QMainWindow::closeEvent(event);
+}
+
 void MainWindow::update() {
   ++this->m_frame_counter;
 
   if (this->m_replay) {
     if (this->m_replay->isReplayFinished()) {
+      disconnect(timer, &QTimer::timeout, this, &MainWindow::update);
+      timer->stop();
       // TODO show menu from here
       std::cerr << "Finished replaying " << this->m_replay->getMaxTick() << " logical ticks."<< std::endl;
-      exit(0);
+      this->close();
     }
   }
 
@@ -92,7 +102,7 @@ void MainWindow::update() {
     std::ofstream file("replay/game.rpl");
     file << m_logger->getFullLog();
     file.close();
-    exit(0);
+    this->close();
   }
 }
 

@@ -36,7 +36,6 @@ public:
   // entities TODO maybe move this to private?
   std::unordered_map<EntityType, EntityVector> m_entities;
   std::vector<std::pair<int, int>> getCollisionCoordinates();
-  void tryToApplyDirectionsFromReplay(Entity* ent);
 
   template <typename T> std::vector<T *> findEntities();
 
@@ -56,9 +55,12 @@ private:
   std::vector<std::pair<int, int>> checkDirections(int x, int y);
   Grid m_grid;
   EntityVector m_background_gfx;
-  Entity *createEntity(char c, int x, int y);
+  void addEntity(char c, int x, int y, int id, bool init);
   void displayGrid();
   void addBackgroundFloor(int x, int y);
+  void tryToApplyDirectionsFromReplay(Entity* ent);
+  void tryToRemoveEntitiesFromReplay(bool backwards);
+  void tryToCreateEntitiesFromReplay(bool backwards);
   Log::Logger* m_logger;
   Log::Replay* m_replay;
   int m_id;

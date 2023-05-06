@@ -13,7 +13,6 @@ Sprite::Sprite(std::string sprite_path, int animation_frames) : m_current_animat
 
   setFlag(QGraphicsItem::ItemIsFocusable, true);
   this->m_sprite_path = sprite_path;
-  setPos(0, 0);
 }
 
 void Sprite::setZ(int z) {

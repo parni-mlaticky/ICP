@@ -42,6 +42,13 @@ void Logger::logTickEnd() {
     this->m_log.push_back("");
 }
 
+void Logger::logCreation(int id, char type, int x, int y) {
+    this->m_log[m_tick_number].append("C " + std::to_string(id) + " " + type + " " + std::to_string(x) + " " + std::to_string(y) + "\n");
+}
+void Logger::logRemoval(int id, char type, int x, int y) {
+    this->m_log[m_tick_number].append("R " + std::to_string(id) + " " + type + " " + std::to_string(x) + " " + std::to_string(y) + "\n");
+}
+
 std::string Logger::getLastTick() {
     if (m_tick_number == 1) {
         return "";
@@ -77,7 +84,7 @@ Replay::Replay(std::string str) : m_tick(0) {
     for (auto ch : str) {
         word += ch;
         if (ch == ' ' && lines == -1) {
-            lines = atoi(word.c_str())+1;
+            lines = stoi(word)+1;
             continue;
         }
         lines -= ch == '\n';

@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QPushButton>
 #include <QLineEdit>
-
+#include "server.h"
 class MultiplayerDialog: public QDialog {
     Q_OBJECT
 
@@ -13,15 +13,18 @@ class MultiplayerDialog: public QDialog {
 
     private slots:
         void onCreateServerButtonClicked();
-        void onConnectToServerButtonClicked();
+        Client* onConnectToServerButtonClicked();
         void onInputChanged();
-
+		void closeEvent(QCloseEvent *event) override;
     private:
         QPushButton *createServerButton;
         QPushButton *connectToServerButton;
         QLineEdit *serverPortInput;
         QLineEdit *serverAddressInput;
         QLineEdit *connectPortInput;
+		QSharedPointer<Server> server;
+	signals:
+		void windowClosed();
 };
 
 #endif

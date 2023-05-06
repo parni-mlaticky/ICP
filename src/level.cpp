@@ -117,7 +117,7 @@ void Level::loadLevel(const std::string &levelString) {
 				addEntity(c, x+1, y+1, m_id++, true);
 			}
 			else{
-				cerr << "creating empty space at " << x << " " << y << endl;
+				//cerr << "creating empty space at " << x << " " << y << endl;
 			}
 		}
 	}

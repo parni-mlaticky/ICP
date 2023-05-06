@@ -12,6 +12,7 @@ class MainMenu : public QWidget {
 public:
   explicit MainMenu(QWidget *parent = nullptr);
   ~MainMenu();
+  QString getLevelPath();
 
 public slots:
     void onMainWindowClosed();

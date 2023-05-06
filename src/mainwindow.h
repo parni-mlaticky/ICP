@@ -6,7 +6,8 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QMainWindow>
-
+#include "client.h"
+#include "server.h"
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -15,7 +16,10 @@ public:
       Play,
       Replay
   };
+  // this constructor is used for singleplayer or replays
   explicit MainWindow(QString &levelFilePath,MainWindow::GameMode gameMode, QWidget *parent = nullptr);
+  // this constructor is used for multiplayer
+  explicit MainWindow(QString &levelContent, Client* client, Server* server, QWidget *parent = nullptr);
   void keyPressEvent(QKeyEvent *event);
   ~MainWindow() override;
   std::string loadLevelFile(QString levelFilePath);
@@ -41,4 +45,8 @@ private:
   int m_frame_counter;
   MainWindow::GameMode gamemode;
   QTimer *timer;
+  // client or server stored here
+  Client* MPclient;
+  Server* MPserver;
+  void initialize();
 };

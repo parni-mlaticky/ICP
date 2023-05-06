@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "client.h"
 #include "scene.h"
-#include "server.h"
 #include <QDebug>
 #include <QKeyEvent>
 #include <QTimer>
@@ -11,45 +10,57 @@
 #include <thread>
 #include "logger.h"
 #include <fstream>
+#include "server.h"
+
+void MainWindow::initialize(){
+	const int height = 600;
+	const int width = 800;
+
+	this->m_log_tick_ms = 200;
+	this->m_gfx_tick_ms = 1000 / 60;
+
+	this->m_animation_frames = m_log_tick_ms / m_gfx_tick_ms;
+	this->m_frame_counter = m_animation_frames - 1;
+	this->m_scene =
+		new Scene(width, height, this->m_animation_frames, (MainWindow *)this);
+
+	this->m_view = new QGraphicsView((Scene *)m_scene, this);
+	setWindowTitle("Parni pacman");
+	setFixedSize(width, height);
+	setCentralWidget(m_view);
+	m_view->setRenderHint(QPainter::Antialiasing);
+	m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
+	m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
+	m_logger = new Log::Logger();
+    m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
+    this->m_scene->setHealthCount(3);
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &MainWindow::update);
+    timer->start(this->m_gfx_tick_ms);
+}
+
+MainWindow::MainWindow(QString &levelContent, Client* client, Server* server, QWidget *parent) : QMainWindow(parent), m_levelLoaded(false) {
+	this->initialize();
+	std::string levelString = levelContent.toStdString();
+	this->m_level->loadLevel(levelString);
+	this->m_logger->logGrid(levelString);
+	this->MPclient = client;
+	this->MPserver = server;
+}
 
 MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QWidget *parent)
     : QMainWindow(parent), m_levelLoaded(false) {
 
-  const int height = 600;
-  const int width = 800;
-
-  this->m_log_tick_ms = 200;
-  this->m_gfx_tick_ms = 1000 / 60;
-
-  this->m_animation_frames = m_log_tick_ms / m_gfx_tick_ms;
-  this->m_frame_counter = m_animation_frames - 1;
-  this->m_scene =
-      new Scene(width, height, this->m_animation_frames, (MainWindow *)this);
-
-  this->m_view = new QGraphicsView((Scene *)m_scene, this);
-  setWindowTitle("Parni pacman");
-  setFixedSize(width, height);
-  setCentralWidget(m_view);
-  m_view->setRenderHint(QPainter::Antialiasing);
-  m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
-  m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
+  this->initialize();
   if(gameMode == MainWindow::GameMode::Replay) {
       m_replay = new Log::Replay(loadLevelFile(levelFilePath));
   }
-  m_logger = new Log::Logger();
-
-  m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
   std::string levelString = this->loadLevelFile(levelFilePath);
   m_level->loadLevel(levelString);
   m_logger->logGrid(levelString);
 
-  this->m_scene->setHealthCount(3);
 
-  timer = new QTimer(this);
-
-  connect(timer, &QTimer::timeout, this, &MainWindow::update);
-  timer->start(this->m_gfx_tick_ms);
 }
 
 std::string MainWindow::loadLevelFile(QString levelFilePath) {

@@ -42,17 +42,22 @@ MultiplayerDialog::MultiplayerDialog(QWidget *parent) : QDialog(parent) {
   connect(serverAddressInput, &QLineEdit::textChanged, this, &MultiplayerDialog::onInputChanged);
   connect(connectPortInput, &QLineEdit::textChanged, this, &MultiplayerDialog::onInputChanged);
   connect(this, &MultiplayerDialog::windowClosed, parent, &MainMenu::show);
+  connect(this, SIGNAL(connectionChosen(bool, std::string, int)), parent, SLOT(on_mp_mode_selected(bool, std::string, int)));
 }
 
 void MultiplayerDialog::onCreateServerButtonClicked() {
-  QString levelPath = ((MainMenu*) this->parent())->getLevelPath();
-  this->server = QSharedPointer<Server>::create(this, serverPortInput->text().toInt(), levelPath);
-  qDebug() << "Create server with port:" << serverPortInput->text();
+  // QString levelPath = ((MainMenu*) this->parent())->getLevelPath();
+  // this->server = QSharedPointer<Server>::create(this, serverPortInput->text().toInt(), levelPath);
+  // qDebug() << "Create server with port:" << serverPortInput->text();
+  int port = serverPortInput->text().toInt();
+  connectionChosen(true, "" , port);
 }
 
-Client* MultiplayerDialog::onConnectToServerButtonClicked() {
-  Client* client = new Client(this, serverAddressInput->text(), connectPortInput->text().toInt());
-  return client;
+void MultiplayerDialog::onConnectToServerButtonClicked() {
+  // Client* client = new Client(this, serverAddressInput->text(), connectPortInput->text().toInt());
+  int port = connectPortInput->text().toInt();
+  std::string host = serverAddressInput->text().toStdString();
+  connectionChosen(false, host, port);
 }
 
 void MultiplayerDialog::onInputChanged() {

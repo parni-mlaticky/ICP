@@ -10,7 +10,7 @@
 #include <thread>
 #include "logger.h"
 #include <fstream>
-#include "server.h"
+#include <QString>
 
 void MainWindow::initialize(){
 	const int height = 600;
@@ -33,20 +33,29 @@ void MainWindow::initialize(){
 
 	m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
 	m_logger = new Log::Logger();
-    m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
-    this->m_scene->setHealthCount(3);
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &MainWindow::update);
-    timer->start(this->m_gfx_tick_ms);
+  m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
+  // this->m_scene->setHealthCount(3);
+  timer = new QTimer(this);
+  connect(timer, &QTimer::timeout, this, &MainWindow::update);
 }
 
-MainWindow::MainWindow(QString &levelContent, Client* client, Server* server, QWidget *parent) : QMainWindow(parent), m_levelLoaded(false) {
+MainWindow::MainWindow(QString &levelFilePath, bool hosting, std::string host, int port, QWidget *parent) : QMainWindow(parent), m_levelLoaded(false) {
 	this->initialize();
-	std::string levelString = levelContent.toStdString();
-	this->m_level->loadLevel(levelString);
-	this->m_logger->logGrid(levelString);
-	this->MPclient = client;
-	this->MPserver = server;
+
+  if (hosting) {
+    this->mp_server = new Remote(this, port);
+    std::string levelString = loadLevelFile(levelFilePath);
+    // TODO Wair for connection.
+    // TODO send level
+    this->m_level->loadLevel(levelString);
+    this->m_logger->logGrid(levelString);
+  }
+  else {
+    this->mp_client = new Remote(this, QString::fromStdString(host), port);
+    // TODO wait for connection.
+  }
+
+  //timer->start(this->m_gfx_tick_ms);
 }
 
 MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QWidget *parent)
@@ -60,7 +69,24 @@ MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QW
   m_level->loadLevel(levelString);
   m_logger->logGrid(levelString);
 
+  timer->start(this->m_gfx_tick_ms);
 
+}
+
+void MainWindow::on_connected_to_client() {
+  std::cerr << "MainWindow: Client has connected to this server!" << std::endl;
+  emit sendMessage("Hello world z main window serveru!");
+  // Poslat level
+  // this->mp_server->send(this->m_logger->getGrid());
+  // Zapnout clock
+}
+
+void MainWindow::on_connected_to_server() {
+  std::cerr << "MainWindow: This client has connected to a server!" << std::endl;
+  emit sendMessage("Hello world z main window klienta!");
+  // Přijmout level
+  // std::cerr << this->mp_client->readUntill('\n');
+  // Zapnout clock
 }
 
 std::string MainWindow::loadLevelFile(QString levelFilePath) {
@@ -85,7 +111,13 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     QMainWindow::closeEvent(event);
 }
 
+void MainWindow::onRecive(std::string message) {
+  std::cerr << "MainWindow: Recived new message: " << message << std::endl;
+}
+
 void MainWindow::update() {
+  std::cerr << "update" << std::endl;
+  return;
   ++this->m_frame_counter;
 
   if (this->m_replay) {

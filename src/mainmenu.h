@@ -2,6 +2,7 @@
 #define MAINMENU_H
 
 #include "ui_mainmenu.h"
+#include "multiplayerDialog.h"
 #include <QWidget>
 
 class MainWindow;
@@ -24,6 +25,7 @@ private:
   QString replayFile = "";
   const QString LEVEL_FOLDER_PATH = "./levels";
   const QString REPLAY_FOLDER_PATH = "./replay";
+  MultiplayerDialog* multiplayerDialog;
 
 signals:
   void levelSelected(const QString &levelFilePath);
@@ -34,6 +36,7 @@ private slots:
   void on_exitButton_clicked();
   void on_replayButton_clicked();
   void on_selectLevelButton_clicked();
+  void on_mp_mode_selected(bool hosting, std::string host, int port);
 };
 
 #endif

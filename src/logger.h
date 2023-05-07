@@ -19,6 +19,7 @@ class Logger {
         std::string getLastTick();
         std::string getCurrentTick();
         std::string getFullLog();
+        std::string getGrid();
 
     protected:
         std::vector<std::string> m_log;

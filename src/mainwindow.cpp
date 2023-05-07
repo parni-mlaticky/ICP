@@ -1,16 +1,4 @@
 #include "mainwindow.h"
-#include "client.h"
-#include "scene.h"
-#include <QDebug>
-#include <QKeyEvent>
-#include <QTimer>
-#include <QVBoxLayout>
-#include <chrono>
-#include <iostream>
-#include <thread>
-#include "logger.h"
-#include <fstream>
-#include "server.h"
 
 void MainWindow::initialize(){
 	const int height = 600;
@@ -40,7 +28,7 @@ void MainWindow::initialize(){
     timer->start(this->m_gfx_tick_ms);
 }
 
-MainWindow::MainWindow(QString &levelContent, Client* client, Server* server, QWidget *parent) : QMainWindow(parent), m_levelLoaded(false) {
+MainWindow::MainWindow(QString &levelContent, Client* client, Server* server, QWidget *parent) : QMainWindow(parent){
 	this->initialize();
 	std::string levelString = levelContent.toStdString();
 	this->m_level->loadLevel(levelString);
@@ -50,7 +38,7 @@ MainWindow::MainWindow(QString &levelContent, Client* client, Server* server, QW
 }
 
 MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QWidget *parent)
-    : QMainWindow(parent), m_levelLoaded(false) {
+    : QMainWindow(parent){
 
   this->initialize();
   if(gameMode == MainWindow::GameMode::Replay) {

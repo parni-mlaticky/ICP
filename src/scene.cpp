@@ -1,10 +1,5 @@
 #include "scene.h"
-#include "drawable_item.h"
 #include "mainwindow.h"
-#include <utility>
-#include <iostream>
-#include <QPixmapCache>
-#include <QDir>
 
 Scene::Scene(int window_w, int window_h, int frames_between_updates, MainWindow* window) {
   this->m_window_w = window_w;

@@ -1,7 +1,4 @@
 #include "logger.h"
-#include <exception>
-#include <iostream>
-#include <vector>
 
 using namespace Log;
 

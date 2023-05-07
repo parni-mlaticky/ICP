@@ -4,6 +4,8 @@
 #include "drawable_item.h"
 #include <string>
 
+// TODO comment
+
 class Drawable {
 public:
   virtual void render(int frame_n) = 0;

@@ -5,6 +5,9 @@
 class Client : public QObject {
   Q_OBJECT
 
+
+// TODO comment
+
 public:
   Client(QObject *parent = nullptr, QString hostname = "", int port = 9999);
   ~Client();

@@ -5,8 +5,11 @@
 #include <QCoreApplication>
 #include <QObject>
 #include "client.h"
+#include <QDialog>
+#include <QWidget>
 
 
+// TODO comment
 class Server : public QObject {
 	Q_OBJECT
 public:

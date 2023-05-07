@@ -1,9 +1,6 @@
 #include "ghost.h"
-#include <QKeyEvent>
-#include <QPainter>
-#include <iostream>
 
-Ghost::Ghost(int x, int y, DrawableItem* item, int id) : Entity(x, y, item, 'G', id), m_steps_left(1) {
+Ghost::Ghost(int x, int y, DrawableItem* item, int id) : Entity(x, y, item, id), m_steps_left(1) {
     m_can_move = true;
 	m_type = EntityType::GHOST;
     m_allowed_directions = std::vector<std::pair<int, int>>();

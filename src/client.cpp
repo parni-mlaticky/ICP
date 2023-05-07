@@ -1,6 +1,7 @@
 #include "client.h"
 #include "mainwindow.h"
 #include <QDialog>
+
 Client::Client(QObject *parent, QString hostname, int port) : QObject(parent) {
     socket = new QTcpSocket(this);
     connect(socket, &QTcpSocket::connected, this, &Client::onConnected);

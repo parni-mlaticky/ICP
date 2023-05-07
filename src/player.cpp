@@ -1,17 +1,6 @@
 #include "player.h"
-#include "entity.h"
-#include "wall.h"
-#include "ghost.h"
-#include "key.h"
-#include "finish.h"
-#include <QDebug>
-#include <QKeyEvent>
-#include <QPainter>
-#include <iostream>
-#include <thread>
-#include <chrono>
-Player::Player(int x, int y, bool isLocal, DrawableItem* item, int id) : Entity(x ,y, item, 'P', id), m_local_player(isLocal) {
-  m_speed = 1;
+
+Player::Player(int x, int y, bool isLocal, DrawableItem* item, int id) : Entity(x ,y, item, id), m_local_player(isLocal) {
   m_key_count = 0;
   m_can_move = true;
   m_type = EntityType::PLAYER;
@@ -102,6 +91,7 @@ void Player::onCollision(Entity* other) {
 		}
 		case EntityType::KEY: {
 				this->m_key_count++;
+				other->kill();
 				break;
 		}
 		case EntityType::FINISH: {

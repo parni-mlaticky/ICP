@@ -5,8 +5,13 @@
 #include <QPixmap>
 #include <utility>
 #include "drawable_item.h"
-
+#include <iostream>
+#include <QPixmapCache>
+#include <qnamespace.h>
+#include <qpixmapcache.h>
 class Scene;
+
+// TODO Comment
 
 class Sprite : public QObject, public QGraphicsPixmapItem, public DrawableItem {
 Q_OBJECT

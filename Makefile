@@ -19,4 +19,7 @@ clean:
 	rm -rf $(BUILDDIR)
 
 pack:
-	zip xhucov00-xkolou05-xzobal01.zip Makefile README.md src/* CMakeLists.txt
+	zip xhucov00-xkolou05-xzobal01.zip Makefile README.md src/* CMakeLists.txt LICENSE Doxyfile
+
+doxygen:
+	doxygen Doxyfile

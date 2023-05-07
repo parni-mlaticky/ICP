@@ -5,6 +5,14 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include "server.h"
+
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QDebug>
+#include "mainwindow.h"
+
+// TODO comment
 class MultiplayerDialog: public QDialog {
     Q_OBJECT
 

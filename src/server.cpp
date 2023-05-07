@@ -1,7 +1,5 @@
 #include "server.h"
 #include "mainwindow.h"
-#include <QDialog>
-#include <QWidget>
 Server::Server(QObject* parent, int port, QString levelPath) : QObject(parent) {
 	server = new QTcpServer(this);
 	connect(server, SIGNAL(newConnection()), this, SLOT(newConnection()));

@@ -22,7 +22,6 @@ Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay) : m_i
   this->m_drawable = drawable;
   this->m_bound_x = -1;
   this->m_bound_y = -1;
-  this->m_background_gfx = vector<Entity *>();
   this->m_logger = logger;
   this->m_replay = replay;
   srand(time(NULL));
@@ -201,8 +200,8 @@ void Level::updateEntitiesOfType(EntityType type){
 		entity->m_drawable_item->setRotation(dx, dy);
 		if(!checkWall(coords.first + dx, coords.second + dy)){
 			entity->m_drawable_item->setAnimate(true);
-			int newX = coords.first + entity->getSpeed() * dx;
-			int newY = coords.second + entity->getSpeed() * dy;
+			int newX = coords.first + dx;
+			int newY = coords.second + dy;
 			if(!checkWall(newX, newY)){
 				EntityVector* entitiesAtXY = &this->m_grid[coords.first][coords.second];
 				auto it = std::find(entitiesAtXY->begin(), entitiesAtXY->end(), entity);		

@@ -4,6 +4,10 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <iostream>
+#include <exception>
+// TODO Comments
+
 
 namespace Log {
 class Logger {

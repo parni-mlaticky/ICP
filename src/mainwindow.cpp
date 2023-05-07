@@ -23,6 +23,10 @@ void MainWindow::initialize(){
 	m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
 	m_logger = new Log::Logger();
   timer = new QTimer(this);
+
+  this->mp_server = nullptr;
+  this->mp_client = nullptr;
+  this->m_level = nullptr;
   connect(timer, &QTimer::timeout, this, &MainWindow::update);
 }
 
@@ -32,18 +36,12 @@ MainWindow::MainWindow(QString &levelFilePath, bool hosting, std::string host, i
   if (hosting) {
     this->mp_server = new Remote(this, port);
     std::string levelString = loadLevelFile(levelFilePath);
-    // TODO Wair for connection.
-    // TODO send level
-    //this->m_level->loadLevel(levelString);
     this->m_logger->logGrid(levelString);
   }
   else {
     this->mp_client = new Remote(this, QString::fromStdString(host), port);
-    // TODO wait for connection.
+    this->m_replay = new Log::Replay("");
   }
-
-  m_level = new Level((Drawable *)m_scene, this->m_logger, nullptr);
-  //timer->start(this->m_gfx_tick_ms);
 }
 
 MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QWidget *parent)
@@ -65,19 +63,43 @@ MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QW
 
 void MainWindow::on_connected_to_client() {
   std::cerr << "MainWindow: Client has connected to this server!" << std::endl;
-  emit sendMessage("Hello world z main window serveru!");
+
+  // emit sendMessage("Hello world z main window serveru!");
   // Poslat level
-  // this->mp_server->send(this->m_logger->getGrid());
+  emit sendMessage(this->m_logger->getGrid());
   // Zapnout clock
+  m_level = new Level((Drawable *)m_scene, this->m_logger, nullptr);
+  m_level->loadLevel(this->m_logger->getGrid());
+  timer->start(this->m_gfx_tick_ms);
 }
 
 void MainWindow::on_connected_to_server() {
   std::cerr << "MainWindow: This client has connected to a server!" << std::endl;
-  emit sendMessage("Hello world z main window klienta!");
+  // emit sendMessage("Hello world z main window klienta!");
   // Přijmout level
   // std::cerr << this->mp_client->readUntill('\n');
   // Zapnout clock
 }
+
+void MainWindow::onRecive(std::string message) {
+  std::cerr << "MainWindow: Recived new message: " << message << std::endl;
+  if (mp_client) {
+    this->m_replay->stream(message);
+    // If the game wasn't started yet, but we already have
+    // the map, start it!
+    if (!m_level && this->m_replay->hasGrid()) {
+      m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
+      m_logger->logGrid(this->m_replay->getGrid());
+      m_level->loadLevel(this->m_replay->getGrid());
+      timer->start(this->m_gfx_tick_ms);
+    }
+  }
+
+  else if (mp_server) {
+    // TODO
+  }
+}
+
 
 std::string MainWindow::loadLevelFile(QString levelFilePath) {
   QFile file(levelFilePath);
@@ -98,9 +120,14 @@ void MainWindow::mousePressEvent(QGraphicsSceneMouseEvent* event){
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
+  // During MP windows can get this event even before the level is created.
+  if (!m_level) {
+    return;
+  }
+
 	// replay controls
 	// TODO BIG HACK
-	if(this->m_replay){
+	if(this->m_replay && !mp_client){
 		if(event->key() == Qt::Key_Space){
 			if(this->m_replay->isPaused()){
 				this->timer->start();
@@ -128,15 +155,11 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     QMainWindow::closeEvent(event);
 }
 
-void MainWindow::onRecive(std::string message) {
-  std::cerr << "MainWindow: Recived new message: " << message << std::endl;
-}
-
 void MainWindow::update() {
   ++this->m_frame_counter;
 
   if (this->m_replay) {
-    if (this->m_replay->isReplayFinished()) {
+    if (this->m_replay->isReplayFinished() && !mp_client) {
       disconnect(timer, &QTimer::timeout, this, &MainWindow::update);
       timer->stop();
       // TODO show menu from here
@@ -149,16 +172,26 @@ void MainWindow::update() {
 	  this->timer->stop();
   }
 
-  if (this->m_frame_counter == this->m_animation_frames) {
+  if (this->m_frame_counter == this->m_animation_frames || (mp_client && this->m_replay->getTick() != this->m_replay->getMaxTick())) {
+    // If the interpolation from the previous tick finished, but the new one
+    // was not recived yet, nothing moves.
+    if (this->mp_client && this->m_replay->getTick() == this->m_replay->getMaxTick()) {
+        return;
+    }
+
     this->m_level->updateGrid();
+    if (mp_server) {
+      emit sendMessage(this->m_logger->getLastTick());
+    }
     this->m_frame_counter = 0;
+
     if (this->m_replay) {
-		if(this->m_replay->playingBackwards()){
-			this->m_replay->setPreviousTick();
-		}
-		else{
-			this->m_replay->setNextTick();
-		}
+      if(this->m_replay->playingBackwards()){
+        this->m_replay->setPreviousTick();
+      }
+      else{
+        this->m_replay->setNextTick();
+      }
     }
   }
   this->m_scene->render(m_frame_counter);

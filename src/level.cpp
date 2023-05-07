@@ -22,7 +22,6 @@ Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay) : m_i
   this->m_drawable = drawable;
   this->m_bound_x = -1;
   this->m_bound_y = -1;
-  this->m_background_gfx = vector<Entity *>();
   this->m_logger = logger;
   this->m_replay = replay;
   srand(time(NULL));
@@ -117,7 +116,7 @@ void Level::loadLevel(const std::string &levelString) {
 				addEntity(c, x+1, y+1, m_id++, true);
 			}
 			else{
-				cerr << "creating empty space at " << x << " " << y << endl;
+				//cerr << "creating empty space at " << x << " " << y << endl;
 			}
 		}
 	}
@@ -131,6 +130,7 @@ void Level::loadLevel(const std::string &levelString) {
 		addEntity('X', m_bound_x + 1, i, m_id++, true);
 	}
 	this->dumpGrid();
+    this->m_drawable->setHealthCount(3);
 }
 
 void Level::spawnHealth(){
@@ -182,6 +182,9 @@ void Level::updateEntitiesOfType(EntityType type){
 		this->triggerCollisions(entity);
 		if (m_replay) {
 			tryToApplyDirectionsFromReplay(entity);
+			if(type == PLAYER){
+				entity->update();
+			}
 		}
 		else {
 			entity->update();
@@ -194,30 +197,29 @@ void Level::updateEntitiesOfType(EntityType type){
 		this->m_drawable->setPosition(entity->m_drawable_item, coords.first, coords.second);
 		if(!entity->canMove()) continue;
 		entity->setAllowedDirections(this->checkDirections(coords.first, coords.second));
-		if(m_logger){
-			this->m_logger->logDirection(entity->getId(), dx, dy);
-		}
 		if(dx == 0 && dy == 0) continue;
 		entity->m_drawable_item->setRotation(dx, dy);
 		if(!checkWall(coords.first + dx, coords.second + dy)){
 			entity->m_drawable_item->setAnimate(true);
-			int newX = coords.first + entity->getSpeed() * dx;
-			int newY = coords.second + entity->getSpeed() * dy;
-			if(!checkWall(newX, newY)){
-				EntityVector* entitiesAtXY = &this->m_grid[coords.first][coords.second];
-				auto it = std::find(entitiesAtXY->begin(), entitiesAtXY->end(), entity);		
-				if(it != entitiesAtXY->end()){
-					entitiesAtXY->erase(it);
-				}
-				entity->set_xy(newX, newY);
-				this->m_drawable->moveTowards(entity->m_drawable_item, newX, newY);
-				this->m_grid[newX][newY].push_back(entity);
-				entity->setAllowedDirections(this->checkDirections(newX, newY));
-				this->triggerCollisions(entity);
+			int newX = coords.first + dx;
+			int newY = coords.second + dy;
+			EntityVector* entitiesAtXY = &this->m_grid[coords.first][coords.second];
+			auto it = std::find(entitiesAtXY->begin(), entitiesAtXY->end(), entity);		
+			if(it != entitiesAtXY->end()){
+				entitiesAtXY->erase(it);
 			}
-			else {
-				entity->m_drawable_item->setAnimate(false);
-			}
+			entity->set_xy(newX, newY);
+			this->m_drawable->moveTowards(entity->m_drawable_item, newX, newY);
+			this->m_grid[newX][newY].push_back(entity);
+			entity->setAllowedDirections(this->checkDirections(newX, newY));
+			this->triggerCollisions(entity);
+		}
+		else{
+			entity->m_drawable_item->setAnimate(false);
+			entity->stop();
+		}
+		if(m_logger){
+			this->m_logger->logDirection(entity->getId(), entity->getDxDy().first, entity->getDxDy().second);
 		}
 	}
 }
@@ -225,12 +227,12 @@ void Level::removeDeadEntities(){
 	for(auto entityTypeVecPair: this->m_entities){
 		for(auto entity: entityTypeVecPair.second){
 			if(!entity->isAlive()){
+				this->m_logger->logRemoval(entity->getId(), entity->m_type, entity->get_xy().first, entity->get_xy().second);
 				this->removeEntity(entity);
 			}
 		}
 	}
 }
-
 
 void Level::triggerCollisions(Entity* ent){
 	std::pair<int, int> coords = ent->get_xy();
@@ -253,7 +255,15 @@ void Level::tryToApplyDirectionsFromReplay(Entity* ent) {
   for (auto command : this->m_replay->getLastTick()) {
     if (command[0] != "D") continue;
     if (stoi(command[1]) != ent->getId()) continue;
-    ent->setDirection(stoi(command[2]), stoi(command[3]));
+
+	if(!m_replay->playingBackwards()){
+		ent->setDirection(stoi(command[2]), stoi(command[3]));
+		std::cerr << "Setting direction to " << stoi(command[2]) << " " << stoi(command[3]) << std::endl;
+	}
+	else{
+		ent->setDirection(-stoi(command[2]), -stoi(command[3]));
+		std::cerr << "Setting direction to " << -stoi(command[2]) << " " << -stoi(command[3]) << std::endl;
+	}
   }
 }
 
@@ -265,13 +275,29 @@ void Level::tryToRemoveEntitiesFromReplay(bool backwards) {
         char type = command[2][0];
         int x = stoi(command[3]);
         int y = stoi(command[4]);
+		cerr << "Tryng to re-create entity " << type << " at " << x << " " << y <<endl;
         addEntity(type, x, y, id++, false);
         std::cerr << "briihh " << x << " x " << y << std::endl;
     }
 }
 
 void Level::tryToCreateEntitiesFromReplay(bool backwards) {
-    if (backwards) return;
+	if (backwards){
+		for(auto command: this->m_replay->getLastTick()){
+			if (command[0] != "C") continue;
+			int id = stoi(command[1]);
+			char type = command[2][0];
+			int x = stoi(command[3]);
+			int y = stoi(command[4]);
+			auto entitiesAtXY = this->m_grid[x][y];
+			for(auto entity: entitiesAtXY){
+				if(entity->getId() == id){
+					this->removeEntity(entity);
+				}
+			}
+		}
+		return;
+	}
     for (auto command: this->m_replay->getLastTick()) {
         if (command[0] != "C") continue;
         int id = stoi(command[1]);
@@ -285,11 +311,14 @@ void Level::tryToCreateEntitiesFromReplay(bool backwards) {
 
 void Level::updateGrid() {
     if (m_replay) {
-        this->tryToCreateEntitiesFromReplay(false);
-    }
+        this->tryToCreateEntitiesFromReplay(m_replay->playingBackwards());
+	}
 	this->updateEntitiesOfType(EntityType::PLAYER);
 	if(this->m_entities[EntityType::KEY].size() == 0){
 		this->openFinishes();
+	}
+	else{
+		this->closeFinishes();
 	}
 	this->checkPlayerWin();
 	this->updateEntitiesOfType(EntityType::GHOST);
@@ -312,7 +341,7 @@ void Level::updateGrid() {
         }
     }
     if (m_replay) {
-        this->tryToRemoveEntitiesFromReplay(false);
+        this->tryToRemoveEntitiesFromReplay(m_replay->playingBackwards());
     }
 	this->m_drawable->setHealthCount(((Player*) this->m_entities[EntityType::PLAYER][0])->health());
 	this->dumpGrid();
@@ -326,6 +355,13 @@ bool Level::isGameOver(){
 	return this->m_game_over;
 }
 
+
+void Level::closeFinishes(){
+	EntityVector finishes = this->m_entities[EntityType::FINISH];
+	for(Entity* f: finishes){
+		((Finish*) f)->close();
+	}
+}
 
 void Level::openFinishes(){
 	EntityVector finishes = this->m_entities[EntityType::FINISH];
@@ -377,17 +413,13 @@ bool Level::removeEntity(Entity* ent){
 	return false;
 }
 
-void Level::keyPressEvent(QKeyEvent *event) {
+void Level::keyPressEvent(QKeyEvent *event){
   if (m_replay) {
     return;
   }
 
-  for (int row = 0; row < this->m_grid.size(); row++) {
-    for (int col = 0; col < this->m_grid[row].size(); col++) {
-      for (int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++) {
-        this->m_grid[row][col][entIndex]->keyPressEvent(event);
-      }
-    }
+  for(auto ent: this->m_entities[EntityType::PLAYER]){
+	ent->keyPressEvent(event);
   }
 }
 
@@ -395,5 +427,3 @@ void Level::keyPressEvent(QKeyEvent *event) {
 EntityVector Level::findEntitiesAt(int x, int y){
 	return this->m_grid[x][y];
 }
-
-

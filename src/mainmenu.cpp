@@ -1,10 +1,4 @@
 #include "mainmenu.h"
-#include "mainwindow.h"
-#include <QCloseEvent>
-#include <QDebug>
-#include <QFileDialog>
-#include <iostream>
-#include "multiplayerDialog.h"
 
 MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
   ui.setupUi(this);
@@ -35,6 +29,7 @@ void MainMenu::on_playButton_clicked() {
 
 void MainMenu::on_multiplayerButton_clicked() {
     MultiplayerDialog multiplayerDialog(this);
+	this->hide();
     multiplayerDialog.exec();
 }
 
@@ -50,7 +45,6 @@ void MainMenu::on_selectLevelButton_clicked() {
 
 void MainMenu::on_replayButton_clicked() {
     QString replayFilePath = QFileDialog::getOpenFileName(this, tr("Select replay"), REPLAY_FOLDER_PATH);
-
     if (!replayFilePath.isEmpty()) {
         replayFile = replayFilePath;
         if (mainWindow != nullptr) delete mainWindow;
@@ -62,3 +56,6 @@ void MainMenu::on_replayButton_clicked() {
 }
 
 void MainMenu::on_exitButton_clicked() { this->close(); }
+
+
+QString MainMenu::getLevelPath() { return levelFile; }

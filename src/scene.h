@@ -8,8 +8,14 @@
 #include <utility>
 #include <QGraphicsScene>
 #include <vector>
-
+#include "drawable_item.h"
+#include <utility>
+#include <iostream>
+#include <QPixmapCache>
+#include <QDir>
 class MainWindow;
+
+// TODO Comment
 
 class Scene : public Drawable, public QGraphicsScene {
 public:

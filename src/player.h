@@ -50,16 +50,6 @@ public:
    * @return the health of this player
    * */
   int health();
-  /** 
-   * @brief Gets the number of seconds left of the boost powerup
-   * @return the number of seconds left of the boost powerup
-   * */
-  void boostCountdown();
-  /** 
-   * @brief Gets the number of seconds left that the player is not hittable by ghosts after being hit 
-   * @return the number of seconds left that the player cannot be hit
-   * */
-  void unhitableCountdown();
 protected:
   /** 
    * @brief Handles key press events for the player

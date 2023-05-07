@@ -181,6 +181,9 @@ void Level::updateEntitiesOfType(EntityType type){
 		this->triggerCollisions(entity);
 		if (m_replay) {
 			tryToApplyDirectionsFromReplay(entity);
+			if(type == PLAYER){
+				entity->update();
+			}
 		}
 		else {
 			entity->update();

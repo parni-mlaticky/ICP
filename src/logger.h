@@ -45,11 +45,14 @@ class Logger {
         ReplayTick getLastTick();
         bool isReplayFinished();
         void appendTick(std::string commands);
+		bool isPaused();
+		void togglePause();
     private:
         ReplayLog* readCommands(std::string str);
         std::string m_grid;
         ReplayLog m_log;
         int m_tick;
+		bool m_is_paused = false;
     };
 
     class Remote : private Logger {

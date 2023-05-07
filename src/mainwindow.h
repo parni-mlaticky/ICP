@@ -127,4 +127,6 @@ private:
    * @brief Reference to the server is stored here when the game is played in multiplayer mode and this session acts as the server
    * */
   Server* MPserver;
+
+  bool m_replay_paused;
 };

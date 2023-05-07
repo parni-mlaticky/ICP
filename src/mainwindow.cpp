@@ -21,7 +21,6 @@ void MainWindow::initialize(){
 
 	m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
 	m_logger = new Log::Logger();
-    m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
     this->m_scene->setHealthCount(3);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindow::update);
@@ -31,6 +30,7 @@ void MainWindow::initialize(){
 MainWindow::MainWindow(QString &levelContent, Client* client, Server* server, QWidget *parent) : QMainWindow(parent){
 	this->initialize();
 	std::string levelString = levelContent.toStdString();
+    m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
 	this->m_level->loadLevel(levelString);
 	this->m_logger->logGrid(levelString);
 	this->MPclient = client;
@@ -42,13 +42,13 @@ MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QW
 
   this->initialize();
   if(gameMode == MainWindow::GameMode::Replay) {
+	  std::cerr << "Replay mode" << std::endl;
       m_replay = new Log::Replay(loadLevelFile(levelFilePath));
   }
+  m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
   std::string levelString = this->loadLevelFile(levelFilePath);
   m_level->loadLevel(levelString);
   m_logger->logGrid(levelString);
-
-
 }
 
 std::string MainWindow::loadLevelFile(QString levelFilePath) {
@@ -65,7 +65,25 @@ std::string MainWindow::loadLevelFile(QString levelFilePath) {
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
-  this->m_level->keyPressEvent(event);
+	// replay controls
+	// TODO BIG HACK
+	if(this->m_replay){
+		if(event->key() == Qt::Key_Space){
+			if(this->m_replay->isPaused()){
+				this->timer->start();
+			}
+			if(this->m_replay){
+				this->m_replay->togglePause();
+			}
+		}
+		else if(event->key() == Qt::Key_D){
+			if(this->m_replay->isPaused()){
+				this->timer->start();
+			}
+		}
+	}
+	// game controls
+	this->m_level->keyPressEvent(event);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -86,6 +104,10 @@ void MainWindow::update() {
     }
   }
 
+  if(this->m_replay && this->m_replay->isPaused()){
+	  this->timer->stop();
+  }
+
   if (this->m_frame_counter == this->m_animation_frames) {
     this->m_level->updateGrid();
     this->m_frame_counter = 0;
@@ -101,6 +123,7 @@ void MainWindow::update() {
     std::ofstream file("replay/game.rpl");
     file << m_logger->getFullLog();
     file.close();
+	this->timer->stop();
     this->close();
   }
 }

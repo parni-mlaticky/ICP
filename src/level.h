@@ -27,6 +27,7 @@ using Grid = std::vector<Row>;
  */
 class Level {
 public:
+   ~Level() {};
   /** 
    * @brief Level constructor 
    * @param drawable The drawable object of the level

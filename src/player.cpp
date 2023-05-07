@@ -8,25 +8,6 @@ Player::Player(int x, int y, bool isLocal, DrawableItem* item, int id) : Entity(
 }
 
 
-void Player::boostCountdown(){
-  // TODO HACK maybe we should do this in the main thread or add mutex ??
-  this->m_drawable_item->setSpriteVariant("enraged");
-	while(this->m_boost_seconds_left > 0){
-		std::cerr << "boost seconds left: " << this->m_boost_seconds_left << std::endl;
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-		this->m_boost_seconds_left--;
-	}
-  this->m_drawable_item->setSpriteVariant();
-}
-
-void Player::unhitableCountdown(){
-	while(this->m_unhitable_seconds_left > 0){
-		std::cerr << "unhitable seconds left: " << this->m_unhitable_seconds_left << std::endl;
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-		this->m_unhitable_seconds_left--;
-	}
-}
-
 void Player::keyPressEvent(QKeyEvent *event) {
   // Skip movement if this is a remote player.
   int old_dx, old_dy;
@@ -59,6 +40,16 @@ void Player::keyPressEvent(QKeyEvent *event) {
 }
 
 void Player::update() {
+	if(this->m_boost_seconds_left){
+		this->m_boost_seconds_left--;
+		this->m_drawable_item->setSpriteVariant("enraged");
+	}
+	else{
+		this->m_drawable_item->setSpriteVariant("");
+	}
+	if(this->m_unhitable_seconds_left){
+		this->m_unhitable_seconds_left--;
+	}
 }
 
 void Player::onCollision(Entity* other) {
@@ -76,14 +67,10 @@ void Player::onCollision(Entity* other) {
 			}
 			else{
 				if(this->m_unhitable_seconds_left == 0){
-					this->m_unhitable_seconds_left += 3;
+					this->m_unhitable_seconds_left += 10;
 					this->m_health--;
 					if(this->m_health == 0){
 						this->kill();
-					}
-					else{
-						std::thread t(&Player::unhitableCountdown, this);
-						t.detach();
 					}
 				}
 			}
@@ -102,11 +89,7 @@ void Player::onCollision(Entity* other) {
 		}
 		case EntityType::BOOST: {
 			other->kill();
-			if(this->m_boost_seconds_left == 0){
-				std::thread t(&Player::boostCountdown, this);
-				t.detach();
-			}
-			this->m_boost_seconds_left += 5;
+			this->m_boost_seconds_left += 20;
 			break;
 		}
 		case EntityType::HEALTH: {

@@ -151,6 +151,10 @@ int Replay::getMaxTick() {
     return this->m_log.size();
 }
 
+bool Replay::isPaused(){
+	return this->m_is_paused;
+}
+
 ReplayTick Replay::getLastTick() {
     return this->m_log[this->m_tick];
 }
@@ -169,4 +173,7 @@ void Replay::appendTick(std::string commands) {
     for (auto entry : *log) {
         m_log.push_back(entry);
     }
+}
+void Replay::togglePause(){
+	this->m_is_paused = !this->m_is_paused;
 }

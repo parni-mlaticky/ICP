@@ -40,7 +40,9 @@ class Logger {
         int getTick();
         ReplayTick getLastTick();
         bool isReplayFinished();
+        void appendTick(std::string commands);
     private:
+        ReplayLog* readCommands(std::string str);
         std::string m_grid;
         ReplayLog m_log;
         int m_tick;

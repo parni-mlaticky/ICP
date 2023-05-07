@@ -37,8 +37,7 @@ set(SOURCES
     src/boost.cpp
 	src/health.cpp
     src/multiplayerDialog.cpp
-	src/server.cpp
-	src/client.cpp
+	src/remote.cpp
 	)
 
 set(HEADERS
@@ -57,8 +56,7 @@ set(HEADERS
 	src/boost.h
 	src/health.h
     src/multiplayerDialog.h
-	src/server.h
-	src/client.h
+	src/remote.h
 	)
 
 set(UI src/mainwindow.ui src/mainmenu.ui)

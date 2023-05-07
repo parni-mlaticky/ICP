@@ -2,6 +2,7 @@
 #define MAINMENU_H
 
 #include "ui_mainmenu.h"
+#include "multiplayerDialog.h"
 #include <QWidget>
 #include "mainwindow.h"
 #include <QCloseEvent>
@@ -58,6 +59,7 @@ private:
    * @brief The path to the folder containing the replay files
    * */
   const QString REPLAY_FOLDER_PATH = "./replay";
+  MultiplayerDialog* multiplayerDialog;
 
 signals:
   /** 
@@ -86,6 +88,7 @@ private slots:
    * @brief Slot called when the select level button is clicked
    * */
   void on_selectLevelButton_clicked();
+  void on_mp_mode_selected(bool hosting, std::string host, int port);
 };
 
 #endif

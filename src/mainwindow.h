@@ -6,7 +6,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QMainWindow>
-#include "client.h"
+#include "remote.h"
 #include "scene.h"
 #include <QDebug>
 #include <QKeyEvent>
@@ -17,7 +17,7 @@
 #include <thread>
 #include "logger.h"
 #include <fstream>
-#include "server.h"
+
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -42,11 +42,12 @@ public:
   /** 
    * @brief Constructor for the main window, used for multiplayer
    * */
-  explicit MainWindow(QString &levelContent, Client* client, Server* server, QWidget *parent = nullptr);
-  /** 
+  explicit MainWindow(QString &levelFilePath, bool hosting, std::string host, int port, QWidget *parent=nullptr);
+  /**
    * @brief Method called when a key is pressed
    * */
   void keyPressEvent(QKeyEvent *event) override;
+
   ~MainWindow() override;
   /** 
    * @brief loads the level into a string from a specified file path 
@@ -67,6 +68,8 @@ signals:
    * @brief Signal emitted when the window is closed
    * */
   void windowClosed();
+  void openMainMenu();
+  void sendMessage(std::string);
 
 // private members
 private:
@@ -119,14 +122,18 @@ private:
    * @brief Timer used to update the game logic
    * */
   QTimer *timer;
-  /** 
+  /**
    * @brief Reference to the client is stored here when the game is played in multiplayer mode and this session acts as the client
    * */
-  Client* MPclient;
-  /** 
+  Remote* mp_client;
+  /**
    * @brief Reference to the server is stored here when the game is played in multiplayer mode and this session acts as the server
    * */
-  Server* MPserver;
+  Remote* mp_server;
 
   bool m_replay_paused;
+  public slots:
+    void onRecive(std::string message);
+    void on_connected_to_client();
+    void on_connected_to_server();
 };

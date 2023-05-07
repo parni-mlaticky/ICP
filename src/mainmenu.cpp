@@ -28,9 +28,9 @@ void MainMenu::on_playButton_clicked() {
 }
 
 void MainMenu::on_multiplayerButton_clicked() {
-    MultiplayerDialog multiplayerDialog(this);
-	this->hide();
-    multiplayerDialog.exec();
+    this->multiplayerDialog = new MultiplayerDialog((QWidget*) this);
+    this->hide();
+    this->multiplayerDialog->exec();
 }
 
 void MainMenu::on_selectLevelButton_clicked() {
@@ -59,3 +59,14 @@ void MainMenu::on_exitButton_clicked() { this->close(); }
 
 
 QString MainMenu::getLevelPath() { return levelFile; }
+
+void MainMenu::on_mp_mode_selected(bool hosting, std::string host, int port) {
+  multiplayerDialog->close();
+  if (mainWindow != nullptr) {
+    delete mainWindow;
+  }
+  mainWindow = new MainWindow(levelFile, hosting, host, port);
+  connect(mainWindow, SIGNAL(windowClosed()), this, SLOT(onMainWindowClosed()));
+  this->hide();
+  mainWindow->show();
+}

@@ -70,6 +70,14 @@ std::string Logger::getFullLog() {
     return str;
 }
 
+std::string Logger::getGrid() {
+    if (!m_grid_set) {
+        std::cerr << "Attempted to get grid before setting it!" << std::endl;
+        exit(1);
+    }
+    return m_log[0];
+}
+
 Replay::Replay(std::string str) : m_tick(0) {
     std::string word = "";
     // Reading grid

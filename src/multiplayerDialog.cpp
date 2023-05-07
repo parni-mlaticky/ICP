@@ -1,8 +1,3 @@
-#include "multiplayerDialog.h"
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QDebug>
 #include "mainwindow.h"
 #include "mainmenu.h"
 MultiplayerDialog::MultiplayerDialog(QWidget *parent) : QDialog(parent) {

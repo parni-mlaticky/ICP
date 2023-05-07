@@ -1,8 +1,4 @@
 #include "sprite.h"
-#include <iostream>
-#include <QPixmapCache>
-#include <qnamespace.h>
-#include <qpixmapcache.h>
 
 Sprite::Sprite(std::string sprite_path, int animation_frames) : m_current_animation_frame(1),
                                                                 m_animation_frames(animation_frames),

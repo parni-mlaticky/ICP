@@ -1,7 +1,4 @@
 #include "logger.h"
-#include <exception>
-#include <iostream>
-#include <vector>
 
 using namespace Log;
 
@@ -162,12 +159,23 @@ int Replay::getMaxTick() {
     return this->m_log.size();
 }
 
+bool Replay::isPaused(){
+	return this->m_is_paused;
+}
+
 ReplayTick Replay::getLastTick() {
+	std::cerr << "Getting last tick number : " << this->m_tick << std::endl;
     return this->m_log[this->m_tick];
 }
 
 void Replay::setNextTick() {
     this->m_tick++;
+}
+
+void Replay::setPreviousTick(){
+	if(this->m_tick > 0){
+		this->m_tick--;
+	}
 }
 
 bool Replay::isReplayFinished() {
@@ -180,4 +188,15 @@ void Replay::appendTick(std::string commands) {
     for (auto entry : *log) {
         m_log.push_back(entry);
     }
+}
+void Replay::togglePause(){
+	this->m_is_paused = !this->m_is_paused;
+}
+
+bool Replay::playingBackwards(){
+	return this->m_playing_backwards;
+}
+
+void Replay::togglePlaybackDirection(){
+	this->m_playing_backwards = !this->m_playing_backwards;
 }

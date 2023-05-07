@@ -1,16 +1,4 @@
 #include "mainwindow.h"
-#include "client.h"
-#include "scene.h"
-#include <QDebug>
-#include <QKeyEvent>
-#include <QTimer>
-#include <QVBoxLayout>
-#include <chrono>
-#include <iostream>
-#include <thread>
-#include "logger.h"
-#include <fstream>
-#include <QString>
 
 void MainWindow::initialize(){
 	const int height = 600;
@@ -33,12 +21,11 @@ void MainWindow::initialize(){
 
 	m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
 	m_logger = new Log::Logger();
-  // this->m_scene->setHealthCount(3);
   timer = new QTimer(this);
   connect(timer, &QTimer::timeout, this, &MainWindow::update);
 }
 
-MainWindow::MainWindow(QString &levelFilePath, bool hosting, std::string host, int port, QWidget *parent) : QMainWindow(parent), m_levelLoaded(false) {
+MainWindow::MainWindow(QString &levelFilePath, bool hosting, std::string host, int port, QWidget *parent) : QMainWindow(parent) {
 	this->initialize();
 
   if (hosting) {
@@ -46,7 +33,7 @@ MainWindow::MainWindow(QString &levelFilePath, bool hosting, std::string host, i
     std::string levelString = loadLevelFile(levelFilePath);
     // TODO Wair for connection.
     // TODO send level
-    this->m_level->loadLevel(levelString);
+    //this->m_level->loadLevel(levelString);
     this->m_logger->logGrid(levelString);
   }
   else {
@@ -59,7 +46,7 @@ MainWindow::MainWindow(QString &levelFilePath, bool hosting, std::string host, i
 }
 
 MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QWidget *parent)
-    : QMainWindow(parent), m_levelLoaded(false) {
+    : QMainWindow(parent){
 
   this->initialize();
   if(gameMode == MainWindow::GameMode::Replay) {
@@ -73,7 +60,6 @@ MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QW
   m_logger->logGrid(levelString);
 
   timer->start(this->m_gfx_tick_ms);
-
 }
 
 void MainWindow::on_connected_to_client() {
@@ -106,7 +92,29 @@ std::string MainWindow::loadLevelFile(QString levelFilePath) {
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
-  this->m_level->keyPressEvent(event);
+	// replay controls
+	// TODO BIG HACK
+	if(this->m_replay){
+		if(event->key() == Qt::Key_Space){
+			if(this->m_replay->isPaused()){
+				this->timer->start();
+			}
+			if(this->m_replay){
+				this->m_replay->togglePause();
+			}
+		}
+		else if(event->key() == Qt::Key_D){
+			if(this->m_replay->isPaused()){
+				this->timer->start();
+			}
+		}
+		else if(event->key() == Qt::Key_A){
+			this->m_replay->setPreviousTick();
+			this->m_replay->togglePlaybackDirection();
+		}
+	}
+	// game controls
+	this->m_level->keyPressEvent(event);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -131,11 +139,20 @@ void MainWindow::update() {
     }
   }
 
+  if(this->m_replay && this->m_replay->isPaused()){
+	  this->timer->stop();
+  }
+
   if (this->m_frame_counter == this->m_animation_frames) {
     this->m_level->updateGrid();
     this->m_frame_counter = 0;
     if (this->m_replay) {
-      this->m_replay->setNextTick();
+		if(this->m_replay->playingBackwards()){
+			this->m_replay->setPreviousTick();
+		}
+		else{
+			this->m_replay->setNextTick();
+		}
     }
   }
   this->m_scene->render(m_frame_counter);
@@ -146,6 +163,7 @@ void MainWindow::update() {
     std::ofstream file("replay/game.rpl");
     file << m_logger->getFullLog();
     file.close();
+	this->timer->stop();
     this->close();
   }
 }

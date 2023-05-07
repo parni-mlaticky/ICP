@@ -7,6 +7,9 @@
 class Remote : public QObject {
   Q_OBJECT
 
+
+// TODO comment
+
 public:
   Remote(QObject *parent = nullptr, QString hostname = "", int port = 9999);
 	explicit Remote(QObject* parent, int port = 9999);

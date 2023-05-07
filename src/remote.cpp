@@ -1,4 +1,4 @@
-#include "client.h"
+#include "remote.h"
 #include "mainwindow.h"
 #include <QDialog>
 #include <iostream>

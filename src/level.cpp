@@ -130,6 +130,7 @@ void Level::loadLevel(const std::string &levelString) {
 		addEntity('X', m_bound_x + 1, i, m_id++, true);
 	}
 	this->dumpGrid();
+    this->m_drawable->setHealthCount(3);
 }
 
 void Level::spawnHealth(){
@@ -379,17 +380,13 @@ bool Level::removeEntity(Entity* ent){
 	return false;
 }
 
-void Level::keyPressEvent(QKeyEvent *event) {
+void Level::keyPressEvent(QKeyEvent *event){
   if (m_replay) {
     return;
   }
 
-  for (int row = 0; row < this->m_grid.size(); row++) {
-    for (int col = 0; col < this->m_grid[row].size(); col++) {
-      for (int entIndex = 0; entIndex < this->m_grid[row][col].size(); entIndex++) {
-        this->m_grid[row][col][entIndex]->keyPressEvent(event);
-      }
-    }
+  for(auto ent: this->m_entities[EntityType::PLAYER]){
+	ent->keyPressEvent(event);
   }
 }
 

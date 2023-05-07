@@ -50,13 +50,13 @@ public:
    * @return the health of this player
    * */
   int health();
-protected:
   /** 
    * @brief Handles key press events for the player
    * @param event the key press event
    * */
   void keyPressEvent(QKeyEvent *event) override;
 
+protected:
 // private members
 private:
   /** 
@@ -68,9 +68,9 @@ private:
    * */
   bool m_reached_finish = false;
   /** 
-   * @brief The number of seconds left on this player's boost powerup
+   * @brief The number of ticks left on this player's boost powerup
    * */
-  std::atomic_int m_boost_seconds_left = 0;
+  std::atomic_int m_boost_ticks_left = 0;
   /** 
    * @brief The number of keys held by this player
    * */
@@ -80,9 +80,9 @@ private:
    * */
   int m_health;
   /** 
-   * @brief The number of seconds left that this player cannot be hit by ghosts
+   * @brief The number of ticks left that this player cannot be hit by ghosts
    * */
-  std::atomic_int m_unhitable_seconds_left = 0;
+  std::atomic_int m_unhitable_ticks_left = 0;
 };
 #endif
 

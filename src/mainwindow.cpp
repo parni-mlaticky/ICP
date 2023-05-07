@@ -21,7 +21,6 @@ void MainWindow::initialize(){
 
 	m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
 	m_logger = new Log::Logger();
-    this->m_scene->setHealthCount(3);
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindow::update);
     timer->start(this->m_gfx_tick_ms);

@@ -40,15 +40,15 @@ void Player::keyPressEvent(QKeyEvent *event) {
 }
 
 void Player::update() {
-	if(this->m_boost_seconds_left){
-		this->m_boost_seconds_left--;
+	if(this->m_boost_ticks_left){
+		this->m_boost_ticks_left--;
 		this->m_drawable_item->setSpriteVariant("enraged");
 	}
 	else{
 		this->m_drawable_item->setSpriteVariant("");
 	}
-	if(this->m_unhitable_seconds_left){
-		this->m_unhitable_seconds_left--;
+	if(this->m_unhitable_ticks_left){
+		this->m_unhitable_ticks_left--;
 	}
 }
 
@@ -62,12 +62,12 @@ void Player::onCollision(Entity* other) {
 			break;	
 		}
 		case EntityType::GHOST:{
-			if(this->m_boost_seconds_left){
+			if(this->m_boost_ticks_left){
 				dynamic_cast<Ghost*>(other)->kill();
 			}
 			else{
-				if(this->m_unhitable_seconds_left == 0){
-					this->m_unhitable_seconds_left += 10;
+				if(this->m_unhitable_ticks_left == 0){
+					this->m_unhitable_ticks_left += 10;
 					this->m_health--;
 					if(this->m_health == 0){
 						this->kill();
@@ -89,7 +89,7 @@ void Player::onCollision(Entity* other) {
 		}
 		case EntityType::BOOST: {
 			other->kill();
-			this->m_boost_seconds_left += 20;
+			this->m_boost_ticks_left += 20;
 			break;
 		}
 		case EntityType::HEALTH: {

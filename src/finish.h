@@ -30,6 +30,11 @@ public:
    * */
   void open();
 
+  /** 
+   * @brief Closes the finish
+   * */
+  void close();
+
 private:
 };
 #endif

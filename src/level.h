@@ -145,6 +145,11 @@ private:
    * */
   void openFinishes();
 
+  /** 
+   * @brief Closes all finishes (targers) - used for backwards replay playback
+   * */
+  void closeFinishes();
+
 
 // private members
 private:

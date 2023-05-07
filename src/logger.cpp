@@ -156,11 +156,18 @@ bool Replay::isPaused(){
 }
 
 ReplayTick Replay::getLastTick() {
+	std::cerr << "Getting last tick number : " << this->m_tick << std::endl;
     return this->m_log[this->m_tick];
 }
 
 void Replay::setNextTick() {
     this->m_tick++;
+}
+
+void Replay::setPreviousTick(){
+	if(this->m_tick > 0){
+		this->m_tick--;
+	}
 }
 
 bool Replay::isReplayFinished() {
@@ -176,4 +183,12 @@ void Replay::appendTick(std::string commands) {
 }
 void Replay::togglePause(){
 	this->m_is_paused = !this->m_is_paused;
+}
+
+bool Replay::playingBackwards(){
+	return this->m_playing_backwards;
+}
+
+void Replay::togglePlaybackDirection(){
+	this->m_playing_backwards = !this->m_playing_backwards;
 }

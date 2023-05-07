@@ -12,3 +12,8 @@ void Finish::open(){
 	this->m_is_open = true;
 	this->m_drawable_item->setSpriteVariant("open");
 }
+
+void Finish::close(){
+	this->m_is_open = false;
+	this->m_drawable_item->setSpriteVariant("");
+}

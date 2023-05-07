@@ -40,6 +40,7 @@ class Logger {
         int getMaxTick();
         void setTick(int tick);
         void setNextTick();
+        void setPreviousTick();
         std::string getGrid();
         int getTick();
         ReplayTick getLastTick();
@@ -47,8 +48,11 @@ class Logger {
         void appendTick(std::string commands);
 		bool isPaused();
 		void togglePause();
+		void togglePlaybackDirection();
+		bool playingBackwards();
     private:
         ReplayLog* readCommands(std::string str);
+		bool m_playing_backwards = false;
         std::string m_grid;
         ReplayLog m_log;
         int m_tick;

@@ -80,6 +80,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 				this->timer->start();
 			}
 		}
+		else if(event->key() == Qt::Key_A){
+			this->m_replay->setPreviousTick();
+			this->m_replay->togglePlaybackDirection();
+		}
 	}
 	// game controls
 	this->m_level->keyPressEvent(event);
@@ -111,7 +115,12 @@ void MainWindow::update() {
     this->m_level->updateGrid();
     this->m_frame_counter = 0;
     if (this->m_replay) {
-      this->m_replay->setNextTick();
+		if(this->m_replay->playingBackwards()){
+			this->m_replay->setPreviousTick();
+		}
+		else{
+			this->m_replay->setNextTick();
+		}
     }
   }
   this->m_scene->render(m_frame_counter);

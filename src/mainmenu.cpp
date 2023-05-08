@@ -1,7 +1,7 @@
 /**
  * @file mainmenu.cpp
  * @brief Implementation of the MainMenu window class
- * @authors Petr Kolouch, Ondřej Zobal, Vladimír Hucovič 
+ * @authors Petr Kolouch, Ondřej Zobal, Vladimír Hucovič
  * */
 
 #include "mainmenu.h"
@@ -14,12 +14,14 @@ MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
 MainMenu::~MainMenu() {
   if (mainWindow != nullptr) {
     delete mainWindow;
+    mainWindow = nullptr;
   }
 }
 
 void MainMenu::onMainWindowClosed() {
     if (mainWindow != nullptr) {
       delete mainWindow;
+      mainWindow = nullptr;
     }
     this->show();
 }
@@ -75,6 +77,7 @@ void MainMenu::on_mp_mode_selected(bool hosting, std::string host, int port) {
   multiplayerDialog->close();
   if (mainWindow != nullptr) {
     delete mainWindow;
+    mainWindow = nullptr;
   }
   mainWindow = new MainWindow(levelFile, hosting, host, port);
   connect(mainWindow, SIGNAL(windowClosed()), this, SLOT(onMainWindowClosed()));

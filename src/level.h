@@ -41,7 +41,7 @@ public:
    * @param replay The replay object of the level - used to play back a recorded game
    * */
   Level(Drawable *drawable, Log::Logger *logger, Log::Replay *replay, bool is_multiplayer);
-  /** 
+  /**
    * @brief Loads a level from a string
    * @param levelString The string representation of the level
    * */
@@ -111,10 +111,6 @@ public:
    * @return True if the last player got eaten, false otherwise
    * */
   bool isGameOver();
-  /**
-   * @brief returns True if player reached the finish, false otherwise
-   * */
-  bool didPlayerWin();
    /**
    * @brief Returns direction of the local player in this instance
    * */
@@ -147,7 +143,7 @@ private:
    * @return number of entities added.
    */
   int addEntity(char c, int x, int y, int id, bool init);
-  /** 
+  /**
    * @brief If the game is being played from a replay, applies the directions from the replay to the given entity
    * @param ent The entity to apply the directions to
    * */
@@ -210,10 +206,6 @@ private:
    * */
   bool m_game_over = false;
   /**
-   * @brief True if player won the game
-   * */
-  bool playerWon = false;
-  /**
    * @brief True if the game runs as 2-player multiplater.
    * */
   bool m_is_multiplayer;
@@ -221,7 +213,7 @@ private:
    * @brief Index of local player.
    * */
   int m_player_index;
-  /** 
+  /**
    * @brief A map of entity types to vectors of entities of that type
    * Keeps track of entities of each type. This is used to update entities of each type separately, as well as
    * speeding up the process of looking up a specific entity, or an entity of a specific type

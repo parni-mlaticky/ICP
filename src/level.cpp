@@ -42,7 +42,6 @@ Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay, bool 
 
 int Level::addEntity(char c, int x, int y, int id, bool init) {
   DrawableItem *item;
-
   if (m_logger && !init) {
     m_logger->logCreation(m_id-1, c, x, y);
   }
@@ -267,7 +266,7 @@ void Level::removeDeadEntities(){
 		for(auto entity: entityTypeVecPair.second){
 			if(!entity->isAlive()){
                 if (entity == m_entities[EntityType::PLAYER][m_player_index]) {
-                   m_player_index = -1; 
+                   m_player_index = -1;
                 }
 				this->m_logger->logRemoval(entity->getId(), entity->m_type, entity->get_xy().first, entity->get_xy().second);
 				this->removeEntity(entity);
@@ -288,14 +287,9 @@ void Level::checkPlayerWin(){
 	for(Entity* playerEntity : this->m_entities[EntityType::PLAYER]){
 		Player* player = dynamic_cast<Player*>(playerEntity);
 		if(player->reachedFinish()){
-            this->playerWon = true;
 			this->removeEntity(player);
 		}
 	}
-}
-
-bool Level::didPlayerWin() {
-    return this->playerWon;
 }
 
 void Level::tryToApplyDirectionsFromReplay(Entity* ent) {

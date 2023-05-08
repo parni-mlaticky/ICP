@@ -26,6 +26,9 @@
 #include <iomanip>
 #include <QMessageBox>
 
+/**
+  * @brief The window in which the game will be rendered
+  * */
 class MainWindow : public QMainWindow {
   Q_OBJECT
 

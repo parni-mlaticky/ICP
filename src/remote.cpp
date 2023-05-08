@@ -55,7 +55,7 @@ void Remote::newConnection() {
 
 
 Remote::~Remote() {
-	qDebug() << "Remote destructor called" << endl;
+	qDebug() << "Remote destructor called";
     if (socket) {
         socket->disconnectFromHost();
         socket->deleteLater();

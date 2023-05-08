@@ -15,7 +15,7 @@ void MainWindow::initialize(){
 		new Scene(width, height, this->m_animation_frames, (MainWindow *)this);
 
 	this->m_view = new QGraphicsView((Scene *)m_scene, this);
-	setWindowTitle("Parni pacman");
+	setWindowTitle("Steam Engine Pac-Man");
 	setFixedSize(width, height);
 	setCentralWidget(m_view);
 	m_view->setRenderHint(QPainter::Antialiasing);

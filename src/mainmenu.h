@@ -101,15 +101,23 @@ private slots:
   void on_mp_mode_selected(bool hosting, std::string host, int port);
 
 private:
-  const QString helpMessage = "<h2>Welcome to steam engine pacman</h2>"
-            "<p><b>Menu options:</b></p>"
+  const QString helpMessage = "<h2>Welcome to steam engine Pac-Man</h2>"
+            "<p>Created by Ondřej Zobal, Vladimír Hudsovič and Petr Kolouch for ICP class of 2023 at FIT VUT.</p>"
+            "<p><h3>How to play:</h3></p>"
+            "<p>You controll the Pac-Man using <i>W</i>, <i>A</i>, <i>S</i>, <i>D</i> or by cliking. Your goal is to collect all "
+            "keys and head for the door. Make sure to avoid ghosts! If they touch you, you loose a life. "
+            "You can replenish your health by colecting hearth which appear randomly on the map. You can get back "
+            "at the ghosts by collecting a potion that enables you to eat the ghosts. Just like hearths, potions appear "
+            "randomly on the map.</p>"
+            "<p><h3>Menu options:</h3></p>"
             "<ul>"
-            "<li>Play (singleplayer): Start a new singleplayer game"
-            "your goal is to collect keys to open the finish, avoid enemy impostors or eat them within 5 seconds after colleting a boost.</li>"
-            "<li>Multiplayer: Join a multiplayer game or create your own server to play with your friends</li>"
-            "<li>Select level: Choose a level map for your singleplayer or multiplayer gameplay</li>"
-            "<li>Replay: Watch a replay of your last game in an autoplay mode or use your keys to pause, forward or backward the replay</li>"
-            "<li>Exit: Exit the game</li>";
+            "<li><b>Play:</b></br> Start a new singleplayer game."
+            "<li><b>Multiplayer:</b></br> Join a multiplayer game or create your own server to play with your friends.</li>"
+            "<li><b>Select level:</b></br> Choose a map for your singleplayer or multiplayer game.</li>"
+            "<li><b>Replay:</b></br> Watch replays of your past games. Use <i>SPACE</i> to pause and <i>A</i> to switch "
+            "between playing forwards and backwards.</li>"
+            "<li><b>Exit:</b></br> Quit the game</li>"
+            "</ul>";
 };
 
 #endif

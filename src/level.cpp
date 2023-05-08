@@ -269,7 +269,9 @@ void Level::removeDeadEntities(){
                 if (entity == m_entities[EntityType::PLAYER][m_player_index]) {
                    m_player_index = -1; 
                 }
-				this->m_logger->logRemoval(entity->getId(), entity->m_type, entity->get_xy().first, entity->get_xy().second);
+                if (m_logger) {
+                    this->m_logger->logRemoval(entity->getId(), entity->m_type, entity->get_xy().first, entity->get_xy().second);
+                }
 				this->removeEntity(entity);
 			}
 		}

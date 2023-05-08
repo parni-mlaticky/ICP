@@ -19,6 +19,7 @@
 #include <fstream>
 #include <chrono>
 #include <iomanip>
+#include <QMessageBox>
 
 class MainWindow : public QMainWindow {
   Q_OBJECT

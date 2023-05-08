@@ -1,3 +1,9 @@
+/**
+ * @file mainmenu.h
+ * @brief Header for the MainMenu window class
+ * @authors Petr Kolouch, Ondřej Zobal, Vladimír Hucovič 
+ * */
+
 #ifndef MAINMENU_H
 #define MAINMENU_H
 

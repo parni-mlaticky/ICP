@@ -1,3 +1,10 @@
+/**
+ *
+ * @file health.h
+ * @brief Header of the Health entity
+ * @authors Vladimír Hucovič
+ * */
+
 #include "entity.h"
 
 

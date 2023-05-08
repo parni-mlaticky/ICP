@@ -1,3 +1,9 @@
+/** 
+ * @file scene.cpp
+ * @brief Implementation of the Scene class
+ * @authors Ondřej Zobal, Petr Kolouch, Vladimír Hucovič
+ * */
+
 #include "scene.h"
 #include "mainwindow.h"
 #include <cmath>

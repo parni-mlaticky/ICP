@@ -1,3 +1,10 @@
+/** 
+ * @file level.cpp
+ * @brief Implementation of the Level class, which handles most of the game logic and manages the game state and entities
+ * @authors Ondřej Zobal, Vladimír Hucovič, Petr Kolouch
+ * */
+
+
 #include "level.h"
 #include "boost.h"
 #include "entity.h"

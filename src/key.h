@@ -1,3 +1,9 @@
+/**  
+ * @file key.h
+ * @brief Header of the Key entity
+ * @authors Vladimír Hucovič
+ * */
+
 #ifndef KEY_H
 #define KEY_H
 #include "entity.h"

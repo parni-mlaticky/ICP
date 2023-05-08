@@ -1,3 +1,9 @@
+/** 
+ * @file sprite.cpp
+ * @brief Implementation of sprites, which are the displayed images of entities in the game world
+ * @authors Ondřej Zobal, Vladimír Hucovič
+ * */
+
 #include "sprite.h"
 
 Sprite::Sprite(std::string sprite_path, int animation_frames, rotationType rType) : m_current_animation_frame(1),

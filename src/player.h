@@ -1,3 +1,9 @@
+/** 
+ * @file player.h
+ * @brief Header for the Player entity
+ * @authors Vladimír Hucovič, Ondřej Zobal, Petr Kolouch
+ * */
+
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -87,7 +93,9 @@ private:
    * @brief The number of ticks left that this player cannot be hit by ghosts
    * */
   std::atomic_int m_unhitable_ticks_left = 0;
-  // TODO Comment
+  /** 
+   * @brief The vector containing the coordinates of the next cells this player will move to when the player is moving using the mouse
+   * */
   std::vector<std::pair<int, int>> moveVector;
 
 };

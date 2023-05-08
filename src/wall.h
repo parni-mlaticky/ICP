@@ -1,3 +1,10 @@
+/** 
+ * @file wall.h
+ * @brief Header for the Wall entity
+ * @authors Ondřej Zobal
+ * */
+
+
 #ifndef WALL_H
 #define WALL_H
 #include "entity.h"

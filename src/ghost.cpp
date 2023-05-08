@@ -1,3 +1,10 @@
+/** 
+ * @file ghost.cpp
+ * @brief Implementation of the Ghost entity
+ * @authors Ondřej Zobal
+ * */
+
+
 #include "ghost.h"
 
 Ghost::Ghost(int x, int y, DrawableItem* item, int id) : Entity(x, y, item, id), m_steps_left(1) {

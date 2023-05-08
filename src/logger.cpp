@@ -1,3 +1,11 @@
+/** *
+ * @file logger.cpp
+ * @brief Implementation of the Logger class
+ * @details This file contains the implementation of the Logger class, which handles the logging of the game. If also contains the
+ * implementation of the Replay class, which handles the replaying of a recorded game.
+ * @authors Ondřej Zobal, Vladimír Hucovič
+ */
+
 #include "logger.h"
 
 using namespace Log;

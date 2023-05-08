@@ -1,3 +1,9 @@
+/** 
+ * @file multiplayerDialog.h
+ * @brief Header for the MultiplayerDialog window
+ * @authors Ondřej Zobal, Petr Kolouch
+ * */
+
 #ifndef MULTIPLAYERDIALOG_H_
 #define MULTIPLAYERDIALOG_H_
 
@@ -12,6 +18,10 @@
 #include "mainwindow.h"
 
 // TODO comment
+/** 
+ * @class MultiplayerDialog
+ * @brief Class for the MultiplayerDialog window, which is used to create a server or connect to one
+ * */
 class MultiplayerDialog: public QDialog {
     Q_OBJECT
 

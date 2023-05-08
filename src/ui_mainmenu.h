@@ -1,3 +1,8 @@
+/** 
+ * @file ui_mainmenu.h
+ * @brief UI file for the main menu of the game - generated file
+ * */
+
 /********************************************************************************
 ** Form generated from reading UI file 'mainmenu.ui'
 **

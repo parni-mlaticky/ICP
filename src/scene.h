@@ -1,3 +1,9 @@
+/** 
+ * @file scene.h
+ * @brief Header for the Scene class
+ * @authors Ondřej Zobal, Petr Kolouch, Vladimír Hucovič
+ * */
+
 #ifndef SCENE_H_
 #define SCENE_H_
 

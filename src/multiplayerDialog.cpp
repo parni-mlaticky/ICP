@@ -45,14 +45,14 @@ void MultiplayerDialog::onCreateServerButtonClicked() {
   // this->server = QSharedPointer<Server>::create(this, serverPortInput->text().toInt(), levelPath);
   // qDebug() << "Create server with port:" << serverPortInput->text();
   int port = serverPortInput->text().toInt();
-  connectionChosen(true, "" , port);
+  emit connectionChosen(true, "" , port);
 }
 
 void MultiplayerDialog::onConnectToServerButtonClicked() {
   // Client* client = new Client(this, serverAddressInput->text(), connectPortInput->text().toInt());
   int port = connectPortInput->text().toInt();
   std::string host = serverAddressInput->text().toStdString();
-  connectionChosen(false, host, port);
+  emit connectionChosen(false, host, port);
 }
 
 void MultiplayerDialog::onInputChanged() {

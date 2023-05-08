@@ -43,18 +43,19 @@ class Logger {
         void setNextTick();
         void setPreviousTick();
         std::string getGrid();
+        bool hasGrid();
         int getTick();
         ReplayTick getLastTick();
         bool isReplayFinished();
-        void appendTick(std::string commands);
 		bool isPaused();
 		void togglePause();
 		void togglePlaybackDirection();
 		bool playingBackwards();
+        void stream(std::string message);
     private:
-        ReplayLog* readCommands(std::string str);
 		bool m_playing_backwards = false;
         std::string m_grid;
+        std::string unprocessed;
         ReplayLog m_log;
         int m_tick;
 		bool m_is_paused = false;

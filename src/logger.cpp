@@ -79,37 +79,51 @@ std::string Logger::getGrid() {
 }
 
 Replay::Replay(std::string str) : m_tick(0) {
-    std::string word = "";
-    // Reading grid
-    int lines = -1;
-    for (auto ch : str) {
-        word += ch;
-        if (ch == ' ' && lines == -1) {
-            lines = stoi(word)+1;
-            continue;
+    this->m_grid = "";
+    this->m_log = ReplayLog();
+    this->stream(str);
+}
+
+void Replay::stream(std::string message) {
+    message = this->unprocessed + message;
+    auto iter = message.begin();
+
+    // If grid is not yet set, recive grid.
+    if (m_grid == "") {
+        std::string word = "";
+        // Reading grid
+        int lines = -1;
+        while (iter != message.end()) {
+            word += *iter;
+            if (*iter == ' ' && lines == -1) {
+                lines = stoi(word)+1;
+                continue;
+            }
+            lines -= *iter == '\n';
+            if (lines == 0) {
+                std::cerr << "Replay parse: Grid recived in full" << std::endl;
+                m_grid = word;
+                break;
+            }
+            iter++;
         }
-        lines -= ch == '\n';
-        if (lines == 0) {
-            break;
+
+        // If we didn't recive the whole grid
+        if (lines != 0) {
+            std::cerr << "Replay parse: Incomplete grid, stashing..." << std::endl;
+            this->unprocessed = message; // message.substr(iter - message.begin());
+            return;
         }
     }
 
-    m_grid = word;
-    std::cerr << str[word.size()] << "xdd\n";
-    std::string strr = std::string(&str.c_str()[word.size()-2]);
-    m_log = *readCommands(strr);
-}
-
-ReplayLog* Replay::readCommands(std::string str) {
-    ReplayLog* log = new ReplayLog();
+    // Recive commands.
     std::string word = "";
     ReplayCommand command = ReplayCommand();
     ReplayTick tick = ReplayTick();
+    auto parsed_up_to = iter;
 
-    // Reading commands
-    auto iter = str.begin();
-    while (iter != str.end()) {
-        iter++;
+    iter -= 1;
+    while (++iter != message.end()) {
         if (*iter == '\n') {
             if (word != "") {
                 command.push_back(word);
@@ -130,27 +144,49 @@ ReplayLog* Replay::readCommands(std::string str) {
             continue;
         }
 
+        word += *iter;
         if (*iter == 'T') {
             word = "";
             if (command.size() > 0) {
                 tick.push_back(command);
             }
-            log->push_back(tick);
+            m_log.push_back(tick);
             command = ReplayCommand();
             tick = ReplayTick();
+
+            // Skipping the trailing endline.
+            parsed_up_to = ++iter;
+            if (iter == message.end()) {
+                break;
+            }
             continue;
         }
-
-        word += *iter;
     }
 
-    return log;
+    // Moving iter to the next character that wasn't scanned yet.
+    if (iter != message.end()) {
+        ++iter;
+    }
+
+    // Stashing away data that were not yet made into a full tick for another call.
+    if (parsed_up_to != iter) {
+        this->unprocessed = message.substr(parsed_up_to - message.begin());
+        this->unprocessed = (this->unprocessed == "\n") ? "" : this->unprocessed;
+        std::cerr << "Replay: Stashed " << this->unprocessed.size() << "B of incomplete commands." << std::endl;
+        std::cerr << this->unprocessed << std::endl;
+    }
+    else {
+        this->unprocessed = "";
+    }
 }
 
 std::string Replay::getGrid() {
     return this->m_grid;
 }
 
+bool Replay::hasGrid() {
+    return m_grid != "";
+}
 int Replay::getTick() {
     return this->m_tick;
 }
@@ -182,13 +218,6 @@ bool Replay::isReplayFinished() {
     return this->m_tick == (int) m_log.size();
 }
 
-void Replay::appendTick(std::string commands) {
-    auto log = readCommands(commands);
-
-    for (auto entry : *log) {
-        m_log.push_back(entry);
-    }
-}
 void Replay::togglePause(){
 	this->m_is_paused = !this->m_is_paused;
 }

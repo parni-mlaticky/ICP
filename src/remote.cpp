@@ -33,34 +33,27 @@ void Remote::connectSockets() {
     connect(this->socket, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
     connect(this, SIGNAL(onRecive(std::string)), parent, SLOT(onRecive(std::string)));
     connect(parent, SIGNAL(sendMessage(std::string)), this, SLOT(sendMessage(std::string)));
-    connect(this->socket, &QTcpSocket::disconnected, this, &Remote::onDisconnected);
+    connect(this->socket, SIGNAL(disconnected), parent, SLOT(onDisconnect));
     connect(this->socket, QOverload<QAbstractSocket::SocketError>::of(&QTcpSocket::error), this, &Remote::onError);
 }
 
 void Remote::newConnection() {
+    if (this->socket) {
+        return;
+    }
 	this->socket = server->nextPendingConnection();
     this->connectSockets();
-	// connect(client, SIGNAL(readyRead()), this, SLOT(readData()));
-	// connect(client, SIGNAL(disconnected()), this, SLOT(disconnected()));
-	qDebug() << "New client connected!";
-	// this->client->write("Hello client!");
-	// this->client->flush();
-	// QFile file(this->levelPath);
-	// file.open(QIODevice::ReadOnly);
-    // QTextStream in(&file);
-	// QString level = in.readAll();
-	// MainWindow* mainWindow = new MainWindow(level, nullptr, this, nullptr);
-    // connect(mainWindow, SIGNAL(windowClosed()), this->parent()->parent(), SLOT(onMainWindowClosed()));
-	// mainWindow->show();
-	// ((QWidget*)this->parent()->parent())->hide();
+	std::cerr << "New client connected!";
     emit connected_to_client();
 }
 
 
 Remote::~Remote() {
 	qDebug() << "Remote destructor called" << endl;
-    socket->disconnectFromHost();
-    socket->deleteLater();
+    if (socket) {
+        socket->disconnectFromHost();
+        socket->deleteLater();
+    }
 }
 
 void Remote::onConnected() {

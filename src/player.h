@@ -61,10 +61,23 @@ class Player : public Entity {
 		 * @param event the key press event
 		 * */
 		void keyPressEvent(QKeyEvent *event) override;
-		// TODO comment
+		/**
+		 * @brief Sets the move vector calculated by astar
+		 * @param vector the move vector
+		 * */
 		void setMoveVector(std::vector<std::pair<int, int>> &vector);
+		/** 
+		 * @brief Sets the next cell this player will move to when autopathing
+		 * */
 		void autoSetDirection();
+		/** 
+		 * @brief Gets the next cell this player will move to when autopathing
+		 * @return the next cell this player will move to
+		 * */
 		void clearMoveVector();
+		/** 
+		 * @brief Checks if there are moves left in the move vector
+		 * */
 		bool hasMoveVector();
 		static std::pair<int, int> keypressToDirection(QKeyEvent* event);
 		/**

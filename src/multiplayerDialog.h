@@ -17,7 +17,6 @@
 #include <QDebug>
 #include "mainwindow.h"
 
-// TODO comment
 /** 
  * @class MultiplayerDialog
  * @brief Class for the MultiplayerDialog window, which is used to create a server or connect to one

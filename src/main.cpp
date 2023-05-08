@@ -11,8 +11,8 @@
 #include <QDir>
 
 int main(int argc, char *argv[]) {
-  QApplication app(argc, argv);
-  MainMenu mainMenu;
-  mainMenu.show();
-  return app.exec();
+	QApplication app(argc, argv);
+	MainMenu mainMenu;
+	mainMenu.show();
+	return app.exec();
 }

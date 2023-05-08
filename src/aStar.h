@@ -2,7 +2,7 @@
  * @file aStar.h
  * @brief Header file for the A* algorithm
  * @authors Petr Kolouch, Vladimír Hucovič 
-**/
+ **/
 
 
 #ifndef ASTAR_H_
@@ -93,7 +93,7 @@ struct AstarNode{
  * @details To find the shortest path from one square to another in the grid, this A* algorithm is used.
  * */
 class Astar {
-    public:
+	public:
 		/** 
 		 * @brief Calculates the shortest path from one square to another in the grid
 		 * @param start The starting coordinates
@@ -130,13 +130,13 @@ class Astar {
 		 * @param b The coordinates of the end node
 		 * @return The heuristic value of the node
 		 * */
-        static int heuristic(Coords a, Coords b);
+		static int heuristic(Coords a, Coords b);
 		/** 
 		 * @brief Checks if there is a walkable node at the given coordinate
 		 * @param coord The coordinates to check
 		 * @param grid The grid to check in
 		 * */
-        static bool isValidMove(Coords coord, const Grid &grid);
+		static bool isValidMove(Coords coord, const Grid &grid);
 };
 
 

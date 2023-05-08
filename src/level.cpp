@@ -29,98 +29,98 @@ using namespace std;
 
 
 Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay, bool is_multiplayer) : m_id(0) {
-  this->m_drawable = drawable;
-  this->m_bound_x = -1;
-  this->m_bound_y = -1;
-  this->m_logger = logger;
-  this->m_replay = replay;
-  this->m_is_multiplayer = is_multiplayer;
-  this->m_player_index = 0;
-  srand(time(NULL));
+	this->m_drawable = drawable;
+	this->m_bound_x = -1;
+	this->m_bound_y = -1;
+	this->m_logger = logger;
+	this->m_replay = replay;
+	this->m_is_multiplayer = is_multiplayer;
+	this->m_player_index = 0;
+	srand(time(NULL));
 }
 
 int Level::addEntity(char c, int x, int y, int id, bool init) {
-  DrawableItem *item;
-  if (m_logger && !init) {
-    m_logger->logCreation(m_id-1, c, x, y);
-  }
+	DrawableItem *item;
+	if (m_logger && !init) {
+		m_logger->logCreation(m_id-1, c, x, y);
+	}
 
-  int spawned = 0;
+	int spawned = 0;
 
-  Entity* entity;
-  // create the entity based on the specified character
-  switch (c) {
-    case 'T': {
-        item = m_drawable->drawItem("finish", 1, rotationType::ROTATE);
-        entity = (Entity *)new Finish(x, y, item, id);
-        ++spawned;
-        break;
-    }
-    case 'X': {
-        item = m_drawable->drawItem("wall", 1, rotationType::ROTATE);
-        entity = (Entity *)new Wall(x, y, item, id);
-        ++spawned;
-        break;
-    }
-    case 'G': {
-        item = m_drawable->drawItem("ghost", 1, rotationType::SPRITE_CHANGE);
-        entity = (Entity *)new Ghost(x, y, item, id);
-        ++spawned;
-        break;
-    }
-    case 'K': {
-        item = m_drawable->drawItem("key", 1, rotationType::ROTATE);
-        entity = (Entity *)new Key(x, y, item, id);
-        ++spawned;
-        break;
-    }
-    case 'S': {
-        item = m_drawable->drawItem("player", 6, rotationType::ROTATE);
-        entity = (Entity *)new Player(x, y, true, item, id);
-        entity->m_drawable_item->setZ(10);
-        ++spawned;
-        bool condition = false;
-        if (m_replay) {
-            condition = m_replay->getReplaingMultiplayer();
-        }
-        if (m_is_multiplayer || condition) {
-            m_grid[x][y].push_back(entity);
-            this->m_entities[entity->m_type].push_back(entity);
-            this->m_drawable->setPosition(entity->m_drawable_item, x, y);
-            this->m_player_index = this->m_replay != nullptr;
+	Entity* entity;
+	// create the entity based on the specified character
+	switch (c) {
+		case 'T': {
+					  item = m_drawable->drawItem("finish", 1, rotationType::ROTATE);
+					  entity = (Entity *)new Finish(x, y, item, id);
+					  ++spawned;
+					  break;
+				  }
+		case 'X': {
+					  item = m_drawable->drawItem("wall", 1, rotationType::ROTATE);
+					  entity = (Entity *)new Wall(x, y, item, id);
+					  ++spawned;
+					  break;
+				  }
+		case 'G': {
+					  item = m_drawable->drawItem("ghost", 1, rotationType::SPRITE_CHANGE);
+					  entity = (Entity *)new Ghost(x, y, item, id);
+					  ++spawned;
+					  break;
+				  }
+		case 'K': {
+					  item = m_drawable->drawItem("key", 1, rotationType::ROTATE);
+					  entity = (Entity *)new Key(x, y, item, id);
+					  ++spawned;
+					  break;
+				  }
+		case 'S': {
+					  item = m_drawable->drawItem("player", 6, rotationType::ROTATE);
+					  entity = (Entity *)new Player(x, y, true, item, id);
+					  entity->m_drawable_item->setZ(10);
+					  ++spawned;
+					  bool condition = false;
+					  if (m_replay) {
+						  condition = m_replay->getReplaingMultiplayer();
+					  }
+					  if (m_is_multiplayer || condition) {
+						  m_grid[x][y].push_back(entity);
+						  this->m_entities[entity->m_type].push_back(entity);
+						  this->m_drawable->setPosition(entity->m_drawable_item, x, y);
+						  this->m_player_index = this->m_replay != nullptr;
 
-            item = m_drawable->drawItem("otherplayer", 6, rotationType::ROTATE);
-            entity = (Entity *)new Player(x, y, false, item, id+1);
-            ++spawned;
-        }
-        break;
-    }
-    case '.': {
-        return spawned;
-    }
-    case 'B':{
-        item = m_drawable->drawItem("boost", 1, rotationType::ROTATE);
-        entity = (Entity*) new Boost(x, y, item, id);
-        ++spawned;
-        break;
-    }
-    case 'H':{
-        item = m_drawable->drawItem("health", 1, rotationType::ROTATE);
-        entity = (Entity*) new Health(x, y, item, id);
-        ++spawned;
-        break;
-    }
-    default: {
-        //std::cerr << "Invalid entity character used: " << c << std::endl;
-        exit(1);
-    }
-  }
+						  item = m_drawable->drawItem("otherplayer", 6, rotationType::ROTATE);
+						  entity = (Entity *)new Player(x, y, false, item, id+1);
+						  ++spawned;
+					  }
+					  break;
+				  }
+		case '.': {
+					  return spawned;
+				  }
+		case 'B':{
+					 item = m_drawable->drawItem("boost", 1, rotationType::ROTATE);
+					 entity = (Entity*) new Boost(x, y, item, id);
+					 ++spawned;
+					 break;
+				 }
+		case 'H':{
+					 item = m_drawable->drawItem("health", 1, rotationType::ROTATE);
+					 entity = (Entity*) new Health(x, y, item, id);
+					 ++spawned;
+					 break;
+				 }
+		default: {
+					 //std::cerr << "Invalid entity character used: " << c << std::endl;
+					 exit(1);
+				 }
+	}
 
-  m_grid[x][y].push_back(entity);
-  this->m_entities[entity->m_type].push_back(entity);
-  this->m_drawable->setPosition(entity->m_drawable_item, x, y);
+	m_grid[x][y].push_back(entity);
+	this->m_entities[entity->m_type].push_back(entity);
+	this->m_drawable->setPosition(entity->m_drawable_item, x, y);
 
-  return spawned;
+	return spawned;
 }
 
 void Level::loadLevel(const std::string &levelString) {
@@ -168,7 +168,7 @@ void Level::loadLevel(const std::string &levelString) {
 		m_id += addEntity('X', m_bound_x + 1, i, m_id, true);
 	}
 	this->dumpGrid();
-    this->m_drawable->setHealthCount(3);
+	this->m_drawable->setHealthCount(3);
 }
 
 void Level::spawnHealth(){
@@ -275,12 +275,12 @@ void Level::removeDeadEntities(){
 	for(auto entityTypeVecPair: this->m_entities){
 		for(auto entity: entityTypeVecPair.second){
 			if(!entity->isAlive()){
-                if (entity == m_entities[EntityType::PLAYER][m_player_index]) {
-                   m_player_index = -1;
-                }
-                if (m_logger) {
-                    this->m_logger->logRemoval(entity->getId(), entity->m_type, entity->get_xy().first, entity->get_xy().second);
-                }
+				if (entity == m_entities[EntityType::PLAYER][m_player_index]) {
+					m_player_index = -1;
+				}
+				if (m_logger) {
+					this->m_logger->logRemoval(entity->getId(), entity->m_type, entity->get_xy().first, entity->get_xy().second);
+				}
 				this->removeEntity(entity);
 			}
 		}
@@ -305,33 +305,33 @@ void Level::checkPlayerWin(){
 }
 
 void Level::tryToApplyDirectionsFromReplay(Entity* ent) {
-  for (auto command : this->m_replay->getLastTick()) {
-    if (command[0] != "D") continue;
-    if (stoi(command[1]) != ent->getId()) continue;
+	for (auto command : this->m_replay->getLastTick()) {
+		if (command[0] != "D") continue;
+		if (stoi(command[1]) != ent->getId()) continue;
 
-	// if we are playing forward, apply the direction as is
-	if(!m_replay->playingBackwards()){
-		ent->setDirection(stoi(command[2]), stoi(command[3]));
+		// if we are playing forward, apply the direction as is
+		if(!m_replay->playingBackwards()){
+			ent->setDirection(stoi(command[2]), stoi(command[3]));
+		}
+		// if we are playing backwards, apply the opposite direction
+		else{
+			ent->setDirection(-stoi(command[2]), -stoi(command[3]));
+		}
 	}
-	// if we are playing backwards, apply the opposite direction
-	else{
-		ent->setDirection(-stoi(command[2]), -stoi(command[3]));
-	}
-  }
 }
 
 void Level::tryToRemoveEntitiesFromReplay(bool backwards) {
-    if (!backwards) return;
+	if (!backwards) return;
 	// if playing backwards, add back the entity that was removed
-    for (auto command: this->m_replay->getLastTick()) {
-        if (command[0] != "R") continue;
-        int id = stoi(command[1]);
-        char type = command[2][0];
-        int x = stoi(command[3]);
-        int y = stoi(command[4]);
+	for (auto command: this->m_replay->getLastTick()) {
+		if (command[0] != "R") continue;
+		int id = stoi(command[1]);
+		char type = command[2][0];
+		int x = stoi(command[3]);
+		int y = stoi(command[4]);
 		//cerr << "Tryng to re-create entity " << type << " at " << x << " " << y <<endl;
-        addEntity(type, x, y, id, false);
-    }
+		addEntity(type, x, y, id, false);
+	}
 }
 
 void Level::tryToCreateEntitiesFromReplay(bool backwards) {
@@ -353,19 +353,19 @@ void Level::tryToCreateEntitiesFromReplay(bool backwards) {
 		return;
 	}
 	// if playing forward, add the entity that was created
-    for (auto command: this->m_replay->getLastTick()) {
-        if (command[0] != "C") continue;
-        int id = stoi(command[1]);
-        char type = command[2][0];
-        int x = stoi(command[3]);
-        int y = stoi(command[4]);
-        addEntity(type, x, y, id, false);
-    }
+	for (auto command: this->m_replay->getLastTick()) {
+		if (command[0] != "C") continue;
+		int id = stoi(command[1]);
+		char type = command[2][0];
+		int x = stoi(command[3]);
+		int y = stoi(command[4]);
+		addEntity(type, x, y, id, false);
+	}
 }
 
 void Level::updateGrid() {
-    if (m_replay) {
-        this->tryToCreateEntitiesFromReplay(m_replay->playingBackwards());
+	if (m_replay) {
+		this->tryToCreateEntitiesFromReplay(m_replay->playingBackwards());
 	}
 	// player has priority, update player first
 	this->updateEntitiesOfType(EntityType::PLAYER);
@@ -387,23 +387,23 @@ void Level::updateGrid() {
 		this->m_game_over = true;
 	}
 	// 10% chance of spawning a boost and 5% chance of spawning a heart
-    if (!m_replay) {
-        if(rand() % 100 < 10 && this->m_entities[EntityType::BOOST].size() == 0){
-            //cerr << "SPAWNING BOOST" << endl;
-            this->spawnBoost();
-        }
-        if(rand() % 100 < 5 && this->m_entities[EntityType::HEALTH].size() == 0){
-            //cerr << "SPAWNING HEALTH" << endl;
-            this->spawnHealth();
-        }
-    }
-    if (m_replay) {
-        this->tryToRemoveEntitiesFromReplay(m_replay->playingBackwards());
-    }
+	if (!m_replay) {
+		if(rand() % 100 < 10 && this->m_entities[EntityType::BOOST].size() == 0){
+			//cerr << "SPAWNING BOOST" << endl;
+			this->spawnBoost();
+		}
+		if(rand() % 100 < 5 && this->m_entities[EntityType::HEALTH].size() == 0){
+			//cerr << "SPAWNING HEALTH" << endl;
+			this->spawnHealth();
+		}
+	}
+	if (m_replay) {
+		this->tryToRemoveEntitiesFromReplay(m_replay->playingBackwards());
+	}
 
 	// update health
-    int health = m_player_index != -1 ? ((Player*) this->m_entities[EntityType::PLAYER][m_player_index])->health() : 0;
-    this->m_drawable->setHealthCount(health);
+	int health = m_player_index != -1 ? ((Player*) this->m_entities[EntityType::PLAYER][m_player_index])->health() : 0;
+	this->m_drawable->setHealthCount(health);
 	//this->dumpGrid();
 
 	if(this->m_logger){
@@ -431,35 +431,35 @@ void Level::openFinishes(){
 }
 
 std::vector<std::pair<int, int>> Level::checkDirections(int x, int y) {
-  std::vector<std::pair<int, int>> out{};
-  // check if there is a wall in each direction
-  if (!this->checkWall(x-1, y)) {
-    out.push_back(std::pair<int, int>(-1, 0));
-  }
-  if (!this->checkWall(x+1, y)) {
-    out.push_back(std::pair<int, int>(1, 0));
-  }
-  if (!this->checkWall(x, y-1)) {
-    out.push_back(std::pair<int, int>(0, -1));
-  }
-  if (!this->checkWall(x, y+1)) {
-    out.push_back(std::pair<int, int>(0, 1));
-  }
-  return out;
+	std::vector<std::pair<int, int>> out{};
+	// check if there is a wall in each direction
+	if (!this->checkWall(x-1, y)) {
+		out.push_back(std::pair<int, int>(-1, 0));
+	}
+	if (!this->checkWall(x+1, y)) {
+		out.push_back(std::pair<int, int>(1, 0));
+	}
+	if (!this->checkWall(x, y-1)) {
+		out.push_back(std::pair<int, int>(0, -1));
+	}
+	if (!this->checkWall(x, y+1)) {
+		out.push_back(std::pair<int, int>(0, 1));
+	}
+	return out;
 }
 
 bool Level::checkWall(int x, int y) {
 	// check if there is a wall at the given coordinates
-  if (x >= this->m_grid.size() || x < 0)
-    return true;
-  if (y >= this->m_grid[x].size() || y < 0)
-    return true;
-  for (Entity *entity : this->m_grid[x][y]) {
-    if (dynamic_cast<Wall *>(entity) != nullptr) {
-      return true;
-    }
-  }
-  return false;
+	if (x >= this->m_grid.size() || x < 0)
+		return true;
+	if (y >= this->m_grid[x].size() || y < 0)
+		return true;
+	for (Entity *entity : this->m_grid[x][y]) {
+		if (dynamic_cast<Wall *>(entity) != nullptr) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool Level::removeEntity(Entity* ent){
@@ -476,13 +476,13 @@ bool Level::removeEntity(Entity* ent){
 }
 
 void Level::keyPressEvent(QKeyEvent *event){
-  if (m_replay) {
-    return;
-  }
+	if (m_replay) {
+		return;
+	}
 
-  for(auto ent: this->m_entities[EntityType::PLAYER]){
-	ent->keyPressEvent(event);
-  }
+	for(auto ent: this->m_entities[EntityType::PLAYER]){
+		ent->keyPressEvent(event);
+	}
 }
 
 
@@ -492,65 +492,65 @@ EntityVector Level::findEntitiesAt(int x, int y){
 
 
 void Level::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-        if(m_player_index == -1) { return; }
-        if (event->button() == Qt::LeftButton) {
-        qreal x = event->scenePos().x();
-        qreal y = event->scenePos().y();
-        auto test = this->m_drawable->reverseTranslate(x, y);
-        //std::cerr << "testing A star" << std::endl;
-        Entity* playerEntity = this->m_entities[EntityType::PLAYER][m_player_index];
+	if(m_player_index == -1) { return; }
+	if (event->button() == Qt::LeftButton) {
+		qreal x = event->scenePos().x();
+		qreal y = event->scenePos().y();
+		auto test = this->m_drawable->reverseTranslate(x, y);
+		//std::cerr << "testing A star" << std::endl;
+		Entity* playerEntity = this->m_entities[EntityType::PLAYER][m_player_index];
 		((Player*)playerEntity)->clearMoveVector();
-        std::pair<int, int> playerPos = playerEntity->get_xy();
-        std::pair<int, int> start(playerPos.first, playerPos.second);
-        std::pair<int, int> finish(this->m_drawable->reverseTranslate(x, y));
+		std::pair<int, int> playerPos = playerEntity->get_xy();
+		std::pair<int, int> start(playerPos.first, playerPos.second);
+		std::pair<int, int> finish(this->m_drawable->reverseTranslate(x, y));
 
 		//cerr << "start: " << start.first << " " << start.second << endl;
 		//cerr << "finish: " << finish.first << " " << finish.second << endl;
-        std::vector<std::pair<int, int>> path = Astar::calculatePath(start, finish, this->m_grid);
-        ((Player*)playerEntity)->setMoveVector(path);
-        //std::cerr << "Path found:\n";
-        /* for (const auto &coord : path) { */
-        /*     std::cerr << '(' << coord.first << ", " << coord.second << ")\n"; */
-        /* } */
-    }
+		std::vector<std::pair<int, int>> path = Astar::calculatePath(start, finish, this->m_grid);
+		((Player*)playerEntity)->setMoveVector(path);
+		//std::cerr << "Path found:\n";
+		/* for (const auto &coord : path) { */
+		/*     std::cerr << '(' << coord.first << ", " << coord.second << ")\n"; */
+		/* } */
+	}
 }
 
 std::pair<int, int> Level::getLocalPlayerDirection() {
-    if (m_player_index == -1) {
-        return std::pair<int, int>(0, 0);
-    }
+	if (m_player_index == -1) {
+		return std::pair<int, int>(0, 0);
+	}
 
-    return m_entities[EntityType::PLAYER][m_player_index]->getDxDy();
+	return m_entities[EntityType::PLAYER][m_player_index]->getDxDy();
 }
 
 void Level::setRemotePlayerDirection(std::string command) {
-    Entity* remote_player = nullptr;
+	Entity* remote_player = nullptr;
 
-    // Finding remote player.
-    for (auto player : m_entities[EntityType::PLAYER]) {
-        if (!((Player*) player)->m_local_player) {
-            remote_player = player;
-            break;
-        }
-    }
+	// Finding remote player.
+	for (auto player : m_entities[EntityType::PLAYER]) {
+		if (!((Player*) player)->m_local_player) {
+			remote_player = player;
+			break;
+		}
+	}
 
-    if (!remote_player) {
-        return;
-    }
+	if (!remote_player) {
+		return;
+	}
 
-    // Decoding message
+	// Decoding message
 	std::istringstream stream(command);
-    char code;
-    int dx;
-    int dy;
-    stream >> code;
-    stream >> dx;
-    stream >> dy;
+	char code;
+	int dx;
+	int dy;
+	stream >> code;
+	stream >> dx;
+	stream >> dy;
 
-    if (code != 'P') {
-        return;
-    }
+	if (code != 'P') {
+		return;
+	}
 
-    remote_player->setDirection(dx, dy);
+	remote_player->setDirection(dx, dy);
 }
 

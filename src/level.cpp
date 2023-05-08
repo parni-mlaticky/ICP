@@ -342,11 +342,11 @@ void Level::updateGrid() {
 		this->m_game_over = true;
 	}
     if (!m_replay) {
-        if(rand() % 100 < 98 && this->m_entities[EntityType::BOOST].size() == 0){
+        if(rand() % 100 < 2 && this->m_entities[EntityType::BOOST].size() == 0){
             cerr << "SPAWNING BOOST" << endl;
             this->spawnBoost();
         }
-        if(rand() % 100 < 95 && this->m_entities[EntityType::HEALTH].size() == 0){
+        if(rand() % 100 < 3 && this->m_entities[EntityType::HEALTH].size() == 0){
             cerr << "SPAWNING HEALTH" << endl;
             this->spawnHealth();
         }

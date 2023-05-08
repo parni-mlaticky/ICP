@@ -10,7 +10,7 @@ Player::Player(int x, int y, bool isLocal, DrawableItem* item, int id) : Entity(
   m_key_count = 0;
   m_can_move = true;
   m_type = EntityType::PLAYER;
-  m_health = 3;
+  m_health = 2;
 }
 
 

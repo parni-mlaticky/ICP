@@ -1,11 +1,12 @@
 #include "sprite.h"
 
-Sprite::Sprite(std::string sprite_path, int animation_frames) : m_current_animation_frame(1),
+Sprite::Sprite(std::string sprite_path, int animation_frames, rotationType rType) : m_current_animation_frame(1),
                                                                 m_animation_frames(animation_frames),
                                                                 m_scale(-1),
                                                                 m_sprite_path(sprite_path),
                                                                 m_animate(false),
-                                                                m_sprite_variant("") {
+                                                                m_sprite_variant(""),
+																rType(rType)  {
 
   setFlag(QGraphicsItem::ItemIsFocusable, true);
   this->m_sprite_path = sprite_path;
@@ -70,6 +71,20 @@ void Sprite::moveTowards(std::pair<int, int> coords) {
 }
 
 void Sprite::setRotation(int dx, int dy) {
+  if(this->rType == rotationType::SPRITE_CHANGE) {
+	if(dx == 1)
+		setSpriteVariant("right");
+	else if(dx == -1)
+		setSpriteVariant("left");
+	else if(dy == 1)
+		setSpriteVariant("down");
+	else if(dy == -1)
+		setSpriteVariant("up");
+	else{
+		setSpriteVariant("up");
+	}
+	return;
+  }
   dy = dy == 1 ? 2 : dy;
 
   QPointF center = this->boundingRect().center();

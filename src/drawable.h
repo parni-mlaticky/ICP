@@ -6,10 +6,12 @@
 
 // TODO comment
 
+enum class rotationType;
+
 class Drawable {
 public:
   virtual void render(int frame_n) = 0;
-  virtual DrawableItem* drawItem(std::string sprite_path, int frame_count) = 0;
+  virtual DrawableItem* drawItem(std::string sprite_path, int frame_count, rotationType rType) = 0;
   virtual void deleteItem(DrawableItem* item) = 0;
   virtual void setGridDimensions(int x, int y) = 0;
   virtual void drawBackgroundTiles(std::string sprite_path) = 0;

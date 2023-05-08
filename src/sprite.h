@@ -13,11 +13,17 @@ class Scene;
 
 // TODO Comment
 
+enum class rotationType {
+	SPRITE_CHANGE,
+	ROTATE
+};
+
 class Sprite : public QObject, public QGraphicsPixmapItem, public DrawableItem {
 Q_OBJECT
 Q_INTERFACES(QGraphicsItem)
+
 public:
-  Sprite(std::string sprite_path, int frame_count);
+  Sprite(std::string sprite_path, int frame_count, rotationType rType);
   void setSpriteScale(int scale);
   void interpolate(int frame_n, int frame_count);
   void setZ(int z);
@@ -36,6 +42,7 @@ protected:
   std::string m_sprite_variant;
   int m_animation_frames;
   int m_current_animation_frame;
+  rotationType rType;
   bool m_animate;
   int m_scale;
   std::pair<int, int> old_coords;

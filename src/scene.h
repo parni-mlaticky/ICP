@@ -21,7 +21,7 @@ class Scene : public Drawable, public QGraphicsScene {
 public:
   // Drawable
   void render(int frame_n) override;
-  DrawableItem* drawItem(std::string sprite_path, int frame_count) override;
+  DrawableItem* drawItem(std::string sprite_path, int frame_count, rotationType rType) override;
   void deleteItem(DrawableItem* item) override;
   void setGridDimensions(int x, int y) override;
   void moveTowards(DrawableItem* item, int row, int col) override;

@@ -18,7 +18,9 @@
 #include <thread>
 #include "aStar.h"
 #include <QGraphicsSceneMouseEvent>
+#include "sprite.h"
 using namespace std;
+
 
 Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay) : m_id(0) {
   this->m_drawable = drawable;
@@ -39,27 +41,27 @@ void Level::addEntity(char c, int x, int y, int id, bool init) {
   Entity* entity;
   switch (c) {
     case 'T': {
-        item = m_drawable->drawItem("finish", 1);
+        item = m_drawable->drawItem("finish", 1, rotationType::ROTATE);
         entity = (Entity *)new Finish(x, y, item, id);
         break;
     }
     case 'X': {
-        item = m_drawable->drawItem("wall", 1);
+        item = m_drawable->drawItem("wall", 1, rotationType::ROTATE);
         entity = (Entity *)new Wall(x, y, item, id);
         break;
     }
     case 'G': {
-        item = m_drawable->drawItem("ghost", 4);
+        item = m_drawable->drawItem("ghost", 1, rotationType::SPRITE_CHANGE);
         entity = (Entity *)new Ghost(x, y, item, id);
         break;
     }
     case 'K': {
-        item = m_drawable->drawItem("key", 1);
+        item = m_drawable->drawItem("key", 1, rotationType::ROTATE);
         entity = (Entity *)new Key(x, y, item, id);
         break;
     }
     case 'S': {
-        item = m_drawable->drawItem("player", 6);
+        item = m_drawable->drawItem("player", 6, rotationType::ROTATE);
         entity = (Entity *)new Player(x, y, true, item, id);
         break;
     }
@@ -67,12 +69,12 @@ void Level::addEntity(char c, int x, int y, int id, bool init) {
         return;
     }
     case 'B':{
-        item = m_drawable->drawItem("boost", 1);
+        item = m_drawable->drawItem("boost", 1, rotationType::ROTATE);
         entity = (Entity*) new Boost(x, y, item, id);
         break;
     }
     case 'H':{
-        item = m_drawable->drawItem("health", 1);
+        item = m_drawable->drawItem("health", 1, rotationType::ROTATE);
         entity = (Entity*) new Health(x, y, item, id);
         break;
     }

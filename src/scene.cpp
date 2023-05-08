@@ -51,8 +51,8 @@ void Scene::render(int frame_n) {
   }
 }
 
-DrawableItem* Scene::drawItem(std::string sprite_path, int frame_count) {
-  Sprite* sprite = new Sprite(sprite_path, frame_count);
+DrawableItem* Scene::drawItem(std::string sprite_path, int frame_count, rotationType rType) {
+  Sprite* sprite = new Sprite(sprite_path, frame_count, rType);
   sprite->setSpriteScale(m_scale);
   this->addItem(sprite);
   return sprite;
@@ -87,7 +87,7 @@ void Scene::setKeyCount(int count) {
   qreal sceneWidth = this->sceneRect().width();
   qreal sceneHeight = this->sceneRect().height();
   this->keyCount = count;
-  Sprite *key = new Sprite("key", 1);
+  Sprite *key = new Sprite("key", 1, rotationType::ROTATE);
   key->setSpriteScale(this->m_scale);
   key->setPosition(std::pair<int, int>(-370 + this->keyOffset, -280));
   this->addItem(key);
@@ -108,7 +108,7 @@ void Scene::setHealthCount(int count) {
 	}
   } else {
     for (int i = 0; i < count - this->healthCount; i++) {
-      Sprite *health = new Sprite("health", 1);
+      Sprite *health = new Sprite("health", 1, rotationType::ROTATE);
       health->setSpriteScale(this->m_scale);
       health->setPosition(std::pair<int, int>(300 + this->healthOffset, -280));
       this->addItem(health);
@@ -122,7 +122,7 @@ void Scene::setHealthCount(int count) {
 void Scene::drawBackgroundTiles(std::string sprite_path) {
   for (int row = 0; row < this->m_x; row++) {
     for (int col = 0; col < this->m_y; col++) {
-      Sprite* sprite = new Sprite(sprite_path, 1);
+      Sprite* sprite = new Sprite(sprite_path, 1, rotationType::ROTATE);
       sprite->setPosition(this->translate(row, col));
       sprite->setSpriteScale(this->m_scale);
       sprite->setZ(-1);

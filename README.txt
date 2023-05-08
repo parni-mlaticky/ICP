@@ -62,3 +62,4 @@ Klávesa D - Pokud je záznam pozastaven, přehraje jeden snímek záznamu. V p�
 Pozn. aplikace a dokumentace zdrojového kódu jsou v anglickém jazyce
 Autory grafických elementů jsou Vladimír Hucovič a Ondřej Zobal
 
+

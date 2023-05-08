@@ -1,4 +1,4 @@
-/** 
+/**
  * @file level.cpp
  * @brief Implementation of the Level class, which handles most of the game logic and manages the game state and entities
  * @authors Ondřej Zobal, Vladimír Hucovič, Petr Kolouch
@@ -42,7 +42,6 @@ Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay, bool 
 
 int Level::addEntity(char c, int x, int y, int id, bool init) {
   DrawableItem *item;
-
   if (m_logger && !init) {
     m_logger->logCreation(m_id-1, c, x, y);
   }
@@ -267,7 +266,7 @@ void Level::removeDeadEntities(){
 		for(auto entity: entityTypeVecPair.second){
 			if(!entity->isAlive()){
                 if (entity == m_entities[EntityType::PLAYER][m_player_index]) {
-                   m_player_index = -1; 
+                   m_player_index = -1;
                 }
                 if (m_logger) {
                     this->m_logger->logRemoval(entity->getId(), entity->m_type, entity->get_xy().first, entity->get_xy().second);

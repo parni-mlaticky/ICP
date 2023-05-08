@@ -247,7 +247,7 @@ void MainWindow::update() {
     std::ofstream file("replay/" + time.str() + ".rpl");
     file << m_logger->getFullLog();
     file.close();
-    this->timer->stop();
+	this->timer->stop();
     QMessageBox::information(this, "Game over", "Game over!");
     this->close();
   }

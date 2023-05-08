@@ -16,6 +16,8 @@ void Player::keyPressEvent(QKeyEvent *event) {
   if (!this->m_local_player)
     return;
 
+
+  this->moveVector.clear();
   switch (event->key()) {
   case Qt::Key_W:
     setDirection(-1, 0);
@@ -40,6 +42,9 @@ void Player::keyPressEvent(QKeyEvent *event) {
 }
 
 void Player::update() {
+	if(this->moveVector.size() > 0){
+		this->autoSetDirection();
+	}
 	if(this->m_boost_ticks_left){
 		this->m_boost_ticks_left--;
 		this->m_drawable_item->setSpriteVariant("enraged");
@@ -115,3 +120,37 @@ int Player::keyCount(){
 int Player::health(){
 	return this->m_health;
 }
+
+
+void Player::clearMoveVector(){
+	this->moveVector.clear();
+}
+
+void Player::setMoveVector(std::vector<std::pair<int, int>> &vector) {
+	if(vector.size() == 0) return;
+	for(int i = vector.size() - 1; i >= 0; i--){
+		this->moveVector.push_back(vector[i]);
+	}
+	this->moveVector.push_back(vector[0]);
+	for(auto pair : this->moveVector){
+		std::cerr << "move vector: " << pair.first << " " << pair.second << std::endl;
+	}
+}
+
+void Player::autoSetDirection() {
+    if(this->moveVector.size() == 0) return;
+
+    std::pair<int, int> currentPosition = this->get_xy();
+    std::pair<int, int> nextPosition = this->moveVector[0];
+
+    int dx = nextPosition.first - currentPosition.first;
+    int dy = nextPosition.second - currentPosition.second;
+    this->moveVector.erase(this->moveVector.begin());
+
+    std::cerr << "dx: " << dx << " dy: " << dy << std::endl;
+    std::cerr << "curr x: " << currentPosition.first << " curr y: " << currentPosition.second << std::endl;
+    std::cerr << "next x: " << nextPosition.first << " next y: " << nextPosition.second << std::endl;
+
+	this->setDirection(dx, dy);
+}
+

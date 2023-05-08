@@ -56,6 +56,8 @@ public:
    * */
   std::string loadLevelFile(QString levelFilePath);
 
+  // TODO comment
+  void mousePressEvent(QGraphicsSceneMouseEvent* event);
 // protected methods
 protected:
   /** 

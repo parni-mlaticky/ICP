@@ -106,6 +106,8 @@ public:
    * */
   bool isGameOver();
 
+	// TODO comment
+  void mousePressEvent(QGraphicsSceneMouseEvent *event);
 // private methods
 private:
   /** 

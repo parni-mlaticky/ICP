@@ -38,6 +38,7 @@ set(SOURCES
 	src/health.cpp
     src/multiplayerDialog.cpp
 	src/remote.cpp
+	src/aStar.cpp
 	)
 
 set(HEADERS
@@ -57,6 +58,7 @@ set(HEADERS
 	src/health.h
     src/multiplayerDialog.h
 	src/remote.h
+	src/aStar.h
 	)
 
 set(UI src/mainwindow.ui src/mainmenu.ui)

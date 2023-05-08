@@ -1,5 +1,6 @@
 #include "scene.h"
 #include "mainwindow.h"
+#include <cmath>
 
 Scene::Scene(int window_w, int window_h, int frames_between_updates, MainWindow* window) {
   this->m_window_w = window_w;
@@ -34,6 +35,10 @@ void Scene::cacheSprites(const std::string dirPath) {
 
 void Scene::keyPressEvent(QKeyEvent* event) {
   m_window->keyPressEvent(event);
+}
+
+void Scene::mousePressEvent(QGraphicsSceneMouseEvent *event){
+	m_window->mousePressEvent(event);
 }
 
 void Scene::render(int frame_n) {
@@ -140,3 +145,24 @@ std::pair<int, int> Scene::translate(int x, int y) {
 
   return result;
 }
+
+std::pair<int, int> Scene::reverseTranslate(int x, int y) {
+	double x_d = (double)x;
+	double y_d = (double)y;
+    int base_x = 0 - m_x / 2;
+    int base_y = 0 - m_y / 2;
+
+	x_d = floor(x_d / m_scale);
+    x = x_d;
+    x -= base_x - 1;
+
+	y_d = floor(y_d / m_scale);
+    y = y_d;
+    y -= base_y - 1;
+
+    auto result = std::pair<int, int>(y, x);
+
+    return result;
+}
+
+

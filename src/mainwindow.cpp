@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include <qgraphicsitem.h>
 
 void MainWindow::initialize(){
 	const int height = 600;
@@ -89,6 +90,11 @@ std::string MainWindow::loadLevelFile(QString levelFilePath) {
   file.close();
 
   return level.toStdString();
+}
+
+void MainWindow::mousePressEvent(QGraphicsSceneMouseEvent* event){
+	std::cerr << "mouse press event" << std::endl;
+	this->m_level->mousePressEvent(event);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {

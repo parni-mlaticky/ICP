@@ -13,7 +13,7 @@ public:
   virtual void deleteItem(DrawableItem* item) = 0;
   virtual void setGridDimensions(int x, int y) = 0;
   virtual void drawBackgroundTiles(std::string sprite_path) = 0;
-
+  virtual std::pair<int, int> reverseTranslate(int x, int y) = 0;
   virtual void moveTowards(DrawableItem* item, int row, int col) = 0;
   virtual void setPosition(DrawableItem* item, int row, int col) = 0;
 

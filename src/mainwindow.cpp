@@ -194,7 +194,8 @@ void MainWindow::update() {
   }
 
 
-  if ((!mp_client && this->m_frame_counter == this->m_animation_frames) || (mp_client && this->m_replay->getTick() != this->m_replay->getMaxTick())) {
+  if ((!mp_client && this->m_frame_counter == this->m_animation_frames)
+      || (mp_client && this->m_replay->getTick() != this->m_replay->getMaxTick())) {
     // If the interpolation from the previous tick finished, but the new one
     // was not recived yet, nothing moves.
     if (this->mp_client && this->m_replay->getTick() == this->m_replay->getMaxTick()) {
@@ -231,13 +232,14 @@ void MainWindow::update() {
   }
   this->m_scene->render(m_frame_counter);
 
-  // TODO save level on game over and show main menu.
   if (this->m_logger && this->m_level->isGameOver()) {
-    // TODO Change filename to UTC timestamp.
-    std::ofstream file("replay/game.rpl");
+    std::time_t now_utc = std::time(nullptr);
+    std::stringstream time;
+    time << std::put_time(std::gmtime(&now_utc), "%Y-%m-%d_%H-%M-%S");
+    std::ofstream file("replay/" + time.str() + ".rpl");
     file << m_logger->getFullLog();
     file.close();
-	this->timer->stop();
+    this->timer->stop();
     QMessageBox::information(this, "Game over", "Game over!");
     this->close();
   }

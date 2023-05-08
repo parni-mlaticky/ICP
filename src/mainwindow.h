@@ -17,6 +17,8 @@
 #include <thread>
 #include "logger.h"
 #include <fstream>
+#include <chrono>
+#include <iomanip>
 
 class MainWindow : public QMainWindow {
   Q_OBJECT

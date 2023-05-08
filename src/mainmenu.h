@@ -102,7 +102,7 @@ private slots:
 
 private:
   const QString helpMessage = "<h2>Welcome to steam engine Pac-Man</h2>"
-            "<p>Created by Ondřej Zobal, Vladimír Hudsovič and Petr Kolouch for ICP class of 2023 at FIT VUT.</p>"
+            "<p>Created by Ondřej Zobal, Vladimír Hucovič and Petr Kolouch for ICP class of 2023 at FIT VUT.</p>"
             "<p><h3>How to play:</h3></p>"
             "<p>You controll the Pac-Man using <i>W</i>, <i>A</i>, <i>S</i>, <i>D</i> or by cliking. Your goal is to collect all "
             "keys and head for the door. Make sure to avoid ghosts! If they touch you, you loose a life. "

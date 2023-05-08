@@ -138,7 +138,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   }
 
 	// replay controls
-	// TODO BIG HACK
 	if(this->m_replay && !mp_client){
 		if(event->key() == Qt::Key_Space){
 			if(this->m_replay->isPaused()){
@@ -186,7 +185,6 @@ void MainWindow::update() {
       timer->stop();
       // TODO show menu from here
       std::cerr << "Finished replaying " << this->m_replay->getMaxTick() << " logical ticks."<< std::endl;
-      QMessageBox::information(this, "Replay", "The replay has finished replaying");
       this->close();
     }
   }

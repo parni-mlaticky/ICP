@@ -317,7 +317,6 @@ void Level::tryToRemoveEntitiesFromReplay(bool backwards) {
         int y = stoi(command[4]);
 		cerr << "Tryng to re-create entity " << type << " at " << x << " " << y <<endl;
         addEntity(type, x, y, id, false);
-        std::cerr << "briihh " << x << " x " << y << std::endl;
     }
 }
 
@@ -345,7 +344,6 @@ void Level::tryToCreateEntitiesFromReplay(bool backwards) {
         int x = stoi(command[3]);
         int y = stoi(command[4]);
         addEntity(type, x, y, id, false);
-        std::cerr << "briihh " << x << " x " << y << std::endl;
     }
 }
 

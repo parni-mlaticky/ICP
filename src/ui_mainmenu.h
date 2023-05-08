@@ -1,12 +1,7 @@
-/** 
- * @file ui_mainmenu.h
- * @brief UI file for the main menu of the game - generated file
- * */
-
 /********************************************************************************
 ** Form generated from reading UI file 'mainmenu.ui'
 **
-** Created by: Qt User Interface Compiler version 5.15.8
+** Created by: Qt User Interface Compiler version 5.15.9
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -86,12 +81,12 @@ public:
 
     void retranslateUi(QWidget *Form)
     {
-        Form->setWindowTitle(QCoreApplication::translate("Form", "Form", nullptr));
+        Form->setWindowTitle(QCoreApplication::translate("Form", "Steam Engine Pac-Man", nullptr));
         playButton->setText(QCoreApplication::translate("Form", "Play", nullptr));
         multiplayerButton->setText(QCoreApplication::translate("Form", "Multiplayer", nullptr));
-        selectLevelButton->setText(QCoreApplication::translate("Form", "Select level", nullptr));
+        selectLevelButton->setText(QCoreApplication::translate("Form", "Select Level", nullptr));
         replayButton->setText(QCoreApplication::translate("Form", "Replay", nullptr));
-        helpButton->setText(QCoreApplication::translate("Form", "help", nullptr));
+        helpButton->setText(QCoreApplication::translate("Form", "Help", nullptr));
         exitButton->setText(QCoreApplication::translate("Form", "Exit", nullptr));
     } // retranslateUi
 

@@ -21,7 +21,7 @@ void MainWindow::initialize(){
 	m_view->setRenderHint(QPainter::Antialiasing);
 	m_view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-	m_replay = nullptr; //new Log::Replay(loadLevelFile("replay/keysnatch.rpl"));
+	m_replay = nullptr;
 	m_logger = new Log::Logger();
   timer = new QTimer(this);
 
@@ -51,15 +51,19 @@ MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QW
     : QMainWindow(parent){
 
   this->initialize();
+  std::string levelString = this->loadLevelFile(levelFilePath);
   if(gameMode == MainWindow::GameMode::Replay) {
     std::cerr << "AAA " << levelFilePath.toStdString();
       m_replay = new Log::Replay(loadLevelFile(levelFilePath));
+      delete this->m_logger;
+      m_logger = nullptr;
+  }
+  else {
+    m_logger->logGrid(levelString);
   }
 
   m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay, false);
-  std::string levelString = this->loadLevelFile(levelFilePath);
   m_level->loadLevel(levelString);
-  m_logger->logGrid(levelString);
 
   timer->start(this->m_gfx_tick_ms);
 }
@@ -125,6 +129,10 @@ std::string MainWindow::loadLevelFile(QString levelFilePath) {
 
 void MainWindow::mousePressEvent(QGraphicsSceneMouseEvent* event){
 	std::cerr << "mouse press event" << std::endl;
+  if (!m_level) {
+    return;
+  }
+
   if (this->m_replay) {
     return;
   }

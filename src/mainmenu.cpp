@@ -5,7 +5,6 @@
  * */
 
 #include "mainmenu.h"
-#include <QMessageBox>
 
 MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
   ui.setupUi(this);

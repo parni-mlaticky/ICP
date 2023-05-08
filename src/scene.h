@@ -20,7 +20,7 @@ class MainWindow;
 class Scene : public Drawable, public QGraphicsScene {
 public:
   // Drawable
-  void render(int frame_n);
+  void render(int frame_n) override;
   DrawableItem* drawItem(std::string sprite_path, int frame_count) override;
   void deleteItem(DrawableItem* item) override;
   void setGridDimensions(int x, int y) override;
@@ -29,7 +29,8 @@ public:
   void drawBackgroundTiles(std::string sprite_path) override;
   void setKeyCount(int count) override;
   void setHealthCount(int count) override;
-
+  std::pair<int, int> reverseTranslate(int x, int y) override;
+  void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
   Scene(int m_window_w, int m_window_h, int frame_between_updates, MainWindow* window);
   std::pair<int, int> translate(int x, int y);
   int scale();

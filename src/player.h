@@ -55,6 +55,10 @@ public:
    * @param event the key press event
    * */
   void keyPressEvent(QKeyEvent *event) override;
+  // TODO comment
+  void setMoveVector(std::vector<std::pair<int, int>> &vector);
+  void autoSetDirection();
+  void clearMoveVector();
 
 protected:
 // private members
@@ -83,6 +87,9 @@ private:
    * @brief The number of ticks left that this player cannot be hit by ghosts
    * */
   std::atomic_int m_unhitable_ticks_left = 0;
+  // TODO Comment
+  std::vector<std::pair<int, int>> moveVector;
+
 };
 #endif
 

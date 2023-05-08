@@ -16,6 +16,8 @@
 #include <type_traits>
 #include <vector>
 #include <thread>
+#include "aStar.h"
+#include <QGraphicsSceneMouseEvent>
 using namespace std;
 
 Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay) : m_id(0) {
@@ -197,6 +199,9 @@ void Level::updateEntitiesOfType(EntityType type){
 		this->m_drawable->setPosition(entity->m_drawable_item, coords.first, coords.second);
 		if(!entity->canMove()) continue;
 		entity->setAllowedDirections(this->checkDirections(coords.first, coords.second));
+		if(m_logger){
+			this->m_logger->logDirection(entity->getId(), entity->getDxDy().first, entity->getDxDy().second);
+		}
 		if(dx == 0 && dy == 0) continue;
 		entity->m_drawable_item->setRotation(dx, dy);
 		if(!checkWall(coords.first + dx, coords.second + dy)){
@@ -217,9 +222,6 @@ void Level::updateEntitiesOfType(EntityType type){
 		else{
 			entity->m_drawable_item->setAnimate(false);
 			entity->stop();
-		}
-		if(m_logger){
-			this->m_logger->logDirection(entity->getId(), entity->getDxDy().first, entity->getDxDy().second);
 		}
 	}
 }
@@ -427,3 +429,29 @@ void Level::keyPressEvent(QKeyEvent *event){
 EntityVector Level::findEntitiesAt(int x, int y){
 	return this->m_grid[x][y];
 }
+
+
+void Level::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+		if(m_replay){ return; }
+        if (event->button() == Qt::LeftButton) {
+        qreal x = event->scenePos().x();
+        qreal y = event->scenePos().y();
+        auto test = this->m_drawable->reverseTranslate(x, y);
+        std::cerr << "testing A star" << std::endl;
+        Entity* playerEntity = this->m_entities[EntityType::PLAYER][0];
+		((Player*)playerEntity)->clearMoveVector();
+        std::pair<int, int>playerPos = playerEntity->get_xy();
+        std::pair<int, int> start(playerPos.first, playerPos.second);
+        std::pair<int, int> finish(this->m_drawable->reverseTranslate(x, y));
+
+		cerr << "start: " << start.first << " " << start.second << endl;
+		cerr << "finish: " << finish.first << " " << finish.second << endl;
+        std::vector<std::pair<int, int>> path = Astar::calculatePath(start, finish, this->m_grid);
+        ((Player*)playerEntity)->setMoveVector(path);
+        std::cerr << "Path found:\n";
+        for (const auto &coord : path) {
+            std::cerr << '(' << coord.first << ", " << coord.second << ")\n";
+        }
+    }
+}
+

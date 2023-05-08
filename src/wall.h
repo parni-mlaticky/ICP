@@ -15,12 +15,12 @@
  * @brief Class for the wall entity
  * */
 class Wall : public Entity {
-// public methods
-public:
-  /** 
-   * @copydoc Entity::Entity(int x, int y, DrawableItem* item, int id)
-   * */
-  Wall(int x, int y, DrawableItem* item, int id);
+	// public methods
+	public:
+		/** 
+		 * @copydoc Entity::Entity(int x, int y, DrawableItem* item, int id)
+		 * */
+		Wall(int x, int y, DrawableItem* item, int id);
 
 };
 #endif

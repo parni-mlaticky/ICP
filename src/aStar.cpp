@@ -8,22 +8,22 @@
 #include <iostream>
 
 bool Astar::isValidMove(std::pair<int, int> coord, const Grid &grid) {
-    int x = coord.first;
-    int y = coord.second;
+	int x = coord.first;
+	int y = coord.second;
 	// check if the coordinates are not outisde of the grid
-    if (x < 0 || y < 0 || x >= grid.size() || y >= grid[0].size()) {
-        return false;
-    }
+	if (x < 0 || y < 0 || x >= grid.size() || y >= grid[0].size()) {
+		return false;
+	}
 
 	// check if there is no wall on the coordinates 
-    const auto& cell = grid[x][y];
-    for (const Entity *entity : cell) {
-        if (entity->m_type == EntityType::WALL) {
-            return false;
-        }
-    }
+	const auto& cell = grid[x][y];
+	for (const Entity *entity : cell) {
+		if (entity->m_type == EntityType::WALL) {
+			return false;
+		}
+	}
 
-    return true;
+	return true;
 }
 
 int Astar::heuristic(Coords a, Coords b){

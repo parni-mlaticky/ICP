@@ -74,12 +74,12 @@ public:
    * */
   void stop();
   /** 
-   * @brief Gets the x and y coordinates of the entity // TODO rename
+   * @brief Gets the x and y coordinates of the entity
    * @return A pair of ints, the x and y coordinates of the entity
    * */
   std::pair<int, int> get_xy();
   /** 
-   * @brief Sets the x and y coordinates of the entity // TODO rename
+   * @brief Sets the x and y coordinates of the entity
    * */
   void set_xy(int x, int y);
   /** 

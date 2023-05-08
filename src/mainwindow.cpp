@@ -1,3 +1,8 @@
+/**
+ * @file mainwindow.cpp
+ * @brief Implementation of MainWindow
+ * @authors Ondřej Zobal, Vladimír Hucovič, Petr Kolouch
+ */
 #include "mainwindow.h"
 #include <qgraphicsitem.h>
 #include <QMessageBox>
@@ -191,7 +196,6 @@ void MainWindow::update() {
     if (this->m_replay->isReplayFinished() && !mp_client) {
       disconnect(timer, &QTimer::timeout, this, &MainWindow::update);
       timer->stop();
-      // TODO show menu from here
       std::cerr << "Finished replaying " << this->m_replay->getMaxTick() << " logical ticks."<< std::endl;
       this->close();
     }

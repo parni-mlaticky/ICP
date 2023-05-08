@@ -17,10 +17,7 @@
 #include <qpixmapcache.h>
 class Scene;
 
-// TODO Comment
-
-
-/** 
+/**
  * @enum rotationType
  * @brief This enum is used to determine how the sprite should be rotated
  * SPRITE_CHANGE - The sprite is changed to a different one
@@ -53,11 +50,19 @@ public:
    * @param scale The scale of the sprite
    * */
   void setSpriteScale(int scale);
-
+  /**
+   * @brief Draws another frame of interpolation
+   * @param frame_n current frame number
+   * @param frame_count Total frames in which the interpolation should compalete
+   * */
   void interpolate(int frame_n, int frame_count);
+  /**
+   * @brief Draws another frame of animations
+   * */
   void animate();
 
   // Drawable Item
+  // See drawable_item.h for descriptions
   void moveTowards(std::pair<int, int>) override;
   void setPosition(std::pair<int, int>) override;
   void setRotation(int dx, int dy) override;
@@ -65,16 +70,47 @@ public:
   void setSpriteVariant(std::string variant) override;
   void setSpriteVariant() override;
   void setZ(int z) override;
+
 protected:
+  /**
+   * @brief Pixmap of this sprite
+   * */
   QPixmap m_pixmap;
+  /**
+   * @brief Base path of this sprite
+   * */
   std::string m_sprite_path;
+  /**
+   * @brief Current variant of this sprite
+   * */
   std::string m_sprite_variant;
+  /**
+   * @brief Total frames an animation of this sprite has
+   * */
   int m_animation_frames;
+  /**
+   * @brief Current frame of the animation
+   * */
   int m_current_animation_frame;
+  /**
+   * @brief Rotation tipe of this sprite
+   * */
   rotationType rType;
+  /**
+   * @brief Wether this sprite should be animated or not
+   * */
   bool m_animate;
+  /**
+   * @brief Scale of this sprite in pixels
+   * */
   int m_scale;
+  /**
+   * @brief Coordinates to interpolate from
+   * */
   std::pair<int, int> old_coords;
+  /**
+   * @brief Coordinates to interpolate to
+   * */
   std::pair<int, int> new_coords;
 };
 

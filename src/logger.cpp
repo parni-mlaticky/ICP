@@ -28,10 +28,6 @@ void Logger::logGrid(std::string record) {
     m_grid_set = true;
 }
 
-void Logger::logRemotePlayer(int id) {
-    this->m_log[m_tick_number].append("Y " + std::to_string(id) + "\n");
-}
-
 void Logger::logDirection(int id, std::pair<int, int> dx_dy) {
     this->m_log[m_tick_number].append("D " + std::to_string(id) + " " + \
                                       std::to_string(dx_dy.first) + " " +\

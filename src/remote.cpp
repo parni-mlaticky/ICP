@@ -1,3 +1,9 @@
+/**
+ * @file remote.cpp
+ * @brief Implementation for the Remote class
+ * @authors Ondřej Zobal, Vladimír Hucovič
+ * */
+
 #include "remote.h"
 #include "mainwindow.h"
 #include <QDialog>
@@ -56,14 +62,7 @@ Remote::~Remote() {
     }
 }
 
-void Remote::onConnected() {
-    this->socket->write("Hello, server!");
-}
-
 void Remote::onReadyRead() {
-    // QByteArray data = socket->readAll();
-    // qDebug() << "Received data:" << data;
-    // message += data.toStdString();
     auto message = this->socket->readAll().toStdString();
     std::cerr << "REMOTE: Recived message" << message << std::endl;
     emit onRecive(message);
@@ -77,16 +76,13 @@ void Remote::onError(QAbstractSocket::SocketError socketError) {
     qDebug() << "Socket error:" << socketError;
 }
 
-void Remote::makeMainWindow() {
-}
-
-// tries to connect to the server of timeouts after 3s 
+// tries to connect to the server of timeouts after 3s
 // the commented part is the code that should be used to show the main window
 // but it is a war crime 
 bool Remote::connectToSession(){
     std::cerr << "Attempting to connect to" << this->hostname.toStdString() << ":" << this->port << std::endl;
 	socket->connectToHost(this->hostname, this->port);
-	if(socket->waitForConnected(3000)){
+	if(socket->waitForConnected()){
         qDebug() << "Connected to server with address:" << this->hostname  << "and port:" << this->port;
         return true;
 	}
@@ -97,22 +93,7 @@ bool Remote::connectToSession(){
 }
 
 std::string Remote::read() {
-    // message += socket->readLine().toStdString();
-    // auto iter = this->message.begin();
-    // std::string out;
-    // do {
-    //     out += *iter;
-    // } while (*iter != c || iter != message.end());
-
-    // message = message.substr(out.size(), message.size() - out.size());
-
-    // return out;
-
     return this->socket->readAll().toStdString();
-}
-
-int Remote::messageLength() {
-    return this->message.size();
 }
 
 void Remote::sendMessage(std::string message) {

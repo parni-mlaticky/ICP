@@ -122,7 +122,10 @@ public:
    * the cilent to the server.
    * */
   void setRemotePlayerDirection(std::string command);
-	// TODO comment
+  /**
+   * @brief Event called from pressing mouse buttons
+   * @param event Event informatin
+   * */
   void mousePressEvent(QGraphicsSceneMouseEvent *event);
 // private methods
 private:

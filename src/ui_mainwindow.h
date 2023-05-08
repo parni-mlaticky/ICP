@@ -23,7 +23,6 @@
 
 QT_BEGIN_NAMESPACE
 
-// TODO comment
 
 class Ui_MainWindow
 {

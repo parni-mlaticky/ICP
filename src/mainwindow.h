@@ -1,3 +1,8 @@
+/**
+ * @file mainwindow.h
+ * @brief Header for MainWindow
+ * @authors Ondřej Zobal, Vladimír Hucovič, Petr Kolouch
+ */
 #pragma once
 
 #include "drawable.h"
@@ -59,7 +64,10 @@ public:
    * */
   std::string loadLevelFile(QString levelFilePath);
 
-  // TODO comment
+  /**
+   * @brief Invoked when a mouse is pressed
+   * @param event Information about the event
+   * */
   void mousePressEvent(QGraphicsSceneMouseEvent* event);
 // protected methods
 protected:
@@ -73,7 +81,13 @@ signals:
    * @brief Signal emitted when the window is closed
    * */
   void windowClosed();
+  /**
+   * @brief Emitted when the openening of the main menu is requested
+   * */
   void openMainMenu();
+  /**
+   * @brief Emitted in order to send a message to the remote party
+   * */
   void sendMessage(std::string);
 
 // private members
@@ -126,8 +140,14 @@ private:
    * */
   std::vector<std::string> m_client_queue;
 
-  int m_animation_frames; // TODO comment @Ondrej
-  int m_frame_counter; // TODO comment @Ondrej
+  /**
+   * @brief Number of frames an interpolation should take
+   * */
+  int m_animation_frames;
+  /**
+   * @brief Frame counter (from 0 to m_animation_frames)
+   * */
+  int m_frame_counter;
   /** 
    * @brief Specifies the game mode - play or replay
    * */
@@ -144,11 +164,25 @@ private:
    * @brief Reference to the server is stored here when the game is played in multiplayer mode and this session acts as the server
    * */
   Remote* mp_server;
-
+  /**
+   * @brief If true, the game is paused
+   * */
   bool m_replay_paused;
   public slots:
+    /**
+    * @brief Processes newly recived messages
+    * */
     void onRecive(std::string message);
+    /**
+    * @brief Called when the server connects to the client
+    * */
     void on_connected_to_client();
+    /**
+    * @brief Called when the client to server
+    * */
     void on_connected_to_server();
+    /**
+    * @brief Called when the other party disconnects
+    * */
     void onDisconnect();
 };

@@ -15,7 +15,7 @@ void MainWindow::initialize(){
 		new Scene(width, height, this->m_animation_frames, (MainWindow *)this);
 
 	this->m_view = new QGraphicsView((Scene *)m_scene, this);
-	setWindowTitle("Parni pacman");
+	setWindowTitle("Steam Engine Pac-Man");
 	setFixedSize(width, height);
 	setCentralWidget(m_view);
 	m_view->setRenderHint(QPainter::Antialiasing);
@@ -28,6 +28,7 @@ void MainWindow::initialize(){
   this->mp_server = nullptr;
   this->mp_client = nullptr;
   this->m_level = nullptr;
+  this->m_client_message = "";
   connect(timer, &QTimer::timeout, this, &MainWindow::update);
 }
 
@@ -38,6 +39,7 @@ MainWindow::MainWindow(QString &levelFilePath, bool hosting, std::string host, i
     this->mp_server = new Remote(this, port);
     std::string levelString = loadLevelFile(levelFilePath);
     this->m_logger->logGrid(levelString);
+    this->m_logger->logMultiplayer();
   }
   else {
     this->mp_client = new Remote(this, QString::fromStdString(host), port);
@@ -54,7 +56,7 @@ MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QW
       m_replay = new Log::Replay(loadLevelFile(levelFilePath));
   }
 
-  m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
+  m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay, false);
   std::string levelString = this->loadLevelFile(levelFilePath);
   m_level->loadLevel(levelString);
   m_logger->logGrid(levelString);
@@ -65,21 +67,16 @@ MainWindow::MainWindow(QString &levelFilePath, MainWindow::GameMode gameMode, QW
 void MainWindow::on_connected_to_client() {
   std::cerr << "MainWindow: Client has connected to this server!" << std::endl;
 
-  // emit sendMessage("Hello world z main window serveru!");
   // Poslat level
   emit sendMessage(this->m_logger->getGrid());
   // Zapnout clock
-  m_level = new Level((Drawable *)m_scene, this->m_logger, nullptr);
+  m_level = new Level((Drawable *)m_scene, this->m_logger, nullptr, true);
   m_level->loadLevel(this->m_logger->getGrid());
   timer->start(this->m_gfx_tick_ms);
 }
 
 void MainWindow::on_connected_to_server() {
   std::cerr << "MainWindow: This client has connected to a server!" << std::endl;
-  // emit sendMessage("Hello world z main window klienta!");
-  // Přijmout level
-  // std::cerr << this->mp_client->readUntill('\n');
-  // Zapnout clock
 }
 
 void MainWindow::onRecive(std::string message) {
@@ -89,15 +86,26 @@ void MainWindow::onRecive(std::string message) {
     // If the game wasn't started yet, but we already have
     // the map, start it!
     if (!m_level && this->m_replay->hasGrid()) {
-      m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay);
+      m_level = new Level((Drawable *)m_scene, this->m_logger, this->m_replay, true);
       m_logger->logGrid(this->m_replay->getGrid());
+      m_logger->logMultiplayer();
       m_level->loadLevel(this->m_replay->getGrid());
       timer->start(this->m_gfx_tick_ms);
     }
   }
 
   else if (mp_server) {
-    // TODO
+    std::cerr << this->m_client_message;
+    if (message == "") {
+      return;
+    }
+
+    if(message[0] == 'Q') {
+      this->m_client_queue.push_back(message);
+    }
+    else if (message[0] == 'P') {
+      this->m_client_message = message;
+    }
   }
 }
 
@@ -117,6 +125,9 @@ std::string MainWindow::loadLevelFile(QString levelFilePath) {
 
 void MainWindow::mousePressEvent(QGraphicsSceneMouseEvent* event){
 	std::cerr << "mouse press event" << std::endl;
+  if (this->m_replay) {
+    return;
+  }
 	this->m_level->mousePressEvent(event);
 }
 
@@ -127,7 +138,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
   }
 
 	// replay controls
-	// TODO BIG HACK
 	if(this->m_replay && !mp_client){
 		if(event->key() == Qt::Key_Space){
 			if(this->m_replay->isPaused()){
@@ -147,8 +157,18 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 			this->m_replay->togglePlaybackDirection();
 		}
 	}
+
+  else if (this->mp_client) {
+    auto dir = Player::keypressToDirection(event);
+    if (dir.first || dir.second) {
+      std::string message = "P " + std::to_string(dir.first) + " " + std::to_string(dir.second) + "\n";
+      emit sendMessage(message);
+    }
+  }
+
 	// game controls
 	this->m_level->keyPressEvent(event);
+
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
@@ -165,7 +185,6 @@ void MainWindow::update() {
       timer->stop();
       // TODO show menu from here
       std::cerr << "Finished replaying " << this->m_replay->getMaxTick() << " logical ticks."<< std::endl;
-      QMessageBox::information(this, "Replay", "The replay has finished replaying");
       this->close();
     }
   }
@@ -174,19 +193,34 @@ void MainWindow::update() {
 	  this->timer->stop();
   }
 
-  if (this->m_frame_counter == this->m_animation_frames || (mp_client && this->m_replay->getTick() != this->m_replay->getMaxTick())) {
+
+  if ((!mp_client && this->m_frame_counter == this->m_animation_frames)
+      || (mp_client && this->m_replay->getTick() != this->m_replay->getMaxTick())) {
     // If the interpolation from the previous tick finished, but the new one
     // was not recived yet, nothing moves.
     if (this->mp_client && this->m_replay->getTick() == this->m_replay->getMaxTick()) {
         return;
     }
 
+    // Applying remote client's movement.
+    if (this->mp_server) {
+      if (this->m_client_message != "") {
+        this->m_level->setRemotePlayerDirection(this->m_client_message);
+        this->m_client_message = "";
+      }
+    }
+
+    // Updating game logic.
     this->m_level->updateGrid();
+
+    // Sending current state of the grid.
     if (mp_server) {
       emit sendMessage(this->m_logger->getLastTick());
     }
+
     this->m_frame_counter = 0;
 
+    // Replay controlls
     if (this->m_replay) {
       if(this->m_replay->playingBackwards()){
         this->m_replay->setPreviousTick();
@@ -198,13 +232,14 @@ void MainWindow::update() {
   }
   this->m_scene->render(m_frame_counter);
 
-  // TODO save level on game over and show main menu.
   if (this->m_logger && this->m_level->isGameOver()) {
-    // TODO Change filename to UTC timestamp.
-    std::ofstream file("replay/game.rpl");
+    std::time_t now_utc = std::time(nullptr);
+    std::stringstream time;
+    time << std::put_time(std::gmtime(&now_utc), "%Y-%m-%d_%H-%M-%S");
+    std::ofstream file("replay/" + time.str() + ".rpl");
     file << m_logger->getFullLog();
     file.close();
-	this->timer->stop();
+    this->timer->stop();
     QMessageBox::information(this, "Game over", "Game over!");
     this->close();
   }

@@ -40,7 +40,7 @@ public:
    * @param logger The logger object of the level - used for logging the game
    * @param replay The replay object of the level - used to play back a recorded game
    * */
-  Level(Drawable *drawable, Log::Logger *logger, Log::Replay *replay);
+  Level(Drawable *drawable, Log::Logger *logger, Log::Replay *replay, bool is_multiplayer);
   /** 
    * @brief Loads a level from a string
    * @param levelString The string representation of the level
@@ -111,6 +111,17 @@ public:
    * @return True if the last player got eaten, false otherwise
    * */
   bool isGameOver();
+  /**
+   * @brief Returns direction of the local player in this instance
+   * */
+  std::pair<int, int> getLocalPlayerDirection();
+  /**
+   * @brief If the remote player is alive it will decode the given
+   * command as directions and apply them to the remote player.
+   * @param command Online protocol command for communication from
+   * the cilent to the server.
+   * */
+  void setRemotePlayerDirection(std::string command);
 
 	// TODO comment
   void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -130,8 +141,9 @@ private:
    * @param y The y coordinate of the new entity
    * @param id The id of the new entity
    * @param init True if the entity is being created at the start of the game, false otherwise
+   * @return number of entities added.
    */
-  void addEntity(char c, int x, int y, int id, bool init);
+  int addEntity(char c, int x, int y, int id, bool init);
   /** 
    * @brief If the game is being played from a replay, applies the directions from the replay to the given entity
    * @param ent The entity to apply the directions to
@@ -194,7 +206,14 @@ private:
    * @brief True if the game is over 
    * */
   bool m_game_over = false;
-
+  /**
+   * @brief True if the game runs as 2-player multiplater.
+   * */
+  bool m_is_multiplayer;
+  /**
+   * @brief Index of local player.
+   * */
+  int m_player_index;
   /** 
    * @brief A map of entity types to vectors of entities of that type
    * Keeps track of entities of each type. This is used to update entities of each type separately, as well as 

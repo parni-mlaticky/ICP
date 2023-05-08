@@ -12,6 +12,7 @@ public:
   virtual void setAnimate(bool allow) = 0;
   virtual void setSpriteVariant(std::string variant) = 0;
   virtual void setSpriteVariant() = 0;
+  virtual void setZ(int z) = 0;
   DrawableItem();
 };
 

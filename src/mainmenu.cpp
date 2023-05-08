@@ -18,11 +18,13 @@ MainMenu::~MainMenu() {
 }
 
 void MainMenu::onMainWindowClosed() {
+    if (mainWindow != nullptr) {
+      delete mainWindow;
+    }
     this->show();
 }
 
 void MainMenu::on_playButton_clicked() {
-    if(mainWindow != nullptr) delete mainWindow;
     mainWindow = new MainWindow(levelFile, MainWindow::GameMode::Play);
     connect(mainWindow, SIGNAL(windowClosed()), this, SLOT(onMainWindowClosed()));
   this->hide();
@@ -49,7 +51,6 @@ void MainMenu::on_replayButton_clicked() {
     QString replayFilePath = QFileDialog::getOpenFileName(this, tr("Select replay"), REPLAY_FOLDER_PATH);
     if (!replayFilePath.isEmpty()) {
         replayFile = replayFilePath;
-        if (mainWindow != nullptr) delete mainWindow;
         mainWindow = new MainWindow(replayFile, MainWindow::GameMode::Replay);
         connect(mainWindow, SIGNAL(windowClosed()), this, SLOT(onMainWindowClosed()));
         this->hide();

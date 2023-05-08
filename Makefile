@@ -20,7 +20,7 @@ clean:
 	rm -rf doc
 
 pack:
-	zip xhucov00-xkolou05-xzobal01.zip Makefile README.md src/* CMakeLists.txt LICENSE Doxyfile
+	zip -r xhucov00-xkolou05-xzobal01.zip Makefile README.txt src/* CMakeLists.txt LICENSE Doxyfile examples/* assets/*
 
 doxygen:
 	doxygen Doxyfile

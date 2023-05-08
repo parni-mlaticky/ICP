@@ -73,6 +73,7 @@ void Player::onCollision(Entity* other) {
 		return;
 	}
 	switch(other->m_type){
+		// should not happen
 		case EntityType::WALL: {
 			this->setDirection(0, 0);
 			break;	
@@ -82,6 +83,7 @@ void Player::onCollision(Entity* other) {
 				dynamic_cast<Ghost*>(other)->kill();
 			}
 			else{
+				// if hit, become unhitable for 10 ticks
 				if(this->m_unhitable_ticks_left == 0){
 					this->m_unhitable_ticks_left += 10;
 					this->m_health--;
@@ -143,9 +145,9 @@ void Player::setMoveVector(std::vector<std::pair<int, int>> &vector) {
 		this->moveVector.push_back(vector[i]);
 	}
 	this->moveVector.push_back(vector[0]);
-	for(auto pair : this->moveVector){
-		std::cerr << "move vector: " << pair.first << " " << pair.second << std::endl;
-	}
+	/* for(auto pair : this->moveVector){ */
+	/* 	std::cerr << "move vector: " << pair.first << " " << pair.second << std::endl; */
+	/* } */
 }
 
 void Player::autoSetDirection() {
@@ -158,9 +160,9 @@ void Player::autoSetDirection() {
     int dy = nextPosition.second - currentPosition.second;
     this->moveVector.erase(this->moveVector.begin());
 
-    std::cerr << "dx: " << dx << " dy: " << dy << std::endl;
-    std::cerr << "curr x: " << currentPosition.first << " curr y: " << currentPosition.second << std::endl;
-    std::cerr << "next x: " << nextPosition.first << " next y: " << nextPosition.second << std::endl;
+    /* std::cerr << "dx: " << dx << " dy: " << dy << std::endl; */
+    /* std::cerr << "curr x: " << currentPosition.first << " curr y: " << currentPosition.second << std::endl; */
+    /* std::cerr << "next x: " << nextPosition.first << " next y: " << nextPosition.second << std::endl; */
 
 	this->setDirection(dx, dy);
 }

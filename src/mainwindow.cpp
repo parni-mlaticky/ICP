@@ -248,7 +248,7 @@ void MainWindow::update() {
     std::time_t now_utc = std::time(nullptr);
     std::stringstream time;
     time << std::put_time(std::gmtime(&now_utc), "%Y-%m-%d_%H-%M-%S");
-    std::ofstream file("replay/" + time.str() + ".rpl");
+    std::ofstream file("examples/replay/" + time.str() + ".rpl");
     file << m_logger->getFullLog();
     file.close();
 	this->timer->stop();

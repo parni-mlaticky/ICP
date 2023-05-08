@@ -125,7 +125,7 @@ class Astar {
 		 * */
 		static void expand(AstarNode* node, Grid grid, vector<AstarNode*> &open, vector<AstarNode*> &closed,  Coords end);
 		/**
-		 * @brief Calculates the heuristic value of a node
+		 * @brief Calculates the Manhattan heuristic value of a node
 		 * @param a The coordinates of the node
 		 * @param b The coordinates of the end node
 		 * @return The heuristic value of the node

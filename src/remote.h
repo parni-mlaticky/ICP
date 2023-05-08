@@ -72,7 +72,7 @@ signals:
 public slots:
   /**
    * @brief Handles sending messages
-   * @param The message that will be sent to the other connected party
+   * @param message The message that will be sent to the other connected party
    * */
     void sendMessage(std::string message);
 

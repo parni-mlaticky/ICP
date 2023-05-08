@@ -65,16 +65,17 @@ public:
    * @brief Sets the position of a drawable item
    * @param item Drawable item who's position is beeing set
    * @param row Grid row which the item should be set to
+   * @param col Grid column which the item should be set to
    * */
   virtual void setPosition(DrawableItem* item, int row, int col) = 0;
   /**
    * @brief The number of key icons that should be displayed on the screen
-   * @param item Count of keys
+   * @param count Count of keys
    * */
   virtual void setKeyCount(int count) = 0;
   /**
    * @brief The number of health icons that should be displayed on the screen
-   * @param item Count of health
+   * @param count Count of health
    * */
   virtual void setHealthCount(int count) = 0;
 

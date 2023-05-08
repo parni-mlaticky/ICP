@@ -9,7 +9,7 @@
 #include "entity.h"
 /** 
  * @class Key
- * @brief Class for the key entity
+ * @brief Class for the Key entity
  * */
 class Key : public Entity {
 // private methods	

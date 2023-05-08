@@ -29,7 +29,7 @@ using Grid = std::vector<Row>;
 
 /**
  * @class Level
- * @brief Class for the level, which contains most of the game logic
+ * @brief Class for the Level, which contains most of the game logic
  */
 class Level {
 public:
@@ -39,6 +39,7 @@ public:
    * @param drawable The drawable object of the level
    * @param logger The logger object of the level - used for logging the game
    * @param replay The replay object of the level - used to play back a recorded game
+   * @param is_multiplayer Specifies if this is a multiplayer game
    * */
   Level(Drawable *drawable, Log::Logger *logger, Log::Replay *replay, bool is_multiplayer);
   /**

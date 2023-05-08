@@ -49,6 +49,8 @@ protected:
   int m_y;
   int keyCount;
   int healthCount;
+  int healthOffset;
+  int keyOffset;
   std::vector<Sprite *> healthSprites;
   std::vector<Sprite *> keySprites;
 };

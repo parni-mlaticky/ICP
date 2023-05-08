@@ -26,6 +26,7 @@ public:
     QPushButton *multiplayerButton;
     QPushButton *selectLevelButton;
     QPushButton *replayButton;
+    QPushButton *helpButton;
     QPushButton *exitButton;
 
     void setupUi(QWidget *Form)
@@ -62,6 +63,11 @@ public:
 
         verticalLayout->addWidget(replayButton, 0, Qt::AlignHCenter);
 
+        helpButton = new QPushButton(verticalLayoutWidget);
+        helpButton->setObjectName(QString::fromUtf8("helpButton"));
+
+        verticalLayout->addWidget(helpButton, 0, Qt::AlignHCenter);
+
         exitButton = new QPushButton(verticalLayoutWidget);
         exitButton->setObjectName(QString::fromUtf8("exitButton"));
 
@@ -80,6 +86,7 @@ public:
         multiplayerButton->setText(QCoreApplication::translate("Form", "Multiplayer", nullptr));
         selectLevelButton->setText(QCoreApplication::translate("Form", "Select level", nullptr));
         replayButton->setText(QCoreApplication::translate("Form", "Replay", nullptr));
+        helpButton->setText(QCoreApplication::translate("Form", "help", nullptr));
         exitButton->setText(QCoreApplication::translate("Form", "Exit", nullptr));
     } // retranslateUi
 

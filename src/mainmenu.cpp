@@ -1,12 +1,8 @@
 #include "mainmenu.h"
+#include <QMessageBox>
 
 MainMenu::MainMenu(QWidget *parent) : QWidget(parent) {
   ui.setupUi(this);
-
-  connect(ui.playButton, &QPushButton::clicked, this,
-          &MainMenu::on_playButton_clicked);
-  connect(ui.exitButton, &QPushButton::clicked, this,
-          &MainMenu::on_exitButton_clicked);
 }
 
 MainMenu::~MainMenu() {
@@ -53,6 +49,14 @@ void MainMenu::on_replayButton_clicked() {
         this->hide();
         mainWindow->show();
     }
+}
+
+void MainMenu::on_helpButton_clicked() {
+    QMessageBox helpDialog(this);
+    helpDialog.setWindowTitle("Help");
+    helpDialog.setTextFormat(Qt::RichText);
+    helpDialog.setText(this->helpMessage);
+    helpDialog.exec();
 }
 
 void MainMenu::on_exitButton_clicked() { this->close(); }

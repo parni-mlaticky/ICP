@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include <qgraphicsitem.h>
+#include <QMessageBox>
 
 void MainWindow::initialize(){
 	const int height = 600;
@@ -141,6 +142,7 @@ void MainWindow::update() {
       timer->stop();
       // TODO show menu from here
       std::cerr << "Finished replaying " << this->m_replay->getMaxTick() << " logical ticks."<< std::endl;
+      QMessageBox::information(this, "Replay", "The replay has finished replaying");
       this->close();
     }
   }
@@ -170,6 +172,7 @@ void MainWindow::update() {
     file << m_logger->getFullLog();
     file.close();
 	this->timer->stop();
+    QMessageBox::information(this, "Game over", "Game over!");
     this->close();
   }
 }

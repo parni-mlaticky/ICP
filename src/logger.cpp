@@ -47,6 +47,10 @@ void Logger::logTickEnd() {
     this->m_log.push_back("");
 }
 
+void Logger::logMultiplayer() {
+    this->m_log[m_tick_number++].append("M\n");
+    this->m_log.push_back("");
+}
 void Logger::logCreation(int id, char type, int x, int y) {
     this->m_log[m_tick_number].append("C " + std::to_string(id) + " " + type + " " + std::to_string(x) + " " + std::to_string(y) + "\n");
 }
@@ -144,6 +148,10 @@ void Replay::stream(std::string message) {
             continue;
         }
 
+        if (*iter == 'M') {
+            this->m_replaing_multiplayer = true;
+        }
+
         if (*iter == ' ') {
             if (word != "") {
                 command.push_back(word);
@@ -208,7 +216,6 @@ bool Replay::isPaused(){
 }
 
 ReplayTick Replay::getLastTick() {
-	std::cerr << "Getting last tick number : " << this->m_tick << std::endl;
     return this->m_log[this->m_tick];
 }
 
@@ -236,4 +243,8 @@ bool Replay::playingBackwards(){
 
 void Replay::togglePlaybackDirection(){
 	this->m_playing_backwards = !this->m_playing_backwards;
+}
+
+bool Replay::getReplaingMultiplayer() {
+    return this->m_replaing_multiplayer;
 }

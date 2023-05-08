@@ -55,7 +55,6 @@ public:
   void setSpriteScale(int scale);
 
   void interpolate(int frame_n, int frame_count);
-  void setZ(int z);
   void animate();
 
   // Drawable Item
@@ -65,6 +64,7 @@ public:
   void setAnimate(bool allow) override;
   void setSpriteVariant(std::string variant) override;
   void setSpriteVariant() override;
+  void setZ(int z) override;
 protected:
   QPixmap m_pixmap;
   std::string m_sprite_path;

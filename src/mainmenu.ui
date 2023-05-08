@@ -64,6 +64,13 @@
           </widget>
         </item>
         <item alignment="Qt::AlignHCenter">
+          <widget class="QPushButton" name="helpButton">
+            <property name="text">
+              <string>help</string>
+            </property>
+          </widget>
+        </item>
+        <item alignment="Qt::AlignHCenter">
           <widget class="QPushButton" name="exitButton">
             <property name="text">
               <string>Exit</string>

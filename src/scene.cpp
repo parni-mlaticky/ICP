@@ -10,6 +10,8 @@ Scene::Scene(int window_w, int window_h, int frames_between_updates, MainWindow*
   this->m_window = window;
   this->keyCount = 0;
   this->healthCount = 0;
+  this->healthOffset = 0;
+  this->keyOffset = 0;
 
   this->setSceneRect(-100, -100, 200, 200);
   this->setFocus();
@@ -81,24 +83,25 @@ void Scene::setPosition(DrawableItem* item, int row, int col) {
 }
 
 void Scene::setKeyCount(int count) {
-  static int offset = 0;
+ if(count <= this->keyCount) return;
+  qreal sceneWidth = this->sceneRect().width();
+  qreal sceneHeight = this->sceneRect().height();
   this->keyCount = count;
   Sprite *key = new Sprite("key", 1);
   key->setSpriteScale(this->m_scale);
-  key->setPosition(std::pair<int, int>(-350 + offset, -280));
+  key->setPosition(std::pair<int, int>(-370 + this->keyOffset, -280));
   this->addItem(key);
   this->keySprites.push_back(key);
-  offset += 20;
+  this->keyOffset += 20;
 }
 
 void Scene::setHealthCount(int count) {
   if(count == this->healthCount) {
 	return;
   }
-  static int offset = 0;
   if (count < this->healthCount) {
 	for(int i = 0; i < this->healthCount - count; i++){
-	  offset -= 20;
+	  this->healthOffset -= 20;
 	  Sprite *deletedHealth = this->healthSprites.back();
 	  this->deleteItem(deletedHealth);
 	  this->healthSprites.pop_back();
@@ -107,10 +110,10 @@ void Scene::setHealthCount(int count) {
     for (int i = 0; i < count - this->healthCount; i++) {
       Sprite *health = new Sprite("health", 1);
       health->setSpriteScale(this->m_scale);
-      health->setPosition(std::pair<int, int>(300 + offset, -280));
+      health->setPosition(std::pair<int, int>(300 + this->healthOffset, -280));
       this->addItem(health);
       this->healthSprites.push_back(health);
-      offset += 20;
+      this->healthOffset += 20;
     }
   }
   this->healthCount = count;

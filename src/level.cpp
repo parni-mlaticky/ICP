@@ -148,7 +148,7 @@ void Level::spawnHealth(){
 
 void Level::spawnBoost(){
 	int x, y;
-	do{	
+	do{
 		x = rand() % this->m_bound_x + 1;
 		y = rand() % this->m_bound_y + 1;
 	}
@@ -209,7 +209,7 @@ void Level::updateEntitiesOfType(EntityType type){
 			int newX = coords.first + dx;
 			int newY = coords.second + dy;
 			EntityVector* entitiesAtXY = &this->m_grid[coords.first][coords.second];
-			auto it = std::find(entitiesAtXY->begin(), entitiesAtXY->end(), entity);		
+			auto it = std::find(entitiesAtXY->begin(), entitiesAtXY->end(), entity);
 			if(it != entitiesAtXY->end()){
 				entitiesAtXY->erase(it);
 			}
@@ -346,6 +346,7 @@ void Level::updateGrid() {
         this->tryToRemoveEntitiesFromReplay(m_replay->playingBackwards());
     }
 	this->m_drawable->setHealthCount(((Player*) this->m_entities[EntityType::PLAYER][0])->health());
+    this->m_drawable->setKeyCount(((Player *)this->m_entities[EntityType::PLAYER][0])->keyCount());
 	this->dumpGrid();
 
 	if(this->m_logger){
@@ -408,7 +409,7 @@ bool Level::removeEntity(Entity* ent){
 		if(this->m_grid[coords.first][coords.second][i] == ent){
 			this->m_grid[coords.first][coords.second].erase(this->m_grid[coords.first][coords.second].begin() + i);
 			this->m_entities[ent->m_type].erase(std::find(this->m_entities[ent->m_type].begin(), this->m_entities[ent->m_type].end(), ent));
-			this->m_drawable->deleteItem(ent->m_drawable_item); 
+			this->m_drawable->deleteItem(ent->m_drawable_item);
 			return true;
 		}
 	}

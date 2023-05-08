@@ -55,7 +55,7 @@ void Sprite::animate() {
 
   // If pixmap wasn't cached, load it.
   if (!n) {
-    std::cerr << "SPRITE: caching sprite " << name << std::endl;
+    //std::cerr << "SPRITE: caching sprite " << name << std::endl;
     pixmap = QPixmap(("assets/" + name + ".png").c_str());
     pixmap = pixmap.scaled(m_scale, m_scale, Qt::KeepAspectRatio);
     QPixmapCache::insert(name.c_str(), pixmap);

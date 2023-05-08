@@ -48,6 +48,7 @@ int Level::addEntity(char c, int x, int y, int id, bool init) {
   int spawned = 0;
 
   Entity* entity;
+  // create the entity based on the specified character
   switch (c) {
     case 'T': {
         item = m_drawable->drawItem("finish", 1, rotationType::ROTATE);
@@ -110,7 +111,7 @@ int Level::addEntity(char c, int x, int y, int id, bool init) {
         break;
     }
     default: {
-        std::cerr << "Invalid entity character used: " << c << std::endl;
+        //std::cerr << "Invalid entity character used: " << c << std::endl;
         exit(1);
     }
   }
@@ -137,7 +138,7 @@ void Level::loadLevel(const std::string &levelString) {
 	this->m_drawable->setGridDimensions(m_bound_x + 1, m_bound_y + 1);
 	this->m_drawable->drawBackgroundTiles("floor");
 
-	cerr << "Loading level with bounds: " << m_bound_x << " " << m_bound_y << endl;
+	//cerr << "Loading level with bounds: " << m_bound_x << " " << m_bound_y << endl;
 
 	this->m_grid.resize(m_bound_x + 2);
 	for (int x = 0; x < m_bound_x + 2; x++) {
@@ -149,7 +150,7 @@ void Level::loadLevel(const std::string &levelString) {
 		for (int y = 0; y < m_bound_y; y++) {
 			levelStream >> c;
 			if (c != '.') {
-				cerr << "creating entity at " << x << " " << y << " with code " << c << endl;
+				//cerr << "creating entity at " << x << " " << y << " with code " << c << endl;
 				m_id += addEntity(c, x+1, y+1, m_id, true);
 			}
 			else{
@@ -175,7 +176,7 @@ void Level::spawnHealth(){
 	do{
 		x = rand() % this->m_bound_x + 1;
 		y = rand() % this->m_bound_y + 1;
-		cerr << "trying to spawn health at " << x << " " << y << endl;
+		//cerr << "trying to spawn health at " << x << " " << y << endl;
 	}
 	while(this->m_grid[x][y].size() != 0);
 	m_id += addEntity('H', x, y, m_id, false);
@@ -193,6 +194,7 @@ void Level::spawnBoost(){
 
 void Level::dumpGrid(){
 	std::cerr << "Dumping grid" << this->m_grid.size() << " " <<this->m_grid[0].size() << std::endl;
+	// dump the grid content to the terminal
 	for(int i = 0; i < this->m_grid.size(); i++) {
 		for(int j = 0; j < this->m_grid[i].size(); j++) {
 			if (this->m_grid[i][j].size() == 0) {
@@ -215,6 +217,7 @@ void Level::dumpGrid(){
 
 void Level::updateEntitiesOfType(EntityType type){
 	EntityVector entities = this->m_entities[type];
+	// go through all entities of the given type
 	for(Entity* entity : entities){
 		this->triggerCollisions(entity);
 		if (m_replay) {
@@ -227,18 +230,25 @@ void Level::updateEntitiesOfType(EntityType type){
 			entity->update();
 		}
 
+		// get the direction of the entity
 		pair<int, int> dxdy = entity->getDxDy();
 		int dx = dxdy.first;
 		int dy = dxdy.second;
+		// get current coordinates
 		std::pair<int, int> coords = entity->get_xy();
+		// set position of the drawable object
 		this->m_drawable->setPosition(entity->m_drawable_item, coords.first, coords.second);
 		if(!entity->canMove()) continue;
+		// check where walls are around this entity and set allowed directions
 		entity->setAllowedDirections(this->checkDirections(coords.first, coords.second));
+		// log the direction
 		if(m_logger){
 			this->m_logger->logDirection(entity->getId(), entity->getDxDy().first, entity->getDxDy().second);
 		}
 		if(dx == 0 && dy == 0) continue;
+		// set the rotation of the drawable object
 		entity->m_drawable_item->setRotation(dx, dy);
+		// if wall is not in the way, move entity from the old position to the new position
 		if(!checkWall(coords.first + dx, coords.second + dy)){
 			entity->m_drawable_item->setAnimate(true);
 			int newX = coords.first + dx;
@@ -261,6 +271,7 @@ void Level::updateEntitiesOfType(EntityType type){
 	}
 }
 void Level::removeDeadEntities(){
+	// checks alive status of entities and removes them if they are dead
 	for(auto entityTypeVecPair: this->m_entities){
 		for(auto entity: entityTypeVecPair.second){
 			if(!entity->isAlive()){
@@ -298,9 +309,11 @@ void Level::tryToApplyDirectionsFromReplay(Entity* ent) {
     if (command[0] != "D") continue;
     if (stoi(command[1]) != ent->getId()) continue;
 
+	// if we are playing forward, apply the direction as is
 	if(!m_replay->playingBackwards()){
 		ent->setDirection(stoi(command[2]), stoi(command[3]));
 	}
+	// if we are playing backwards, apply the opposite direction
 	else{
 		ent->setDirection(-stoi(command[2]), -stoi(command[3]));
 	}
@@ -309,19 +322,21 @@ void Level::tryToApplyDirectionsFromReplay(Entity* ent) {
 
 void Level::tryToRemoveEntitiesFromReplay(bool backwards) {
     if (!backwards) return;
+	// if playing backwards, add back the entity that was removed
     for (auto command: this->m_replay->getLastTick()) {
         if (command[0] != "R") continue;
         int id = stoi(command[1]);
         char type = command[2][0];
         int x = stoi(command[3]);
         int y = stoi(command[4]);
-		cerr << "Tryng to re-create entity " << type << " at " << x << " " << y <<endl;
+		//cerr << "Tryng to re-create entity " << type << " at " << x << " " << y <<endl;
         addEntity(type, x, y, id, false);
     }
 }
 
 void Level::tryToCreateEntitiesFromReplay(bool backwards) {
 	if (backwards){
+		// if playinb backwards, remove the entity that was created
 		for(auto command: this->m_replay->getLastTick()){
 			if (command[0] != "C") continue;
 			int id = stoi(command[1]);
@@ -337,6 +352,7 @@ void Level::tryToCreateEntitiesFromReplay(bool backwards) {
 		}
 		return;
 	}
+	// if playing forward, add the entity that was created
     for (auto command: this->m_replay->getLastTick()) {
         if (command[0] != "C") continue;
         int id = stoi(command[1]);
@@ -351,6 +367,7 @@ void Level::updateGrid() {
     if (m_replay) {
         this->tryToCreateEntitiesFromReplay(m_replay->playingBackwards());
 	}
+	// player has priority, update player first
 	this->updateEntitiesOfType(EntityType::PLAYER);
 	if(this->m_entities[EntityType::KEY].size() == 0){
 		this->openFinishes();
@@ -359,6 +376,7 @@ void Level::updateGrid() {
 		this->closeFinishes();
 	}
 	this->checkPlayerWin();
+	// update other entity types
 	this->updateEntitiesOfType(EntityType::GHOST);
 	this->updateEntitiesOfType(EntityType::KEY);
 	this->updateEntitiesOfType(EntityType::FINISH);
@@ -368,13 +386,14 @@ void Level::updateGrid() {
 	if(this->m_entities[EntityType::PLAYER].size() == 0){
 		this->m_game_over = true;
 	}
+	// 10% chance of spawning a boost and 5% chance of spawning a heart
     if (!m_replay) {
         if(rand() % 100 < 10 && this->m_entities[EntityType::BOOST].size() == 0){
-            cerr << "SPAWNING BOOST" << endl;
+            //cerr << "SPAWNING BOOST" << endl;
             this->spawnBoost();
         }
         if(rand() % 100 < 5 && this->m_entities[EntityType::HEALTH].size() == 0){
-            cerr << "SPAWNING HEALTH" << endl;
+            //cerr << "SPAWNING HEALTH" << endl;
             this->spawnHealth();
         }
     }
@@ -382,9 +401,10 @@ void Level::updateGrid() {
         this->tryToRemoveEntitiesFromReplay(m_replay->playingBackwards());
     }
 
+	// update health
     int health = m_player_index != -1 ? ((Player*) this->m_entities[EntityType::PLAYER][m_player_index])->health() : 0;
     this->m_drawable->setHealthCount(health);
-	this->dumpGrid();
+	//this->dumpGrid();
 
 	if(this->m_logger){
 		this->m_logger->logTickEnd();
@@ -412,6 +432,7 @@ void Level::openFinishes(){
 
 std::vector<std::pair<int, int>> Level::checkDirections(int x, int y) {
   std::vector<std::pair<int, int>> out{};
+  // check if there is a wall in each direction
   if (!this->checkWall(x-1, y)) {
     out.push_back(std::pair<int, int>(-1, 0));
   }
@@ -428,6 +449,7 @@ std::vector<std::pair<int, int>> Level::checkDirections(int x, int y) {
 }
 
 bool Level::checkWall(int x, int y) {
+	// check if there is a wall at the given coordinates
   if (x >= this->m_grid.size() || x < 0)
     return true;
   if (y >= this->m_grid[x].size() || y < 0)
@@ -475,21 +497,21 @@ void Level::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         qreal x = event->scenePos().x();
         qreal y = event->scenePos().y();
         auto test = this->m_drawable->reverseTranslate(x, y);
-        std::cerr << "testing A star" << std::endl;
+        //std::cerr << "testing A star" << std::endl;
         Entity* playerEntity = this->m_entities[EntityType::PLAYER][m_player_index];
 		((Player*)playerEntity)->clearMoveVector();
         std::pair<int, int> playerPos = playerEntity->get_xy();
         std::pair<int, int> start(playerPos.first, playerPos.second);
         std::pair<int, int> finish(this->m_drawable->reverseTranslate(x, y));
 
-		cerr << "start: " << start.first << " " << start.second << endl;
-		cerr << "finish: " << finish.first << " " << finish.second << endl;
+		//cerr << "start: " << start.first << " " << start.second << endl;
+		//cerr << "finish: " << finish.first << " " << finish.second << endl;
         std::vector<std::pair<int, int>> path = Astar::calculatePath(start, finish, this->m_grid);
         ((Player*)playerEntity)->setMoveVector(path);
-        std::cerr << "Path found:\n";
-        for (const auto &coord : path) {
-            std::cerr << '(' << coord.first << ", " << coord.second << ")\n";
-        }
+        //std::cerr << "Path found:\n";
+        /* for (const auto &coord : path) { */
+        /*     std::cerr << '(' << coord.first << ", " << coord.second << ")\n"; */
+        /* } */
     }
 }
 

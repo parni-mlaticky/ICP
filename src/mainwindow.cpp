@@ -207,4 +207,12 @@ void MainWindow::update() {
   }
 }
 
+void MainWindow::onDisconnect() {
+  std::cerr << "Remote disconnected" << std::endl;
+  if (this->timer) {
+    this->timer->stop();
+  }
+  this->close();
+}
+
 MainWindow::~MainWindow() = default;

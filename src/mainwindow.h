@@ -138,4 +138,5 @@ private:
     void onRecive(std::string message);
     void on_connected_to_client();
     void on_connected_to_server();
+    void onDisconnect();
 };

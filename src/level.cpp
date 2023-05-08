@@ -1,3 +1,10 @@
+/** 
+ * @file level.cpp
+ * @brief Implementation of the Level class, which handles most of the game logic and manages the game state and entities
+ * @authors Ondřej Zobal, Vladimír Hucovič, Petr Kolouch
+ * */
+
+
 #include "level.h"
 #include "boost.h"
 #include "entity.h"
@@ -335,11 +342,11 @@ void Level::updateGrid() {
 		this->m_game_over = true;
 	}
     if (!m_replay) {
-        if(rand() % 100 < 98 && this->m_entities[EntityType::BOOST].size() == 0){
+        if(rand() % 100 < 2 && this->m_entities[EntityType::BOOST].size() == 0){
             cerr << "SPAWNING BOOST" << endl;
             this->spawnBoost();
         }
-        if(rand() % 100 < 95 && this->m_entities[EntityType::HEALTH].size() == 0){
+        if(rand() % 100 < 3 && this->m_entities[EntityType::HEALTH].size() == 0){
             cerr << "SPAWNING HEALTH" << endl;
             this->spawnHealth();
         }

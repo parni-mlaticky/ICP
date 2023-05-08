@@ -1,5 +1,12 @@
+/** 
+ * @file multiplayerDialog.cpp
+ * @brief Implementation of the MultiplayerDialog window, which is used to create a server or connect to one
+ * @authors Ondřej Zobal, Petr Kolouch
+ * */
+
 #include "mainwindow.h"
 #include "mainmenu.h"
+
 MultiplayerDialog::MultiplayerDialog(QWidget *parent) : QDialog(parent) {
   QVBoxLayout *mainLayout = new QVBoxLayout(this);
 

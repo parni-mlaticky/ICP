@@ -1,3 +1,9 @@
+/** 
+ * @file entity.cpp
+ * @brief Implementation of the Entity class 
+ * @authors Vladimír Hucovič, Ondřej Zobal
+ * */
+
 #include "entity.h"
 
 Entity::Entity(int x, int y, DrawableItem* item, int id) : m_x(x),

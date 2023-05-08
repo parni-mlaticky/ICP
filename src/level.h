@@ -1,3 +1,9 @@
+/** 
+ * @file level.h
+ * @brief Header for the Level class
+ * @authors Ondřej Zobal, Vladimír Hucovič, Petr Kolouch
+ * */
+
 #ifndef LEVEL_H_
 #define LEVEL_H_
 

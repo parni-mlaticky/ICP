@@ -1,3 +1,10 @@
+/** 
+ * @file finish.h
+ * @brief Header for the finish entity
+ * @authors Vladimír Hucovič, Ondřej Zobal
+ * */
+
+
 #ifndef FINISH_H
 #define FINISH_H
 #include "entity.h"

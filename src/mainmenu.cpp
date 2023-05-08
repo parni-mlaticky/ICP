@@ -1,3 +1,9 @@
+/**
+ * @file mainmenu.cpp
+ * @brief Implementation of the MainMenu window class
+ * @authors Petr Kolouch, Ondřej Zobal, Vladimír Hucovič 
+ * */
+
 #include "mainmenu.h"
 #include <QMessageBox>
 

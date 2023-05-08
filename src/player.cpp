@@ -1,10 +1,16 @@
+/** 
+ * @file player.cpp
+ * @brief Implementation of the Player entity
+ * @authors Vladimír Hucovič, Ondřej Zobal, Petr Kolouch
+ * */
+
 #include "player.h"
 
 Player::Player(int x, int y, bool isLocal, DrawableItem* item, int id) : Entity(x ,y, item, id), m_local_player(isLocal) {
   m_key_count = 0;
   m_can_move = true;
   m_type = EntityType::PLAYER;
-  m_health = 3;
+  m_health = 2;
 }
 
 

@@ -1,3 +1,9 @@
+/**
+ * @file mainmenu.h
+ * @brief Header for the MainMenu window class
+ * @authors Petr Kolouch, Ondřej Zobal, Vladimír Hucovič 
+ * */
+
 #ifndef MAINMENU_H
 #define MAINMENU_H
 
@@ -46,7 +52,7 @@ private:
   /**
    * @brief The path to the file containing the layout of the level
    * */
-  QString levelFile = "./levels/level.txt";
+  QString levelFile = "./examples/levels/level.txt";
   /**
    * @brief The path to the file containing the replay of the level
    * */
@@ -54,11 +60,11 @@ private:
   /**
    * @brief The path to the folder containing the level layout files
    * */
-  const QString LEVEL_FOLDER_PATH = "./levels";
+  const QString LEVEL_FOLDER_PATH = "./examples/levels";
   /**
    * @brief The path to the folder containing the replay files
    * */
-  const QString REPLAY_FOLDER_PATH = "./replay";
+  const QString REPLAY_FOLDER_PATH = "./examples/replay";
   MultiplayerDialog* multiplayerDialog;
 
 signals:

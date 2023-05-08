@@ -1,3 +1,8 @@
+/** 
+ * @file ui_mainwindow.h
+ * @brief UI file for the main window of the game - generated file
+ * */
+
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **

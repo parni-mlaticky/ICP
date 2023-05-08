@@ -1,3 +1,10 @@
+/** 
+ * @file ghost.h
+ * @brief Header of the Ghost entity
+ * @authors Ondřej Zobal
+ * */
+
+
 #ifndef GHOST_H
 #define GHOST_H
 #include <QGraphicsItem>

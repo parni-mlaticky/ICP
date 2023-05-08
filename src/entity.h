@@ -1,3 +1,9 @@
+/** 
+ * @file entity.h
+ * @brief Header for the entity class
+ * @authors Vladimír Hucovič, Ondřej Zobal
+ * */
+
 #ifndef ENTITY_H_
 #define ENTITY_H_
 

@@ -1,3 +1,9 @@
+/** 
+ * @file boost.h
+ * @brief Header for the boost entity
+ * @author Vladimír Hucovič
+ * */
+
 #include "entity.h"
 
 

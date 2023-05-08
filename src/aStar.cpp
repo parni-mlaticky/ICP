@@ -1,10 +1,15 @@
+/** 
+ * @file aStar.cpp
+ * @brief Implementation of the A* algorithm
+ * @authors Petr Kolouch, Vladimír Hucovič
+ * */
+
 #include "aStar.h"
 #include <iostream>
 
 bool Astar::isValidMove(std::pair<int, int> coord, const Grid &grid) {
     int x = coord.first;
     int y = coord.second;
-    // FIXME
     if (x < 0 || y < 0 || x >= grid.size() || y >= grid[0].size()) {
         return false;
     }
@@ -20,7 +25,7 @@ bool Astar::isValidMove(std::pair<int, int> coord, const Grid &grid) {
 }
 
 
-int getH(Coords a, Coords b){
+int Astar::heuristic(Coords a, Coords b){
 	return abs(a.first - b.first) + abs(a.second - b.second);
 }
 
@@ -69,7 +74,7 @@ void Astar::expand(AstarNode* node, Grid grid, vector<AstarNode*> &open, vector<
 			}
 			AstarNode* newNode = new AstarNode(neighbours[i]);
 			newNode->g = node->g + 1;
-			newNode->h = getH(neighbours[i], end);
+			newNode->h = heuristic(neighbours[i], end);
 			newNode->f = newNode->g + newNode->h;
 			newNode->parent = node;
 			AstarNode* existing = findInOpen(newNode->coords, open);
@@ -106,3 +111,4 @@ std::vector<Coords> Astar::calculatePath(Coords start, Coords end, Grid grid){
 	}
 	return {};
 }
+

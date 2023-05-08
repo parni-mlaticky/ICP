@@ -8,6 +8,10 @@
 #include "entity.h"
 
 
+/** 
+ * @class Health
+ * @brief Class representing the Health entity
+ * */
 class Health : public Entity {
 // public methods
 public:

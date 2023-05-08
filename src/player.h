@@ -20,7 +20,7 @@
 #include <chrono>
 /**
  * @class Player
- * @brief Class for the player entity, controlled by the user
+ * @brief Class for the Player entity, controlled by the user
  */
 class Player : public Entity {
 public:

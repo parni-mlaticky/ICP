@@ -23,6 +23,7 @@ class MainWindow;
 
 /**
   * @brief A graphical class for drawing on the screen
+  * @ref Drawable
   * */
 class Scene : public Drawable, public QGraphicsScene {
 public:
@@ -71,8 +72,8 @@ protected:
    * */
   void cacheSprites(const std::string dirPath);
   /**
-   * @brief Handles sending messages
-   * @param The message that will be sent to the other connected party.
+   * @brief Handles keypresses
+   * @param event Information about the keypress
    * */
   void keyPressEvent(QKeyEvent* event) override;
   /**

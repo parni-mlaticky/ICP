@@ -12,7 +12,7 @@
 
 /**
  * @class Finish
- * @brief Class for the finish (target) entity
+ * @brief Class for the Finish (target) entity
  */
 class Finish : public Entity {
 // private members

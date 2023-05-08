@@ -1,4 +1,4 @@
-/** 
+/**
  * @file level.cpp
  * @brief Implementation of the Level class, which handles most of the game logic and manages the game state and entities
  * @authors Ondřej Zobal, Vladimír Hucovič, Petr Kolouch
@@ -257,9 +257,14 @@ void Level::checkPlayerWin(){
 	for(Entity* playerEntity : this->m_entities[EntityType::PLAYER]){
 		Player* player = dynamic_cast<Player*>(playerEntity);
 		if(player->reachedFinish()){
+            this->playerWon = true;
 			this->removeEntity(player);
 		}
 	}
+}
+
+bool Level::didPlayerWin() {
+    return this->playerWon;
 }
 
 void Level::tryToApplyDirectionsFromReplay(Entity* ent) {

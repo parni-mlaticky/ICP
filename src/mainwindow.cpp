@@ -205,7 +205,7 @@ void MainWindow::update() {
     file << m_logger->getFullLog();
     file.close();
 	this->timer->stop();
-    QMessageBox::information(this, "Game over", "Game over!");
+    this->m_level->didPlayerWin() ? QMessageBox::information(this, "Congratulations", "You win!") : QMessageBox::information(this, "Game over", "Game over!");
     this->close();
   }
 }

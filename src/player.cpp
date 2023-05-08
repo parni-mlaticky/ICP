@@ -13,31 +13,36 @@ Player::Player(int x, int y, bool isLocal, DrawableItem* item, int id) : Entity(
   m_health = 2;
 }
 
+std::pair<int, int> Player::keypressToDirection(QKeyEvent* event) {
+  switch (event->key()) {
+  case Qt::Key_W:
+    return std::pair<int, int>(-1, 0);
+  case Qt::Key_A:
+    return std::pair<int, int>(0, -1);
+  case Qt::Key_S:
+    return std::pair<int, int>(1, 0);
+  case Qt::Key_D:
+    return std::pair<int, int>(0, 1);
+  }
+  return std::pair<int, int>(0, 0);
+}
 
 void Player::keyPressEvent(QKeyEvent *event) {
   // Skip movement if this is a remote player.
   int old_dx, old_dy;
   old_dx = this->m_dx;
   old_dy = this->m_dy;
-  if (!this->m_local_player)
-    return;
 
+  if (!this->m_local_player) {
+    return;
+  }
 
   this->moveVector.clear();
-  switch (event->key()) {
-  case Qt::Key_W:
-    setDirection(-1, 0);
-    break;
-  case Qt::Key_A:
-    setDirection(0, -1);
-    break;
-  case Qt::Key_S:
-    setDirection(1, 0);
-    break;
-  case Qt::Key_D:
-    setDirection(0, 1);
-    break;
+  auto dir = keypressToDirection(event);
+  if (dir.first || dir.second) {
+    this->setDirection(dir.first, dir.second);
   }
+
   std::pair<int, int> direction = std::make_pair(this->m_dx, this->m_dy);
   for(auto pair : this->m_allowed_directions){
 	if(pair == direction){
@@ -160,3 +165,6 @@ void Player::autoSetDirection() {
 	this->setDirection(dx, dy);
 }
 
+bool Player::hasMoveVector() {
+  return moveVector.size() > 0;
+}

@@ -27,6 +27,7 @@ class Logger {
         void logTickEnd();
         void logCreation(int id, char type, int x, int y);
         void logRemoval(int id, char type, int x, int y);
+        void logMultiplayer();
         std::string getLastTick();
         std::string getCurrentTick();
         std::string getFullLog();
@@ -119,15 +120,17 @@ class Logger {
 		 * */
 		bool playingBackwards();
         void stream(std::string message);
+        bool getReplaingMultiplayer();
     private:
 		/** 
 		 * @brief Specifies if the replay is playing backwards
 		 * */
 		bool m_playing_backwards = false;
-		/** 
+		/**
 		 * @brief The grid of the level being replayed
 		 * */
         std::string m_grid;
+        bool m_replaing_multiplayer = false;
         std::string unprocessed;
         ReplayLog m_log;
         int m_tick;

@@ -17,6 +17,8 @@
 #include <thread>
 #include "logger.h"
 #include <fstream>
+#include <chrono>
+#include <iomanip>
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -111,8 +113,17 @@ private:
   /** 
    * @brief The number of milliseconds between each graphics tick
    * */
-  int m_gfx_tick_ms; 
-
+  int m_gfx_tick_ms;
+  /**
+   * @brief While hosting a multiplayer server, this variable will store
+   * the last message recived from the client.
+   * */
+  std::string m_client_message;
+  /**
+   * @brief While hosting a multiplayer server, this variable will store
+   * a queue of automatic movements the other player requested.
+   * */
+  std::vector<std::string> m_client_queue;
 
   int m_animation_frames; // TODO comment @Ondrej
   int m_frame_counter; // TODO comment @Ondrej

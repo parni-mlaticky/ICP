@@ -105,7 +105,6 @@ void Sprite::setRotation(int dx, int dy) {
 
 void Sprite::setSpriteVariant(std::string variant) {
   m_sprite_variant = variant;
-  std::cerr << "Variant set " << variant << std::endl;
 }
 
 void Sprite::setSpriteVariant() {

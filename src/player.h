@@ -65,15 +65,17 @@ public:
   void setMoveVector(std::vector<std::pair<int, int>> &vector);
   void autoSetDirection();
   void clearMoveVector();
+  bool hasMoveVector();
+  static std::pair<int, int> keypressToDirection(QKeyEvent* event);
+  /**
+   * @brief Specifies if this player is local or remote
+   * */
+  bool m_local_player;
 
 protected:
 // private members
 private:
-  /** 
-   * @brief Specifies if this player is local or remote
-   * */
-  bool m_local_player;
-  /** 
+  /**
    * @brief Specifies if this player has reached the finish square
    * */
   bool m_reached_finish = false;
@@ -99,5 +101,7 @@ private:
   std::vector<std::pair<int, int>> moveVector;
 
 };
+
+
 #endif
 

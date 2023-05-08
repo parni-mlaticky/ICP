@@ -29,60 +29,86 @@
 using namespace std;
 
 
-Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay) : m_id(0) {
+Level::Level(Drawable *drawable, Log::Logger* logger, Log::Replay* replay, bool is_multiplayer) : m_id(0) {
   this->m_drawable = drawable;
   this->m_bound_x = -1;
   this->m_bound_y = -1;
   this->m_logger = logger;
   this->m_replay = replay;
+  this->m_is_multiplayer = is_multiplayer;
+  this->m_player_index = 0;
   srand(time(NULL));
 }
 
-void Level::addEntity(char c, int x, int y, int id, bool init) {
+int Level::addEntity(char c, int x, int y, int id, bool init) {
   DrawableItem *item;
 
   if (m_logger && !init) {
     m_logger->logCreation(m_id-1, c, x, y);
   }
 
+  int spawned = 0;
+
   Entity* entity;
   switch (c) {
     case 'T': {
         item = m_drawable->drawItem("finish", 1, rotationType::ROTATE);
         entity = (Entity *)new Finish(x, y, item, id);
+        ++spawned;
         break;
     }
     case 'X': {
         item = m_drawable->drawItem("wall", 1, rotationType::ROTATE);
         entity = (Entity *)new Wall(x, y, item, id);
+        ++spawned;
         break;
     }
     case 'G': {
         item = m_drawable->drawItem("ghost", 1, rotationType::SPRITE_CHANGE);
         entity = (Entity *)new Ghost(x, y, item, id);
+        ++spawned;
         break;
     }
     case 'K': {
         item = m_drawable->drawItem("key", 1, rotationType::ROTATE);
         entity = (Entity *)new Key(x, y, item, id);
+        ++spawned;
         break;
     }
     case 'S': {
         item = m_drawable->drawItem("player", 6, rotationType::ROTATE);
         entity = (Entity *)new Player(x, y, true, item, id);
+        entity->m_drawable_item->setZ(10);
+        ++spawned;
+        bool condition = false;
+        if (m_replay) {
+            condition = m_replay->getReplaingMultiplayer();
+        }
+        if (m_is_multiplayer || condition) {
+            m_grid[x][y].push_back(entity);
+            this->m_entities[entity->m_type].push_back(entity);
+            this->m_drawable->setPosition(entity->m_drawable_item, x, y);
+            this->m_player_index = this->m_replay != nullptr;
+
+            item = m_drawable->drawItem("otherplayer", 6, rotationType::ROTATE);
+            entity = (Entity *)new Player(x, y, false, item, id+1);
+            ++spawned;
+        }
         break;
     }
     case '.': {
-        return;
+        return spawned;
     }
     case 'B':{
         item = m_drawable->drawItem("boost", 1, rotationType::ROTATE);
         entity = (Entity*) new Boost(x, y, item, id);
+        ++spawned;
         break;
     }
     case 'H':{
         item = m_drawable->drawItem("health", 1, rotationType::ROTATE);
         entity = (Entity*) new Health(x, y, item, id);
+        ++spawned;
         break;
     }
     default: {
@@ -94,6 +120,8 @@ void Level::addEntity(char c, int x, int y, int id, bool init) {
   m_grid[x][y].push_back(entity);
   this->m_entities[entity->m_type].push_back(entity);
   this->m_drawable->setPosition(entity->m_drawable_item, x, y);
+
+  return spawned;
 }
 
 void Level::loadLevel(const std::string &levelString) {
@@ -124,7 +152,7 @@ void Level::loadLevel(const std::string &levelString) {
 			levelStream >> c;
 			if (c != '.') {
 				cerr << "creating entity at " << x << " " << y << " with code " << c << endl;
-				addEntity(c, x+1, y+1, m_id++, true);
+				m_id += addEntity(c, x+1, y+1, m_id, true);
 			}
 			else{
 				//cerr << "creating empty space at " << x << " " << y << endl;
@@ -133,12 +161,12 @@ void Level::loadLevel(const std::string &levelString) {
 	}
 
 	for(int i = 0; i < m_bound_x + 2; i++) {
-		addEntity('X', i, 0, m_id++, true);
-		addEntity('X', i, m_bound_y + 1, m_id++, true);
+		m_id += addEntity('X', i, 0, m_id, true);
+		m_id += addEntity('X', i, m_bound_y + 1, m_id, true);
 	}
 	for(int i = 0; i < m_bound_y + 2; i++) {
-		addEntity('X', 0, i, m_id++, true);
-		addEntity('X', m_bound_x + 1, i, m_id++, true);
+		m_id += addEntity('X', 0, i, m_id, true);
+		m_id += addEntity('X', m_bound_x + 1, i, m_id, true);
 	}
 	this->dumpGrid();
     this->m_drawable->setHealthCount(3);
@@ -152,7 +180,7 @@ void Level::spawnHealth(){
 		cerr << "trying to spawn health at " << x << " " << y << endl;
 	}
 	while(this->m_grid[x][y].size() != 0);
-	addEntity('H', x, y, m_id++, false);
+	m_id += addEntity('H', x, y, m_id, false);
 }
 
 void Level::spawnBoost(){
@@ -162,7 +190,7 @@ void Level::spawnBoost(){
 		y = rand() % this->m_bound_y + 1;
 	}
 	while(this->m_grid[x][y].size() != 0);
-	addEntity('B', x, y, m_id++, false);
+	m_id += addEntity('B', x, y, m_id, false);
 }
 
 void Level::dumpGrid(){
@@ -238,6 +266,9 @@ void Level::removeDeadEntities(){
 	for(auto entityTypeVecPair: this->m_entities){
 		for(auto entity: entityTypeVecPair.second){
 			if(!entity->isAlive()){
+                if (entity == m_entities[EntityType::PLAYER][m_player_index]) {
+                   m_player_index = -1; 
+                }
 				this->m_logger->logRemoval(entity->getId(), entity->m_type, entity->get_xy().first, entity->get_xy().second);
 				this->removeEntity(entity);
 			}
@@ -274,11 +305,9 @@ void Level::tryToApplyDirectionsFromReplay(Entity* ent) {
 
 	if(!m_replay->playingBackwards()){
 		ent->setDirection(stoi(command[2]), stoi(command[3]));
-		std::cerr << "Setting direction to " << stoi(command[2]) << " " << stoi(command[3]) << std::endl;
 	}
 	else{
 		ent->setDirection(-stoi(command[2]), -stoi(command[3]));
-		std::cerr << "Setting direction to " << -stoi(command[2]) << " " << -stoi(command[3]) << std::endl;
 	}
   }
 }
@@ -292,8 +321,7 @@ void Level::tryToRemoveEntitiesFromReplay(bool backwards) {
         int x = stoi(command[3]);
         int y = stoi(command[4]);
 		cerr << "Tryng to re-create entity " << type << " at " << x << " " << y <<endl;
-        addEntity(type, x, y, id++, false);
-        std::cerr << "briihh " << x << " x " << y << std::endl;
+        addEntity(type, x, y, id, false);
     }
 }
 
@@ -320,8 +348,7 @@ void Level::tryToCreateEntitiesFromReplay(bool backwards) {
         char type = command[2][0];
         int x = stoi(command[3]);
         int y = stoi(command[4]);
-        addEntity(type, x, y, id++, false);
-        std::cerr << "briihh " << x << " x " << y << std::endl;
+        addEntity(type, x, y, id, false);
     }
 }
 
@@ -359,8 +386,9 @@ void Level::updateGrid() {
     if (m_replay) {
         this->tryToRemoveEntitiesFromReplay(m_replay->playingBackwards());
     }
-	this->m_drawable->setHealthCount(((Player*) this->m_entities[EntityType::PLAYER][0])->health());
-    this->m_drawable->setKeyCount(((Player *)this->m_entities[EntityType::PLAYER][0])->keyCount());
+
+    int health = m_player_index != -1 ? ((Player*) this->m_entities[EntityType::PLAYER][m_player_index])->health() : 0;
+    this->m_drawable->setHealthCount(health);
 	this->dumpGrid();
 
 	if(this->m_logger){
@@ -447,15 +475,15 @@ EntityVector Level::findEntitiesAt(int x, int y){
 
 
 void Level::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-		if(m_replay){ return; }
+        if(m_player_index == -1) { return; }
         if (event->button() == Qt::LeftButton) {
         qreal x = event->scenePos().x();
         qreal y = event->scenePos().y();
         auto test = this->m_drawable->reverseTranslate(x, y);
         std::cerr << "testing A star" << std::endl;
-        Entity* playerEntity = this->m_entities[EntityType::PLAYER][0];
+        Entity* playerEntity = this->m_entities[EntityType::PLAYER][m_player_index];
 		((Player*)playerEntity)->clearMoveVector();
-        std::pair<int, int>playerPos = playerEntity->get_xy();
+        std::pair<int, int> playerPos = playerEntity->get_xy();
         std::pair<int, int> start(playerPos.first, playerPos.second);
         std::pair<int, int> finish(this->m_drawable->reverseTranslate(x, y));
 
@@ -468,5 +496,44 @@ void Level::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             std::cerr << '(' << coord.first << ", " << coord.second << ")\n";
         }
     }
+}
+
+std::pair<int, int> Level::getLocalPlayerDirection() {
+    if (m_player_index == -1) {
+        return std::pair<int, int>(0, 0);
+    }
+
+    return m_entities[EntityType::PLAYER][m_player_index]->getDxDy();
+}
+
+void Level::setRemotePlayerDirection(std::string command) {
+    Entity* remote_player = nullptr;
+
+    // Finding remote player.
+    for (auto player : m_entities[EntityType::PLAYER]) {
+        if (!((Player*) player)->m_local_player) {
+            remote_player = player;
+            break;
+        }
+    }
+
+    if (!remote_player) {
+        return;
+    }
+
+    // Decoding message
+	std::istringstream stream(command);
+    char code;
+    int dx;
+    int dy;
+    stream >> code;
+    stream >> dx;
+    stream >> dy;
+
+    if (code != 'P') {
+        return;
+    }
+
+    remote_player->setDirection(dx, dy);
 }
 
